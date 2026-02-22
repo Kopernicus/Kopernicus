@@ -34,491 +34,307 @@ using UnityEngine;
 
 namespace Kopernicus.Configuration.Parsing;
 
-
-// Parser for a MapSO
-[RequireConfigType(ConfigType.Value)]
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-public class MapSOParserGreyScale<T> : BaseLoader, IParsable, ITypeParser<T> where T : MapSO
+/// <summary>
+/// An internal base class used to implement various MapSOParser types.
+/// You should never need to use this directly.
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public abstract class MapSOParserBase<T> : BaseLoader, IParsable, ITypeParser<T>
+    where T : MapSO
 {
     /// <summary>
     /// The value that is being parsed
     /// </summary>
     public T Value { get; set; }
 
+    private protected abstract MapSO.MapDepth Depth { get; }
+
+    private protected MapSOParserBase() { }
+
+    private protected MapSOParserBase(T value)
+    {
+        Value = value;
+    }
+
     /// <summary>
     /// Parse the Value from a string
     /// </summary>
-    public void SetFromString(String s)
+    public void SetFromString(string s)
     {
-        // Should we use OnDemand?
-        Boolean useOnDemand = OnDemandStorage.UseOnDemand;
+        using var guard = new SetNameGuard(this, s);
 
         if (s.StartsWith("BUILTIN/"))
         {
-            s = s.Substring(8);
+            s = s.Substring("BUILTIN/".Length);
             Value = Utility.FindMapSO<T>(s);
+            return;
+        }
+
+        if (OnDemandStorage.UseOnDemand &&
+            (typeof(MapSODemand).IsAssignableFrom(typeof(T)) || typeof(T) == typeof(MapSO))
+        )
+        {
+            s = Utility.ValidateOnDemandTexture(s);
+
+            MapSODemand map;
+            // If we want to load the texture on demand 
+            if (typeof(T) == typeof(MapSO))
+                map = ScriptableObject.CreateInstance<MapSODemand>();
+            else
+                map = (MapSODemand)(MapSO)ScriptableObject.CreateInstance<T>();
+
+            map.Path = s;
+            map.Depth = Depth;
+            map.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
+            OnDemandStorage.AddMap(generatedBody.name, map);
+            Value = (T)(MapSO)map;
+            return;
         }
         else
         {
-            // are we on-demand? Don't load now.
-            if (useOnDemand && typeof(T) == typeof(MapSO))
+            var options = new TextureLoadOptions
             {
-                s = Utility.ValidateOnDemandTexture(s);
-
-                MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
-                map.Path = s;
-                map.Depth = MapSO.MapDepth.Greyscale;
-                map.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
-                OnDemandStorage.AddMap(generatedBody.name, map);
-                Value = map as T;
-            }
-            else // Load the texture
+                Hint = TextureLoadHint.Synchronous,
+                Unreadable = false
+            };
+            var handle = TextureLoader.LoadTexture<Texture2D>(s, options);
+            Texture2D map;
+            try
             {
-                var options = new TextureLoadOptions
-                {
-                    Hint = TextureLoadHint.Synchronous,
-                    Unreadable = false
-                };
-                var handle = TextureLoader.LoadTexture<Texture2D>(s, options);
-                Texture2D map;
-                try
-                {
-                    map = handle.TakeTexture();
-                }
-                catch (Exception e)
-                {
-                    Logger.Active.Log($"Failed to load texture {s}");
-                    Logger.Active.LogException(e);
-                    return;
-                }
-
-                // Create a new map script object
-                Value = ScriptableObject.CreateInstance<T>();
-                Value.CreateMap(MapSO.MapDepth.Greyscale, map);
+                map = handle.TakeTexture();
             }
-        }
+            catch (Exception e)
+            {
+                Logger.Active.Log($"Failed to load texture {s}");
+                Logger.Active.LogException(e);
+                return;
+            }
 
-        if (Value != null)
-        {
-            Value.name = s;
+            // Create a new map script object
+            Value = ScriptableObject.CreateInstance<T>();
+            Value.CreateMap(Depth, map);
         }
     }
 
     /// <summary>
     /// Convert the value to a parsable String
     /// </summary>
-    public String ValueToString()
+    public string ValueToString()
     {
-        if (Value == null)
-        {
-            return null;
-        }
+        if (Value.IsNullOrDestroyed())
+            return "";
 
-        if (GameDatabase.Instance.ExistsTexture(Value.name) || TextureLoader.TextureExists(Value.name))
-        {
-            return Value.name;
-        }
+        var name = Value.name;
+        if (GameDatabase.Instance.ExistsTexture(name))
+            return name;
+        if (TextureLoader.TextureExists(name))
+            return name;
 
-        return "BUILTIN/" + Value.name;
+        return $"BUILTIN/{name}";
     }
+
+    struct SetNameGuard(MapSOParserBase<T> parser, string name) : IDisposable
+    {
+        public void Dispose()
+        {
+            var value = parser.Value;
+            if (value.IsNullOrDestroyed())
+                return;
+
+            value.name = name;
+        }
+    }
+}
+
+// Note that we need to define forwarding methods for all the types here so
+// that the parser types stay binary-compatible with previous versions.
+
+// Parser for a MapSO
+[RequireConfigType(ConfigType.Value)]
+public class MapSOParserGreyScale<T> : MapSOParserBase<T>, IParsable, ITypeParser<T>
+    where T : MapSO
+{
+    /// <summary>
+    /// The value that is being parsed
+    /// </summary>
+    public new T Value
+    {
+        get => base.Value;
+        set => base.Value = value;
+    }
+
+    private protected override MapSO.MapDepth Depth => MapSO.MapDepth.Greyscale;
+
+    /// <summary>
+    /// Parse the Value from a string
+    /// </summary>
+    public new void SetFromString(String s) => base.SetFromString(s);
+
+    /// <summary>
+    /// Convert the value to a parsable String
+    /// </summary>
+    public new string ValueToString() => base.ValueToString();
 
     /// <summary>
     /// Create a new MapSOParser_GreyScale
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public MapSOParserGreyScale()
-    {
-
-    }
+    public MapSOParserGreyScale() { }
 
     /// <summary>
     /// Create a new MapSOParser_GreyScale from an already existing Texture
     /// </summary>
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public MapSOParserGreyScale(T value)
-    {
-        Value = value;
-    }
+    public MapSOParserGreyScale(T value) : base(value) { }
 
     /// <summary>
     /// Convert Parser to Value
     /// </summary>
-    public static implicit operator T(MapSOParserGreyScale<T> parser)
-    {
-        return parser.Value;
-    }
+    public static implicit operator T(MapSOParserGreyScale<T> parser) => parser.Value;
 
     /// <summary>
     /// Convert Value to Parser
     /// </summary>
-    public static implicit operator MapSOParserGreyScale<T>(T value)
-    {
-        return new MapSOParserGreyScale<T>(value);
-    }
+    public static implicit operator MapSOParserGreyScale<T>(T value) => new(value);
 }
 
 // Parser for a MapSO
 [RequireConfigType(ConfigType.Value)]
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-public class MapSOParserHeightAlpha<T> : BaseLoader, IParsable, ITypeParser<T> where T : MapSO
+public class MapSOParserHeightAlpha<T> : MapSOParserBase<T>, IParsable, ITypeParser<T>
+    where T : MapSO
 {
     /// <summary>
     /// The value that is being parsed
     /// </summary>
-    public T Value { get; set; }
+    public new T Value
+    {
+        get => base.Value;
+        set => base.Value = value;
+    }
+
+    private protected override MapSO.MapDepth Depth => MapSO.MapDepth.Greyscale;
 
     /// <summary>
     /// Parse the Value from a string
     /// </summary>
-    public void SetFromString(String s)
-    {
-        // Should we use OnDemand?
-        Boolean useOnDemand = OnDemandStorage.UseOnDemand;
-
-        if (s.StartsWith("BUILTIN/"))
-        {
-            s = s.Substring(8);
-            Value = Utility.FindMapSO<T>(s);
-        }
-        else
-        {
-            // are we on-demand? Don't load now.
-            if (useOnDemand && typeof(T) == typeof(MapSO))
-            {
-                s = Utility.ValidateOnDemandTexture(s);
-
-                MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
-                map.Path = s;
-                map.Depth = MapSO.MapDepth.HeightAlpha;
-                map.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
-                OnDemandStorage.AddMap(generatedBody.name, map);
-                Value = map as T;
-            }
-            else // Load the texture
-            {
-                var options = new TextureLoadOptions
-                {
-                    Hint = TextureLoadHint.Synchronous,
-                    Unreadable = false
-                };
-                var handle = TextureLoader.LoadTexture<Texture2D>(s, options);
-                Texture2D map;
-                try
-                {
-                    map = handle.TakeTexture();
-                }
-                catch (Exception e)
-                {
-                    Logger.Active.Log($"Failed to load texture {s}");
-                    Logger.Active.LogException(e);
-                    return;
-                }
-
-                // Create a new map script object
-                Value = ScriptableObject.CreateInstance<T>();
-                Value.CreateMap(MapSO.MapDepth.HeightAlpha, map);
-            }
-        }
-
-        if (Value != null)
-        {
-            Value.name = s;
-        }
-    }
+    public new void SetFromString(String s) => base.SetFromString(s);
 
     /// <summary>
     /// Convert the value to a parsable String
     /// </summary>
-    public String ValueToString()
-    {
-        if (Value == null)
-        {
-            return null;
-        }
-
-        if (GameDatabase.Instance.ExistsTexture(Value.name) || TextureLoader.TextureExists(Value.name))
-        {
-            return Value.name;
-        }
-
-        return "BUILTIN/" + Value.name;
-    }
+    public new string ValueToString() => base.ValueToString();
 
     /// <summary>
     /// Create a new MapSOParser_GreyScale
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public MapSOParserHeightAlpha()
-    {
-
-    }
+    public MapSOParserHeightAlpha() { }
 
     /// <summary>
     /// Create a new MapSOParser_GreyScale from an already existing Texture
     /// </summary>
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public MapSOParserHeightAlpha(T value)
-    {
-        Value = value;
-    }
+    public MapSOParserHeightAlpha(T value) : base(value) { }
 
     /// <summary>
     /// Convert Parser to Value
     /// </summary>
-    public static implicit operator T(MapSOParserHeightAlpha<T> parser)
-    {
-        return parser.Value;
-    }
+    public static implicit operator T(MapSOParserHeightAlpha<T> parser) => parser.Value;
 
     /// <summary>
     /// Convert Value to Parser
     /// </summary>
-    public static implicit operator MapSOParserHeightAlpha<T>(T value)
-    {
-        return new MapSOParserHeightAlpha<T>(value);
-    }
+    public static implicit operator MapSOParserHeightAlpha<T>(T value) => new(value);
 }
 
 // Parser for a MapSO RGB
 [RequireConfigType(ConfigType.Value)]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-public class MapSOParserRGB<T> : BaseLoader, IParsable, ITypeParser<T> where T : MapSO
+public class MapSOParserRGB<T> : MapSOParserBase<T>, IParsable, ITypeParser<T>
+    where T : MapSO
 {
     /// <summary>
     /// The value that is being parsed
     /// </summary>
-    public T Value { get; set; }
+    public new T Value
+    {
+        get => base.Value;
+        set => base.Value = value;
+    }
+
+    private protected override MapSO.MapDepth Depth => MapSO.MapDepth.Greyscale;
 
     /// <summary>
     /// Parse the Value from a string
     /// </summary>
-    public void SetFromString(String s)
-    {
-        // Should we use OnDemand?
-        Boolean useOnDemand = OnDemandStorage.UseOnDemand;
-
-        if (s.StartsWith("BUILTIN/"))
-        {
-            s = s.Substring(8);
-            Value = Utility.FindMapSO<T>(s);
-        }
-        else
-        {
-            // check if OnDemand.
-            if (useOnDemand && typeof(T) == typeof(MapSO))
-            {
-                s = Utility.ValidateOnDemandTexture(s);
-
-                MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
-                map.Path = s;
-                map.Depth = MapSO.MapDepth.RGB;
-                map.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
-                OnDemandStorage.AddMap(generatedBody.name, map);
-                Value = map as T;
-            }
-            else
-            {
-                var options = new TextureLoadOptions
-                {
-                    Hint = TextureLoadHint.Synchronous,
-                    Unreadable = false
-                };
-                var handle = TextureLoader.LoadTexture<Texture2D>(s, options);
-                Texture2D map;
-                try
-                {
-                    map = handle.TakeTexture();
-                }
-                catch (Exception e)
-                {
-                    Logger.Active.Log($"Failed to load texture {s}");
-                    Logger.Active.LogException(e);
-                    return;
-                }
-
-                // Create a new map script object
-                Value = ScriptableObject.CreateInstance<T>();
-                Value.CreateMap(MapSO.MapDepth.RGB, map);
-            }
-        }
-
-        if (Value != null)
-        {
-            Value.name = s;
-        }
-    }
+    public new void SetFromString(String s) => base.SetFromString(s);
 
     /// <summary>
     /// Convert the value to a parsable String
     /// </summary>
-    public String ValueToString()
-    {
-        if (Value == null)
-        {
-            return null;
-        }
-
-        if (GameDatabase.Instance.ExistsTexture(Value.name) || TextureLoader.TextureExists(Value.name))
-        {
-            return Value.name;
-        }
-
-        return "BUILTIN/" + Value.name;
-    }
+    public new string ValueToString() => base.ValueToString();
 
     /// <summary>
-    /// Create a new MapSOParser_RGB
+    /// Create a new MapSOParser_GreyScale
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public MapSOParserRGB()
-    {
-
-    }
+    public MapSOParserRGB() { }
 
     /// <summary>
-    /// Create a new MapSOParser_RGB from an already existing Texture
+    /// Create a new MapSOParser_GreyScale from an already existing Texture
     /// </summary>
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public MapSOParserRGB(T value)
-    {
-        Value = value;
-    }
+    public MapSOParserRGB(T value) : base(value) { }
 
     /// <summary>
     /// Convert Parser to Value
     /// </summary>
-    public static implicit operator T(MapSOParserRGB<T> parser)
-    {
-        return parser.Value;
-    }
+    public static implicit operator T(MapSOParserRGB<T> parser) => parser.Value;
 
     /// <summary>
     /// Convert Value to Parser
     /// </summary>
-    public static implicit operator MapSOParserRGB<T>(T value)
-    {
-        return new MapSOParserRGB<T>(value);
-    }
+    public static implicit operator MapSOParserRGB<T>(T value) => new(value);
 }
 
 // Parser for a MapSO RGBA
 [RequireConfigType(ConfigType.Value)]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-public class MapSOParserRGBA<T> : BaseLoader, IParsable, ITypeParser<T> where T : MapSO
+public class MapSOParserRGBA<T> : MapSOParserBase<T>, IParsable, ITypeParser<T>
+    where T : MapSO
 {
     /// <summary>
     /// The value that is being parsed
     /// </summary>
-    public T Value { get; set; }
+    public new T Value
+    {
+        get => base.Value;
+        set => base.Value = value;
+    }
+
+    private protected override MapSO.MapDepth Depth => MapSO.MapDepth.Greyscale;
 
     /// <summary>
     /// Parse the Value from a string
     /// </summary>
-    public void SetFromString(String s)
-    {
-        // Should we use OnDemand?
-        Boolean useOnDemand = OnDemandStorage.UseOnDemand;
-
-        if (s.StartsWith("BUILTIN/"))
-        {
-            s = s.Substring(8);
-            Value = Utility.FindMapSO<T>(s);
-        }
-        else
-        {
-            // check if OnDemand.
-            if (useOnDemand && typeof(T) == typeof(MapSO))
-            {
-                s = Utility.ValidateOnDemandTexture(s);
-
-                MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
-                map.Path = s;
-                map.Depth = MapSO.MapDepth.RGBA;
-                map.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
-                OnDemandStorage.AddMap(generatedBody.name, map);
-                Value = map as T;
-            }
-            else
-            {
-                var options = new TextureLoadOptions
-                {
-                    Hint = TextureLoadHint.Synchronous,
-                    Unreadable = false
-                };
-                var handle = TextureLoader.LoadTexture<Texture2D>(s, options);
-                Texture2D map;
-                try
-                {
-                    map = handle.TakeTexture();
-                }
-                catch (Exception e)
-                {
-                    Logger.Active.Log($"Failed to load texture {s}");
-                    Logger.Active.LogException(e);
-                    return;
-                }
-
-                // Create a new map script object
-                Value = ScriptableObject.CreateInstance<T>();
-                Value.CreateMap(MapSO.MapDepth.RGBA, map);
-            }
-        }
-
-        if (Value != null)
-        {
-            Value.name = s;
-        }
-    }
+    public new void SetFromString(String s) => base.SetFromString(s);
 
     /// <summary>
     /// Convert the value to a parsable String
     /// </summary>
-    public String ValueToString()
-    {
-        if (Value == null)
-        {
-            return null;
-        }
-
-        if (GameDatabase.Instance.ExistsTexture(Value.name) || TextureLoader.TextureExists(Value.name))
-        {
-            return Value.name;
-        }
-
-        return "BUILTIN/" + Value.name;
-    }
+    public new string ValueToString() => base.ValueToString();
 
     /// <summary>
-    /// Create a new MapSOParser_RGBA
+    /// Create a new MapSOParser_GreyScale
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public MapSOParserRGBA()
-    {
-
-    }
+    public MapSOParserRGBA() { }
 
     /// <summary>
-    /// Create a new MapSOParser_RGB from an already existing Texture
+    /// Create a new MapSOParser_GreyScale from an already existing Texture
     /// </summary>
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public MapSOParserRGBA(T value)
-    {
-        Value = value;
-    }
+    public MapSOParserRGBA(T value) : base(value) { }
 
     /// <summary>
     /// Convert Parser to Value
     /// </summary>
-    public static implicit operator T(MapSOParserRGBA<T> parser)
-    {
-        return parser.Value;
-    }
+    public static implicit operator T(MapSOParserRGBA<T> parser) => parser.Value;
 
     /// <summary>
     /// Convert Value to Parser
     /// </summary>
-    public static implicit operator MapSOParserRGBA<T>(T value)
-    {
-        return new MapSOParserRGBA<T>(value);
-    }
+    public static implicit operator MapSOParserRGBA<T>(T value) => new(value);
 }
