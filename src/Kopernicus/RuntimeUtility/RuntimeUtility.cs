@@ -45,6 +45,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
@@ -98,6 +99,7 @@ namespace Kopernicus.RuntimeUtility
         public static PQSCache.PQSPreset pqsLow;
         public static PQSCache.PQSPreset pqsDefault;
         public static PQSCache.PQSPreset pqsHigh;
+        public static bool SceneSwitchInProgress { get; private set; } = false;
 
         //old mockbody for compat
         public static CelestialBody mockBody = null;
@@ -138,7 +140,10 @@ namespace Kopernicus.RuntimeUtility
             GameEvents.onLevelWasLoaded.Add(s => OnLevelLoaded(s));
             GameEvents.onProtoVesselLoad.Add(d => TransformBodyReferencesOnLoad(d));
             GameEvents.onProtoVesselSave.Add(d => TransformBodyReferencesOnSave(d));
+            GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequested);
             Events.OnMapSOLoad.Add(ActivateOnDemandStorage);
+
+            SceneManager.sceneLoaded += OnSceneLoaded;
 
             // Add Callback only if necessary
             if (KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay)
@@ -1094,6 +1099,16 @@ namespace Kopernicus.RuntimeUtility
         private void ActivateOnDemandStorage(ILoadOnDemand map) =>
             OnDemandStorage.ActivateMap(map);
 
+        private void OnGameSceneLoadRequested(GameScenes _)
+        {
+            SceneSwitchInProgress = true;
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            SceneSwitchInProgress = false;
+        }
+
         // Remove the Handlers
         private void OnDestroy()
         {
@@ -1102,7 +1117,10 @@ namespace Kopernicus.RuntimeUtility
             GameEvents.onLevelWasLoaded.Remove(OnLevelLoaded);
             GameEvents.onProtoVesselLoad.Remove(TransformBodyReferencesOnLoad);
             GameEvents.onProtoVesselSave.Remove(TransformBodyReferencesOnSave);
+            GameEvents.onGameSceneLoadRequested.Remove(OnGameSceneLoadRequested);
             Events.OnMapSOLoad.Remove(ActivateOnDemandStorage);
+
+            SceneManager.sceneLoaded -= OnSceneLoaded;
         }
     }
 }
