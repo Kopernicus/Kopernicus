@@ -90,6 +90,21 @@ namespace Kopernicus.Configuration.Parsing
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class Texture2DParser : IParsable, ITypeParser<Texture2D>
     {
+        private static Texture2D invalidTexture;
+        internal static Texture2D InvalidTexture
+        {
+            get
+            {
+                if (!invalidTexture.IsNullOrDestroyed())
+                    return invalidTexture;
+
+                var texture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+                texture.SetPixel(0, 0, Color.magenta);
+                texture.Apply(false, false);
+                return invalidTexture = texture;
+            }
+        }
+
         /// <summary>
         /// The value that is being parsed
         /// </summary>
@@ -100,6 +115,17 @@ namespace Kopernicus.Configuration.Parsing
         /// </summary>
         public void SetFromString(String s)
         {
+            // A pretty common pattern for when a planet mod doesn't want to specify
+            // a texture is to leave the path blank.
+            //
+            // This normally result in an error but it is not particularly useful to
+            // do that so we can just replace it with an all-pink texture.
+            if (string.IsNullOrEmpty(s))
+            {
+                Value = InvalidTexture;
+                return;
+            }
+
             // Check if we are attempting to load a builtin texture
             if (s.StartsWith("BUILTIN/"))
             {

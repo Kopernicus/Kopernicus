@@ -1,5 +1,8 @@
 # Kopernicus Changelog
 
+## Unreleased
+1. Kopernicus no longer errors when texture paths are left blank in configs.
+
 ## 238
 1. Revert PR #760 as well since it was also causing inflated memory usage.
 
