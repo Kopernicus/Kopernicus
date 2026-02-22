@@ -166,6 +166,8 @@
     <Publicize Include="Assembly-CSharp:PQSCity.planetRelativePosition" />
     <Publicize Include="Assembly-CSharp:PQS.PQSLandControl" />
     <Publicize Include="Assembly-CSharp:PQS.mods" />
+    <Publicize Include="Assembly-CSharp:PQS.Mod_OnSphereStart" />
+    <Publicize Include="Assembly-CSharp:PQS.StartSphere" />
     <Publicize Include="Assembly-CSharp:ModuleAsteroidInfo.baseMod" />
     <Publicize Include="Assembly-CSharp:ModuleAsteroidInfo.SetupAsteroidResources" />
 	<Publicize Include="Assembly-CSharp:ModuleCometInfo.baseMod" />
