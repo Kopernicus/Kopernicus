@@ -1,6 +1,6 @@
 # Kopernicus Changelog
 
-## Unreleased
+## 239
 1. Kopernicus no longer errors when texture paths are left blank in configs.
    Instead we now use a default texture - either black or pink depending on map depth.
 2. MapSODemand now memory maps dds textures by default, and otherwise reuses the memory
