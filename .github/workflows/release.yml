@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+
+  upload-release-assets:
+    needs: build
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: Kopernicus
+          path: Kopernicus
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: Kopernicus.version
+
+      - name: Create release zip
+        run: zip -r Kopernicus.zip Kopernicus
+
+      - name: Upload release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release upload "${{ github.event.release.tag_name }}" Kopernicus.zip Kopernicus.version
