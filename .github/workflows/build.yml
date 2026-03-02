@@ -13,9 +13,16 @@ jobs:
 
       - uses: KSPModdingLibs/KSPBuildTools/.github/actions/setup-ckan@1.1.1
 
-      - uses: KSPModdingLibs/KSPBuildTools/.github/actions/compile@1.1.1
-        with:
-          build-configuration: "1.9+ Release"
+      - name: Download KSP libs
+        run: |
+          wget --quiet https://github.com/KSPModdingLibs/KSPLibs/raw/main/KSP-1.12.5.zip -O /tmp/ksp.zip
+          unzip -q -P "" /tmp/ksp.zip -d /tmp/ksp
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet msbuild -m:1 -p:"Configuration=1.9+ Release" -p:KSPBT_ManagedPath=/tmp/ksp/KSP_x64_Data/Managed
 
       - uses: KSPModdingLibs/KSPBuildTools/.github/actions/assemble-release@1.1.1
         with:
