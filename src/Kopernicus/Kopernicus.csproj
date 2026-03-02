@@ -171,7 +171,7 @@
     <Publicize Include="Assembly-CSharp:PQS.ResetAndWaitCoroutine" />
     <Publicize Include="Assembly-CSharp:ModuleAsteroidInfo.baseMod" />
     <Publicize Include="Assembly-CSharp:ModuleAsteroidInfo.SetupAsteroidResources" />
-	<Publicize Include="Assembly-CSharp:ModuleCometInfo.baseMod" />
+    <Publicize Include="Assembly-CSharp:ModuleCometInfo.baseMod" />
     <Publicize Include="Assembly-CSharp:ModuleCometInfo.SetupCometResources" />
   </ItemGroup>
 
