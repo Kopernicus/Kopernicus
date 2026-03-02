@@ -15,7 +15,7 @@ jobs:
 
       - uses: KSPModdingLibs/KSPBuildTools/.github/actions/compile@1.1.1
         with:
-          build-configuration: ReleaseKSP19Plus
+          build-configuration: "1.9+ Release"
 
       - uses: KSPModdingLibs/KSPBuildTools/.github/actions/assemble-release@1.1.1
         with:
