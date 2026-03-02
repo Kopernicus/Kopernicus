@@ -24,10 +24,16 @@ jobs:
           name: Kopernicus.version
 
       - name: Create release zip
-        run: zip -r Kopernicus.zip Kopernicus
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${VERSION#release-}"
+          zip -r "Kopernicus-1.12.1-${VERSION}.zip" Kopernicus
 
       - name: Upload release assets
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-        run: gh release upload "${{ github.event.release.tag_name }}" Kopernicus.zip Kopernicus.version
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${VERSION#release-}"
+          gh release upload "${{ github.event.release.tag_name }}" "Kopernicus-1.12.1-${VERSION}.zip" Kopernicus.version
