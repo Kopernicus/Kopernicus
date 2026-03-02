@@ -17,14 +17,10 @@ jobs:
       - uses: actions/download-artifact@v8
         with:
           name: Kopernicus
-          path: Kopernicus
 
       - uses: actions/download-artifact@v8
         with:
           name: Kopernicus.version
-
-      - name: Create release zip
-        run: zip -r Kopernicus.zip Kopernicus
 
       - name: Upload release assets
         env:

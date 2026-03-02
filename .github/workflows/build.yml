@@ -31,5 +31,10 @@ jobs:
 
       - uses: actions/upload-artifact@v7
         with:
+          name: Kopernicus
+          path: /tmp/release/Kopernicus.zip
+
+      - uses: actions/upload-artifact@v7
+        with:
           name: Kopernicus.version
           path: build/KSP19PLUS/GameData/Kopernicus/Plugins/Kopernicus.version
