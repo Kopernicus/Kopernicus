@@ -1,0 +1,28 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: KSPModdingLibs/KSPBuildTools/.github/actions/setup-ckan@1.1.1
+
+      - uses: KSPModdingLibs/KSPBuildTools/.github/actions/compile@1.1.1
+        with:
+          build-configuration: ReleaseKSP19Plus
+
+      - uses: KSPModdingLibs/KSPBuildTools/.github/actions/assemble-release@1.1.1
+        with:
+          output-file-name: Kopernicus
+          artifacts: build/KSP19PLUS/GameData
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Kopernicus.version
+          path: build/KSP19PLUS/GameData/Kopernicus/Plugins/Kopernicus.version
