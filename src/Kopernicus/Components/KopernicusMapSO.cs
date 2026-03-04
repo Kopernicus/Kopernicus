@@ -131,7 +131,19 @@ namespace Kopernicus.Components
             if (Texture is null)
                 return Color.black;
 
-            return Texture.GetPixel(x, y);
+            var pixel = Texture.GetPixel(x, y);
+            switch (Depth)
+            {
+                case MapDepth.Greyscale:
+                    if (Texture.Format == TextureFormat.Alpha8)
+                        return new Color(pixel.a, pixel.a, pixel.a, 1f);
+                    else
+                        return new Color(pixel.r, pixel.r, pixel.r, 1f);
+                case MapDepth.HeightAlpha:
+                    return new Color(pixel.r, pixel.r, pixel.r, pixel.a);
+                default:
+                    return pixel;
+            }
         }
         #endregion
 
@@ -141,7 +153,22 @@ namespace Kopernicus.Components
             if (Texture is null)
                 return new Color32(0, 0, 0, 255);
 
-            return Texture.GetPixel32(x, y);
+            var pixel = Texture.GetPixel32(x, y);
+            switch (Depth)
+            {
+                case MapDepth.Greyscale:
+                    // MapSO does new Color(r, r, r, r). This explicitly doesn't
+                    // match what MapSO does here to instead be consistent with
+                    // GetPixelColor.
+                    if (Texture.Format == TextureFormat.Alpha8)
+                        return new Color(pixel.a, pixel.a, pixel.a, 255);
+                    else
+                        return new Color(pixel.r, pixel.r, pixel.r, 255);
+                case MapDepth.HeightAlpha:
+                    return new Color32(pixel.r, pixel.r, pixel.r, pixel.a);
+                default:
+                    return pixel;
+            }
         }
         #endregion
 
@@ -179,14 +206,15 @@ namespace Kopernicus.Components
                 return new ValueHeightAlpha(0f, 0f);
 
             var pixel = Texture.GetPixel(x, y);
+            float height = Texture.Format == TextureFormat.Alpha8 ? pixel.a : pixel.r;
             switch (Depth)
             {
                 case MapDepth.HeightAlpha:
                 case MapDepth.RGBA:
-                    return new ValueHeightAlpha(pixel.r, pixel.a);
+                    return new ValueHeightAlpha(height, pixel.a);
 
                 default:
-                    return new ValueHeightAlpha(pixel.r, 1f);
+                    return new ValueHeightAlpha(height, 1f);
             }
         }
 
