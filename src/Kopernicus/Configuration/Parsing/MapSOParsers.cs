@@ -227,7 +227,7 @@ public class MapSOParserHeightAlpha<T> : MapSOParserBase<T>, IParsable, ITypePar
         set => base.Value = value;
     }
 
-    private protected override MapSO.MapDepth Depth => MapSO.MapDepth.Greyscale;
+    private protected override MapSO.MapDepth Depth => MapSO.MapDepth.HeightAlpha;
 
     /// <summary>
     /// Parse the Value from a string
@@ -275,7 +275,7 @@ public class MapSOParserRGB<T> : MapSOParserBase<T>, IParsable, ITypeParser<T>
         set => base.Value = value;
     }
 
-    private protected override MapSO.MapDepth Depth => MapSO.MapDepth.Greyscale;
+    private protected override MapSO.MapDepth Depth => MapSO.MapDepth.RGB;
 
     /// <summary>
     /// Parse the Value from a string
@@ -323,7 +323,7 @@ public class MapSOParserRGBA<T> : MapSOParserBase<T>, IParsable, ITypeParser<T>
         set => base.Value = value;
     }
 
-    private protected override MapSO.MapDepth Depth => MapSO.MapDepth.Greyscale;
+    private protected override MapSO.MapDepth Depth => MapSO.MapDepth.RGBA;
 
     /// <summary>
     /// Parse the Value from a string
