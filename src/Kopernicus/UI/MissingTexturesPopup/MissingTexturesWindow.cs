@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using KSP.UI;
 using Kopernicus.UI.Components;
@@ -279,26 +281,28 @@ internal class MissingTexturesWindow : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < entries.Count; i++)
+        var grouped = entries.GroupBy(e => e.BodyName);
+        int groupIndex = 0;
+        foreach (var group in grouped)
         {
-            CreateEntryRow(parent, entries[i], i);
+            CreateBodyGroup(parent, group.Key, group.Select(e => e.TexturePath), groupIndex);
+            groupIndex++;
         }
     }
 
-    private static void CreateEntryRow(Transform parent, MissingTextureLog.Entry entry, int index)
+    private static void CreateBodyGroup(Transform parent, string bodyName, IEnumerable<string> texturePaths, int index)
     {
-        var rowGo = Object.Instantiate(Prefab("UIBoxPrefab"), parent);
-        rowGo.SetActive(true);
-        rowGo.name = $"Entry_{index}";
+        var groupGo = Object.Instantiate(Prefab("UIBoxPrefab"), parent);
+        groupGo.SetActive(true);
+        groupGo.name = $"Group_{bodyName}";
 
-        // Subtle background
-        var image = rowGo.GetComponent<Image>();
+        var image = groupGo.GetComponent<Image>();
         image.color = index % 2 == 0
             ? new Color(0.15f, 0.15f, 0.15f, 0.5f)
             : new Color(0.1f, 0.1f, 0.1f, 0.5f);
         image.type = Image.Type.Sliced;
 
-        var layout = rowGo.AddComponent<VerticalLayoutGroup>();
+        var layout = groupGo.AddComponent<VerticalLayoutGroup>();
         layout.padding = new RectOffset(6, 6, 4, 4);
         layout.spacing = 1;
         layout.childForceExpandWidth = true;
@@ -306,16 +310,19 @@ internal class MissingTexturesWindow : MonoBehaviour
         layout.childControlWidth = true;
         layout.childControlHeight = true;
 
-        // Body name
-        var bodyGo = CreateText(rowGo.transform, entry.BodyName, 13);
+        // Body name header
+        var bodyGo = CreateText(groupGo.transform, bodyName, 13);
         var bodyTmp = bodyGo.GetComponent<TextMeshProUGUI>();
         bodyTmp.fontStyle = FontStyles.Bold;
         bodyTmp.color = new Color(1f, 0.8f, 0.3f);
 
-        // Texture path
-        var pathGo = CreateText(rowGo.transform, entry.TexturePath, 12);
-        var pathTmp = pathGo.GetComponent<TextMeshProUGUI>();
-        pathTmp.color = new Color(0.9f, 0.5f, 0.5f);
+        // Texture paths
+        foreach (var path in texturePaths)
+        {
+            var pathGo = CreateText(groupGo.transform, path, 12);
+            var pathTmp = pathGo.GetComponent<TextMeshProUGUI>();
+            pathTmp.color = new Color(0.9f, 0.5f, 0.5f);
+        }
     }
 
     private static void DumpLayout(GameObject root)
