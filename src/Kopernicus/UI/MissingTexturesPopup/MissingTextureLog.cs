@@ -8,20 +8,18 @@ internal static class MissingTextureLog
     {
         public string BodyName;
         public string TexturePath;
-        public string ErrorMessage;
     }
 
     private static readonly List<Entry> _entries = new();
 
     internal static IReadOnlyList<Entry> Entries => _entries;
 
-    internal static void Log(string bodyName, string texturePath, string errorMessage)
+    internal static void Log(string bodyName, string texturePath)
     {
         _entries.Add(new Entry
         {
             BodyName = bodyName ?? "<unknown>",
-            TexturePath = texturePath ?? "<empty>",
-            ErrorMessage = errorMessage ?? ""
+            TexturePath = texturePath ?? "<empty>"
         });
     }
 

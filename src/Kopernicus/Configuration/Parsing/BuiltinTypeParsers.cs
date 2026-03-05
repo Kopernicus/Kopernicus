@@ -37,6 +37,7 @@ using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.ConfigParser.Interfaces;
 using Kopernicus.OnDemand;
+using Kopernicus.UI.MissingTexturesPopup;
 using KSPTextureLoader;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -110,6 +111,9 @@ namespace Kopernicus.Configuration.Parsing
         /// </summary>
         public Texture2D Value { get; set; }
 
+        private static string CurrentBodyName =>
+            Parser.GetState<Body>("Kopernicus:currentBody")?.GeneratedBody?.name;
+
         /// <summary>
         /// Parse the Value from a string
         /// </summary>
@@ -138,6 +142,7 @@ namespace Kopernicus.Configuration.Parsing
 
                 Debug.LogError("[Kopernicus] Could not find built-in texture " + textureName);
                 Logger.Active.Log("Could not find built-in texture " + textureName);
+                MissingTextureLog.Log(CurrentBodyName, s);
                 return;
             }
 
@@ -174,6 +179,7 @@ namespace Kopernicus.Configuration.Parsing
                 Debug.LogError($"[Kopernicus] Failed to load texture {s}");
                 Logger.Active.Log($"Failed load texture {s}");
                 Logger.Active.LogException(e);
+                MissingTextureLog.Log(CurrentBodyName, s);
             }
 
             // Texture was not found

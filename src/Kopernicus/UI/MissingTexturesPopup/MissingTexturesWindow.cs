@@ -89,6 +89,7 @@ internal class MissingTexturesWindow : MonoBehaviour
         // Attach component
         windowGo.AddComponent<MissingTexturesWindow>();
 
+        windowGo.SetActive(true);
         return windowGo;
     }
 
@@ -144,9 +145,27 @@ internal class MissingTexturesWindow : MonoBehaviour
         scrollLE.flexibleWidth = 1;
         scrollLE.preferredHeight = 250;
 
-        // Find the content transform inside the scroll view
-        var scrollRect = scrollGo.GetComponent<ScrollRect>();
-        var contentGo = scrollRect.content.gameObject;
+        // Disable horizontal scrolling
+        var scrollRect = scrollGo.GetComponentInChildren<ScrollRect>();
+        scrollRect.horizontal = false;
+        Object.Destroy(scrollRect.horizontalScrollbar?.gameObject);
+        scrollRect.horizontalScrollbar = null;
+        RectTransform contentRect;
+        if (scrollRect.content != null)
+        {
+            contentRect = scrollRect.content;
+        }
+        else
+        {
+            var contentObj = new GameObject("Content", typeof(RectTransform));
+            contentRect = contentObj.GetComponent<RectTransform>();
+            contentRect.SetParent(scrollRect.viewport ?? scrollGo.transform, false);
+            contentRect.anchorMin = Vector2.zero;
+            contentRect.anchorMax = new Vector2(1, 1);
+            contentRect.sizeDelta = Vector2.zero;
+            scrollRect.content = contentRect;
+        }
+        var contentGo = contentRect.gameObject;
 
         var contentLayout = AddOrGetComponent<VerticalLayoutGroup>(contentGo);
         contentLayout.padding = new RectOffset(4, 4, 4, 4);
@@ -284,14 +303,5 @@ internal class MissingTexturesWindow : MonoBehaviour
         var pathGo = CreateText(rowGo.transform, entry.TexturePath, 12);
         var pathTmp = pathGo.GetComponent<TextMeshProUGUI>();
         pathTmp.color = new Color(0.9f, 0.5f, 0.5f);
-
-        // Error message (if present)
-        if (!string.IsNullOrEmpty(entry.ErrorMessage))
-        {
-            var errorGo = CreateText(rowGo.transform, entry.ErrorMessage, 11);
-            var errorTmp = errorGo.GetComponent<TextMeshProUGUI>();
-            errorTmp.fontStyle = FontStyles.Italic;
-            errorTmp.color = new Color(0.6f, 0.6f, 0.6f);
-        }
     }
 }

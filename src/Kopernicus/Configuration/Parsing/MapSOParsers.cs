@@ -29,6 +29,7 @@ using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.ConfigParser.Interfaces;
 using Kopernicus.OnDemand;
+using Kopernicus.UI.MissingTexturesPopup;
 using KSPTextureLoader;
 using UnityEngine;
 
@@ -124,6 +125,7 @@ public abstract class MapSOParserBase<T> : BaseLoader, IParsable, ITypeParser<T>
             {
                 Logger.Active.Log($"Failed to load texture {s}");
                 Logger.Active.LogException(e);
+                MissingTextureLog.Log(generatedBody?.name, s);
                 return;
             }
 
