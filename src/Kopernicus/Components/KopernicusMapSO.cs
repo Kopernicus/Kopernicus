@@ -78,6 +78,7 @@ namespace Kopernicus.Components
             _width = tex.Width;
             _height = tex.Height;
             _bpp = (int)depth;
+            Depth = depth;
 
             if (tex.Format == TextureFormat.R16 && depth == MapDepth.HeightAlpha)
                 Texture = new RA16Texture(tex);
@@ -101,7 +102,7 @@ namespace Kopernicus.Components
             if (tex == null)
                 throw new ArgumentNullException(nameof(tex));
 
-            CreateMap(Depth, CPUTexture2D.Create(tex));
+            CreateMap(depth, CPUTexture2D.Create(tex));
         }
 
         //
