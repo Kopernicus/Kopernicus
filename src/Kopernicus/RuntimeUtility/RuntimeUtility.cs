@@ -1032,16 +1032,18 @@ namespace Kopernicus.RuntimeUtility
 
         public static void WriteConfigIfNoneExists()
         {
-            // DefaultConfig.cfg provides the base configuration.
-            // No action needed; user overrides are written by UpdateConfig.
         }
 
         public static void UpdateConfig()
         {
-            string configPath = PluginPath + "/../Config/Kopernicus_Config.cfg";
+            string configPath = Path.Combine(PluginPath, "../Config/Kopernicus_Config.cfg");
 
             // Compare current settings against defaults to find overrides
-            ConfigReader defaults = new ConfigReader();
+            var nodes = GameDatabase.Instance.GetConfigNodes("Kopernicus_config_backup");
+
+            ConfigReader defaults = new();
+            if (nodes.Length != 0)
+                ConfigNode.LoadObjectFromConfig(defaults, nodes[0]);
 
             Debug.Log("[Kopernicus] Writing out Kopernicus_Config.cfg");
             using (StreamWriter configFile = new StreamWriter(configPath))
