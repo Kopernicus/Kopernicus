@@ -272,7 +272,7 @@ internal class MissingTexturesWindow : MonoBehaviour
     {
         var entries = MissingTextureLog.Entries;
 
-        var grouped = entries.GroupBy(e => e.Body).OrderBy(g => g.Key?.name ?? "<no body>");
+        var grouped = entries.GroupBy(e => e.Body).OrderBy(g => g.Key?.name ?? " <no body>");
         int groupIndex = 0;
         foreach (var group in grouped)
         {
