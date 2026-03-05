@@ -28,19 +28,12 @@ internal class MissingTexturesWindow : MonoBehaviour
         Show();
     }
 
-    static GameObject Prefab(string name) => UISkinManager.GetPrefab(name);
-
-    static T AddOrGetComponent<T>(GameObject go) where T : Component
-    {
-        return go.GetComponent<T>() ?? go.AddComponent<T>();
-    }
-
     private static GameObject Build(Transform parent)
     {
         var skin = UISkinManager.defaultSkin;
 
         // Root window
-        var windowGo = Object.Instantiate(Prefab("UIBoxPrefab"), parent);
+        var windowGo = Object.Instantiate(UIBuilder.Prefab("UIBoxPrefab"), parent);
         windowGo.name = "KopernicusMissingTexturesWindow";
 
         var windowRect = windowGo.GetComponent<RectTransform>();
@@ -73,7 +66,7 @@ internal class MissingTexturesWindow : MonoBehaviour
         BuildTitleBar(windowGo, skin);
 
         // Description text
-        var descGo = CreateText(
+        var descGo = UIBuilder.CreateText(
             windowGo.transform,
             Localizer.Format("#Kopernicus_UI_MissingTextures_Description")
         );
@@ -81,7 +74,7 @@ internal class MissingTexturesWindow : MonoBehaviour
         descTmp.fontSize = 12;
         descTmp.fontStyle = FontStyles.Italic;
         descTmp.enableWordWrapping = true;
-        var descLE = AddOrGetComponent<LayoutElement>(descGo);
+        var descLE = descGo.AddOrGetComponent<LayoutElement>();
         descLE.flexibleWidth = 1;
 
         // Scroll view with texture list
@@ -99,7 +92,7 @@ internal class MissingTexturesWindow : MonoBehaviour
 
     private static void BuildTitleBar(GameObject windowGo, UISkinDef skin)
     {
-        var titleBarGo = Object.Instantiate(Prefab("UIHorizontalLayoutPrefab"), windowGo.transform);
+        var titleBarGo = Object.Instantiate(UIBuilder.Prefab("UIHorizontalLayoutPrefab"), windowGo.transform);
         titleBarGo.SetActive(true);
         titleBarGo.name = "TitleBar";
 
@@ -116,7 +109,7 @@ internal class MissingTexturesWindow : MonoBehaviour
         le.flexibleWidth = 1;
 
         // Title text
-        var titleGo = CreateText(titleBarGo.transform, WindowTitle);
+        var titleGo = UIBuilder.CreateText(titleBarGo.transform, WindowTitle);
         var titleTmp = titleGo.GetComponent<TextMeshProUGUI>();
         titleTmp.fontStyle = FontStyles.Bold;
         titleTmp.color = skin.window.normal.textColor;
@@ -127,24 +120,20 @@ internal class MissingTexturesWindow : MonoBehaviour
         align.alignment = TextAlignmentOptions.Center;
 
         // Close button
-        var closeGo = CreateButton(titleBarGo.transform, "X", 12);
-        var closeLE = AddOrGetComponent<LayoutElement>(closeGo);
+        var closeGo = UIBuilder.CreateCloseButton(titleBarGo.transform, windowGo);
+        var closeLE = closeGo.AddOrGetComponent<LayoutElement>();
         closeLE.preferredWidth = 24;
         closeLE.preferredHeight = 24;
         closeLE.flexibleWidth = 0;
-
-        var closeBtn = closeGo.AddComponent<CloseButton>();
-        closeBtn.button = closeGo.GetComponent<Button>();
-        closeBtn.target = windowGo;
     }
 
     private static void BuildTextureList(Transform parent)
     {
-        var scrollGo = Object.Instantiate(Prefab("UIScrollViewPrefab"), parent);
+        var scrollGo = Object.Instantiate(UIBuilder.Prefab("UIScrollViewPrefab"), parent);
         scrollGo.SetActive(true);
         scrollGo.name = "TextureListScroll";
 
-        var scrollLE = AddOrGetComponent<LayoutElement>(scrollGo);
+        var scrollLE = scrollGo.AddOrGetComponent<LayoutElement>();
         scrollLE.flexibleHeight = 1;
         scrollLE.flexibleWidth = 1;
         scrollLE.preferredHeight = 250;
@@ -171,7 +160,7 @@ internal class MissingTexturesWindow : MonoBehaviour
         }
         var contentGo = contentRect.gameObject;
 
-        var contentLayout = AddOrGetComponent<VerticalLayoutGroup>(contentGo);
+        var contentLayout = contentGo.AddOrGetComponent<VerticalLayoutGroup>();
         contentLayout.padding = new RectOffset(4, 12, 4, 4);
         contentLayout.spacing = 2;
         contentLayout.childForceExpandWidth = true;
@@ -184,7 +173,7 @@ internal class MissingTexturesWindow : MonoBehaviour
         contentRect.anchorMax = new Vector2(1, 1);
         contentRect.pivot = new Vector2(0, 1);
 
-        var contentFitter = AddOrGetComponent<ContentSizeFitter>(contentGo);
+        var contentFitter = contentGo.AddOrGetComponent<ContentSizeFitter>();
         contentFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
         // Populate with current entries
@@ -193,7 +182,7 @@ internal class MissingTexturesWindow : MonoBehaviour
 
     private static void BuildBottomRow(GameObject windowGo)
     {
-        var rowGo = Object.Instantiate(Prefab("UIHorizontalLayoutPrefab"), windowGo.transform);
+        var rowGo = Object.Instantiate(UIBuilder.Prefab("UIHorizontalLayoutPrefab"), windowGo.transform);
         rowGo.SetActive(true);
         rowGo.name = "BottomRow";
 
@@ -213,8 +202,8 @@ internal class MissingTexturesWindow : MonoBehaviour
 
 #if UI_DUMP_LAYOUT_BUTTON
         // Dump Layout button
-        var dumpGo = CreateButton(rowGo.transform, "Dump Layout");
-        var dumpLE = AddOrGetComponent<LayoutElement>(dumpGo);
+        var dumpGo = UIBuilder.CreateButton(rowGo.transform, "Dump Layout");
+        var dumpLE = dumpGo.AddOrGetComponent<LayoutElement>();
         dumpLE.preferredWidth = 100;
         dumpGo.GetComponent<Button>().onClick.AddListener(() => DumpLayout(windowGo));
 #endif
@@ -226,48 +215,9 @@ internal class MissingTexturesWindow : MonoBehaviour
         spacerLE.flexibleWidth = 1;
 
         // Close button
-        var closeGo = CreateButton(rowGo.transform, Localizer.Format("#Kopernicus_UI_MissingTextures_Close"));
-        var closeLE = AddOrGetComponent<LayoutElement>(closeGo);
+        var closeGo = UIBuilder.CreateCloseButton(rowGo.transform, windowGo, Localizer.Format("#Kopernicus_UI_MissingTextures_Close"), 14);
+        var closeLE = closeGo.AddOrGetComponent<LayoutElement>();
         closeLE.preferredWidth = 80;
-
-        var closeBtn = closeGo.AddComponent<CloseButton>();
-        closeBtn.button = closeGo.GetComponent<Button>();
-        closeBtn.target = windowGo;
-    }
-
-    private static GameObject CreateText(Transform parent, string text, float fontSize = 14)
-    {
-        var go = Object.Instantiate(Prefab("UITextPrefab"), parent);
-        go.SetActive(true);
-        go.name = text.Length > 30 ? text.Substring(0, 30) : text;
-
-        var tmp = go.GetComponent<TextMeshProUGUI>();
-        tmp.text = text;
-        tmp.fontSize = fontSize;
-
-        return go;
-    }
-
-    private static GameObject CreateButton(Transform parent, string text, float fontSize = 14)
-    {
-        var go = Object.Instantiate(Prefab("UIButtonPrefab"), parent);
-        go.SetActive(true);
-        go.name = text;
-
-        var tmp = go.GetComponentInChildren<TextMeshProUGUI>();
-        tmp.text = text;
-        tmp.fontSize = fontSize;
-
-        var textRect = tmp.rectTransform;
-        textRect.anchorMin = Vector2.zero;
-        textRect.anchorMax = Vector2.one;
-        textRect.offsetMin = Vector2.zero;
-        textRect.offsetMax = Vector2.zero;
-
-        var le = AddOrGetComponent<LayoutElement>(go);
-        le.preferredHeight = fontSize + 16;
-
-        return go;
     }
 
     private static void PopulateEntries(Transform parent)
@@ -289,7 +239,7 @@ internal class MissingTexturesWindow : MonoBehaviour
 
     private static void CreateBodyGroup(Transform parent, string name, string displayName, IEnumerable<string> texturePaths, int index)
     {
-        var groupGo = Object.Instantiate(Prefab("UIBoxPrefab"), parent);
+        var groupGo = Object.Instantiate(UIBuilder.Prefab("UIBoxPrefab"), parent);
         groupGo.SetActive(true);
         groupGo.name = $"Group({name})";
 
@@ -308,7 +258,7 @@ internal class MissingTexturesWindow : MonoBehaviour
         layout.childControlHeight = true;
 
         // Body name header
-        var bodyGo = CreateText(groupGo.transform, displayName, 13);
+        var bodyGo = UIBuilder.CreateText(groupGo.transform, displayName, 13);
         var bodyTmp = bodyGo.GetComponent<TextMeshProUGUI>();
         bodyTmp.fontStyle = FontStyles.Bold;
         bodyTmp.color = new Color(1f, 0.8f, 0.3f);
@@ -316,7 +266,7 @@ internal class MissingTexturesWindow : MonoBehaviour
         // Texture paths
         foreach (var path in texturePaths)
         {
-            var pathGo = CreateText(groupGo.transform, path, 12);
+            var pathGo = UIBuilder.CreateText(groupGo.transform, path, 12);
             var pathTmp = pathGo.GetComponent<TextMeshProUGUI>();
             pathTmp.color = new Color(0.9f, 0.5f, 0.5f);
         }
