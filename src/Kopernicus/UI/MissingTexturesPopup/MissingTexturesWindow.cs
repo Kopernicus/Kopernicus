@@ -170,12 +170,17 @@ internal class MissingTexturesWindow : MonoBehaviour
         var contentGo = contentRect.gameObject;
 
         var contentLayout = AddOrGetComponent<VerticalLayoutGroup>(contentGo);
-        contentLayout.padding = new RectOffset(4, 4, 4, 4);
+        contentLayout.padding = new RectOffset(4, 12, 4, 4);
         contentLayout.spacing = 2;
         contentLayout.childForceExpandWidth = true;
         contentLayout.childForceExpandHeight = false;
         contentLayout.childControlWidth = true;
         contentLayout.childControlHeight = true;
+        contentLayout.childAlignment = TextAnchor.UpperLeft;
+
+        contentRect.anchorMin = new Vector2(0, 1);
+        contentRect.anchorMax = new Vector2(1, 1);
+        contentRect.pivot = new Vector2(0, 1);
 
         var contentFitter = AddOrGetComponent<ContentSizeFitter>(contentGo);
         contentFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
