@@ -211,11 +211,13 @@ internal class MissingTexturesWindow : MonoBehaviour
         le.flexibleHeight = 0;
         le.flexibleWidth = 1;
 
+#if UI_DUMP_LAYOUT_BUTTON
         // Dump Layout button
-        var dumpGo = CreateButton(rowGo.transform, Localizer.Format("#Kopernicus_UI_MissingTextures_DumpLayout"));
+        var dumpGo = CreateButton(rowGo.transform, "Dump Layout");
         var dumpLE = AddOrGetComponent<LayoutElement>(dumpGo);
         dumpLE.preferredWidth = 100;
         dumpGo.GetComponent<Button>().onClick.AddListener(() => DumpLayout(windowGo));
+#endif
 
         // Spacer to push close button to the right
         var spacer = new GameObject("Spacer", typeof(RectTransform));
