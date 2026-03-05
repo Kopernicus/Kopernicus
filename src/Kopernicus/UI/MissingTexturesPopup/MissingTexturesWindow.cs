@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using KSP.UI;
-using Kopernicus.UI.Components;
 using TMPro;
 using KSP.Localization;
 using UnityEngine;
@@ -92,39 +91,7 @@ internal class MissingTexturesWindow : MonoBehaviour
 
     private static void BuildTitleBar(GameObject windowGo, UISkinDef skin)
     {
-        var titleBarGo = Object.Instantiate(UIBuilder.Prefab("UIHorizontalLayoutPrefab"), windowGo.transform);
-        titleBarGo.SetActive(true);
-        titleBarGo.name = "TitleBar";
-
-        var layout = titleBarGo.GetComponent<HorizontalLayoutGroup>();
-        layout.padding = new RectOffset(4, 4, 2, 2);
-        layout.childForceExpandWidth = false;
-        layout.childForceExpandHeight = true;
-        layout.childControlWidth = true;
-        layout.childControlHeight = true;
-
-        var le = titleBarGo.AddComponent<LayoutElement>();
-        le.preferredHeight = 28;
-        le.flexibleHeight = 0;
-        le.flexibleWidth = 1;
-
-        // Title text
-        var titleGo = UIBuilder.CreateText(titleBarGo.transform, WindowTitle);
-        var titleTmp = titleGo.GetComponent<TextMeshProUGUI>();
-        titleTmp.fontStyle = FontStyles.Bold;
-        titleTmp.color = skin.window.normal.textColor;
-        titleGo.GetComponent<LayoutElement>().flexibleWidth = 1;
-
-        var align = titleGo.AddComponent<Components.TextAlignment>();
-        align.text = titleTmp;
-        align.alignment = TextAlignmentOptions.Center;
-
-        // Close button
-        var closeGo = UIBuilder.CreateCloseButton(titleBarGo.transform, windowGo);
-        var closeLE = closeGo.AddOrGetComponent<LayoutElement>();
-        closeLE.preferredWidth = 24;
-        closeLE.preferredHeight = 24;
-        closeLE.flexibleWidth = 0;
+        UIBuilder.CreateTitleBar(windowGo.transform, WindowTitle, windowGo, skin);
     }
 
     private static void BuildTextureList(Transform parent)
