@@ -1,5 +1,9 @@
 # Kopernicus Changelog
 
+## Unreleased
+1. Fixed a bug where all planet textures were being loaded as greyscale textures.
+2. Fixed a number of other small bugs in `KopernicusMapSO`.
+
 ## 239
 1. Kopernicus no longer errors when texture paths are left blank in configs.
    Instead we now use a default texture - either black or pink depending on map depth.
