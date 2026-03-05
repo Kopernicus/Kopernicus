@@ -249,7 +249,7 @@ namespace Kopernicus.Components
             if (Texture is null)
                 return new Texture2D(_width, _height);
 
-            var color32 = new Color32[Size];
+            var color32 = new Color32[_width * _height];
             for (int i = 0, y = 0; y < _height; ++y)
             {
                 for (int x = 0; x < _width; ++x, ++i)
@@ -271,7 +271,7 @@ namespace Kopernicus.Components
             if (Texture is null)
                 return new Texture2D(_width, _height);
 
-            var color32 = new Color32[Size];
+            var color32 = new Color32[_width * _height];
             for (int i = 0, y = 0; y < _height; ++y)
             {
                 for (int x = 0; x < _width; ++x, ++i)
@@ -293,7 +293,7 @@ namespace Kopernicus.Components
             if (Texture is null)
                 return new Texture2D(_width, _height);
 
-            var color32 = new Color32[Size];
+            var color32 = new Color32[_width * _height];
             for (int i = 0, y = 0; y < _height; ++y)
             {
                 for (int x = 0; x < _width; ++x, ++i)
@@ -312,7 +312,7 @@ namespace Kopernicus.Components
             if (Texture is null)
                 return new Texture2D(_width, _height);
 
-            var color32 = new Color32[Size];
+            var color32 = new Color32[_width * _height];
             for (int i = 0, y = 0; y < _height; ++y)
             {
                 for (int x = 0; x < _width; ++x, ++i)
