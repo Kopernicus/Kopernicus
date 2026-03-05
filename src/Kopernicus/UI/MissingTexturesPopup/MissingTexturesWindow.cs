@@ -5,6 +5,7 @@ using System.Text;
 using KSP.UI;
 using Kopernicus.UI.Components;
 using TMPro;
+using KSP.Localization;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,7 +13,7 @@ namespace Kopernicus.UI.MissingTexturesPopup;
 
 internal class MissingTexturesWindow : MonoBehaviour
 {
-    private const string WindowTitle = "Kopernicus - Missing Textures";
+    private static readonly string WindowTitle = Localizer.Format("#Kopernicus_UI_MissingTextures_Title");
 
     internal static void Show()
     {
@@ -74,8 +75,7 @@ internal class MissingTexturesWindow : MonoBehaviour
         // Description text
         var descGo = CreateText(
             windowGo.transform,
-            "The following textures failed to load during planet configuration. " +
-            "This usually means a texture file is missing or the path is incorrect."
+            Localizer.Format("#Kopernicus_UI_MissingTextures_Description")
         );
         var descTmp = descGo.GetComponent<TextMeshProUGUI>();
         descTmp.fontSize = 12;
@@ -212,7 +212,7 @@ internal class MissingTexturesWindow : MonoBehaviour
         le.flexibleWidth = 1;
 
         // Dump Layout button
-        var dumpGo = CreateButton(rowGo.transform, "Dump Layout");
+        var dumpGo = CreateButton(rowGo.transform, Localizer.Format("#Kopernicus_UI_MissingTextures_DumpLayout"));
         var dumpLE = AddOrGetComponent<LayoutElement>(dumpGo);
         dumpLE.preferredWidth = 100;
         dumpGo.GetComponent<Button>().onClick.AddListener(() => DumpLayout(windowGo));
@@ -224,7 +224,7 @@ internal class MissingTexturesWindow : MonoBehaviour
         spacerLE.flexibleWidth = 1;
 
         // Close button
-        var closeGo = CreateButton(rowGo.transform, "Close");
+        var closeGo = CreateButton(rowGo.transform, Localizer.Format("#Kopernicus_UI_MissingTextures_Close"));
         var closeLE = AddOrGetComponent<LayoutElement>(closeGo);
         closeLE.preferredWidth = 80;
 
@@ -274,7 +274,7 @@ internal class MissingTexturesWindow : MonoBehaviour
 
         if (entries.Count == 0)
         {
-            var noEntriesGo = CreateText(parent, "No missing textures detected.", 13);
+            var noEntriesGo = CreateText(parent, Localizer.Format("#Kopernicus_UI_MissingTextures_NoEntries"), 13);
             var tmp = noEntriesGo.GetComponent<TextMeshProUGUI>();
             tmp.fontStyle = FontStyles.Italic;
             tmp.color = new Color(0.7f, 0.7f, 0.7f);
