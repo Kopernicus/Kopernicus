@@ -1,3 +1,5 @@
+using System.IO;
+using System.Text;
 using KSP.UI;
 using Kopernicus.UI.Components;
 using TMPro;
@@ -202,7 +204,13 @@ internal class MissingTexturesWindow : MonoBehaviour
         le.flexibleHeight = 0;
         le.flexibleWidth = 1;
 
-        // Spacer to push button to the right
+        // Dump Layout button
+        var dumpGo = CreateButton(rowGo.transform, "Dump Layout");
+        var dumpLE = AddOrGetComponent<LayoutElement>(dumpGo);
+        dumpLE.preferredWidth = 100;
+        dumpGo.GetComponent<Button>().onClick.AddListener(() => DumpLayout(windowGo));
+
+        // Spacer to push close button to the right
         var spacer = new GameObject("Spacer", typeof(RectTransform));
         spacer.transform.SetParent(rowGo.transform, false);
         var spacerLE = spacer.AddComponent<LayoutElement>();
@@ -303,5 +311,48 @@ internal class MissingTexturesWindow : MonoBehaviour
         var pathGo = CreateText(rowGo.transform, entry.TexturePath, 12);
         var pathTmp = pathGo.GetComponent<TextMeshProUGUI>();
         pathTmp.color = new Color(0.9f, 0.5f, 0.5f);
+    }
+
+    private static void DumpLayout(GameObject root)
+    {
+        var sb = new StringBuilder();
+        DumpGameObject(sb, root, 0);
+
+        var dir = Path.Combine(KSPUtil.ApplicationRootPath, "Logs/Kopernicus");
+        Directory.CreateDirectory(dir);
+        var path = Path.Combine(dir, "MissingTexturesWindow.txt");
+        File.WriteAllText(path, sb.ToString());
+        Debug.Log($"[Kopernicus] Window layout dumped to {path}");
+    }
+
+    private static void DumpGameObject(StringBuilder sb, GameObject go, int depth)
+    {
+        var indent = new string(' ', depth * 2);
+        var rect = go.GetComponent<RectTransform>();
+        var rectInfo = "";
+        if (rect != null)
+        {
+            var sd = rect.sizeDelta;
+            var amin = rect.anchorMin;
+            var amax = rect.anchorMax;
+            var piv = rect.pivot;
+            var ap = rect.anchoredPosition;
+            rectInfo = $" [size={sd.x}x{sd.y} anchor=({amin.x},{amin.y})-({amax.x},{amax.y}) pivot=({piv.x},{piv.y}) pos=({ap.x},{ap.y})]";
+        }
+
+        sb.AppendLine($"{indent}{go.name} (active={go.activeSelf}){rectInfo}");
+
+        foreach (var comp in go.GetComponents<Component>())
+        {
+            if (comp == null || comp is Transform or RectTransform)
+                continue;
+            var compInfo = "";
+            if (comp is TextMeshProUGUI tmp)
+                compInfo = $" alignment={tmp.alignment} overflowMode={tmp.overflowMode} enableWordWrapping={tmp.enableWordWrapping}";
+            sb.AppendLine($"{indent}  + {comp.GetType().Name}{compInfo}");
+        }
+
+        for (int i = 0; i < go.transform.childCount; i++)
+            DumpGameObject(sb, go.transform.GetChild(i).gameObject, depth + 1);
     }
 }
