@@ -281,20 +281,24 @@ internal class MissingTexturesWindow : MonoBehaviour
             return;
         }
 
-        var grouped = entries.GroupBy(e => e.BodyName);
+        var grouped = entries.GroupBy(e => e.Body).OrderBy(g => g.Key?.name ?? "<no body>");
         int groupIndex = 0;
         foreach (var group in grouped)
         {
-            CreateBodyGroup(parent, group.Key, group.Select(e => e.TexturePath), groupIndex);
+            var bodyName = group.Key?.name ?? "<no body>";
+            var displayName = group.Key != null
+                ? group.Key.celestialBody.bodyDisplayName
+                : "<no body>";
+            CreateBodyGroup(parent, bodyName, displayName, group.Select(e => e.TexturePath), groupIndex);
             groupIndex++;
         }
     }
 
-    private static void CreateBodyGroup(Transform parent, string bodyName, IEnumerable<string> texturePaths, int index)
+    private static void CreateBodyGroup(Transform parent, string name, string displayName, IEnumerable<string> texturePaths, int index)
     {
         var groupGo = Object.Instantiate(Prefab("UIBoxPrefab"), parent);
         groupGo.SetActive(true);
-        groupGo.name = $"Group_{bodyName}";
+        groupGo.name = $"Group({name})";
 
         var image = groupGo.GetComponent<Image>();
         image.color = index % 2 == 0
@@ -311,7 +315,7 @@ internal class MissingTexturesWindow : MonoBehaviour
         layout.childControlHeight = true;
 
         // Body name header
-        var bodyGo = CreateText(groupGo.transform, bodyName, 13);
+        var bodyGo = CreateText(groupGo.transform, displayName, 13);
         var bodyTmp = bodyGo.GetComponent<TextMeshProUGUI>();
         bodyTmp.fontStyle = FontStyles.Bold;
         bodyTmp.color = new Color(1f, 0.8f, 0.3f);

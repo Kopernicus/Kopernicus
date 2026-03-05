@@ -6,7 +6,7 @@ internal static class MissingTextureLog
 {
     internal struct Entry
     {
-        public string BodyName;
+        public PSystemBody Body;
         public string TexturePath;
     }
 
@@ -14,11 +14,11 @@ internal static class MissingTextureLog
 
     internal static IReadOnlyList<Entry> Entries => _entries;
 
-    internal static void Log(string bodyName, string texturePath)
+    internal static void Log(PSystemBody body, string texturePath)
     {
         _entries.Add(new Entry
         {
-            BodyName = bodyName ?? "<unknown>",
+            Body = body,
             TexturePath = texturePath ?? "<empty>"
         });
     }
