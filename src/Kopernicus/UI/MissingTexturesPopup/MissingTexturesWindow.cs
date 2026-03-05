@@ -272,15 +272,6 @@ internal class MissingTexturesWindow : MonoBehaviour
     {
         var entries = MissingTextureLog.Entries;
 
-        if (entries.Count == 0)
-        {
-            var noEntriesGo = CreateText(parent, Localizer.Format("#Kopernicus_UI_MissingTextures_NoEntries"), 13);
-            var tmp = noEntriesGo.GetComponent<TextMeshProUGUI>();
-            tmp.fontStyle = FontStyles.Italic;
-            tmp.color = new Color(0.7f, 0.7f, 0.7f);
-            return;
-        }
-
         var grouped = entries.GroupBy(e => e.Body).OrderBy(g => g.Key?.name ?? "<no body>");
         int groupIndex = 0;
         foreach (var group in grouped)
