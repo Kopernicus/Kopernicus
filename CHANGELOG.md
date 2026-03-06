@@ -1,8 +1,14 @@
 # Kopernicus Changelog
 
-## Unreleased
+## 240
 1. Fixed a bug where all planet textures were being loaded as greyscale textures.
 2. Fixed a number of other small bugs in `KopernicusMapSO`.
+3. Fixed a bug where the homeworldname would not reset when uninstalling mods.
+4. Changed default Koperncius_Config.cfg setting for UseOnDemandLoader to True. This 
+   means new installs will have that set by default.  We aren't changing the setting 
+   in existing installs yet, but may in the future as a one-time change as it really
+   performs much better now (no real stutter to speak of). Consider switching to it, 
+   it saves a good chunk of ram!
 
 ## 239
 1. Kopernicus no longer errors when texture paths are left blank in configs.
