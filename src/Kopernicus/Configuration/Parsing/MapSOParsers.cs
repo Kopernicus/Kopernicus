@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -78,14 +78,14 @@ public abstract class MapSOParserBase<T> : BaseLoader, IParsable, ITypeParser<T>
             return;
         }
 
-        using var guard = new SetNameGuard(this, s);
-
         if (s.StartsWith("BUILTIN/"))
         {
             s = s.Substring("BUILTIN/".Length);
             Value = Utility.FindMapSO<T>(s);
             return;
         }
+
+        using var guard = new SetNameGuard(this, s);
 
         if (OnDemandStorage.UseOnDemand &&
             (typeof(MapSODemand).IsAssignableFrom(typeof(T)) || typeof(T) == typeof(MapSO))
