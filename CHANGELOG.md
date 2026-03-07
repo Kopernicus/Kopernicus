@@ -1,5 +1,9 @@
 # Kopernicus Changelog
 
+## 241
+1. Hotfixed a bug where using a BUILTIN/ texture path once could render it unusable in the future.  
+   This was aparently introduced in r239.
+
 ## 240
 1. Fixed a bug where all planet textures were being loaded as greyscale textures.
 2. Fixed a number of other small bugs in `KopernicusMapSO`.
