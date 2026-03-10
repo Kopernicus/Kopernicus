@@ -15,6 +15,11 @@ internal class MissingTexturesWindow : MonoBehaviour
     private static readonly string WindowTitle = Localizer.Format("#Kopernicus_UI_MissingTextures_Title");
     private static readonly string NoBodyLabel = Localizer.Format("#Kopernicus_UI_MissingTextures_NoBody");
 
+    private static readonly Color GroupBackgroundEven = new Color(0.15f, 0.15f, 0.15f, 0.5f);
+    private static readonly Color GroupBackgroundOdd = new Color(0.1f, 0.1f, 0.1f, 0.5f);
+    private static readonly Color BodyNameColor = new Color(1f, 0.8f, 0.3f);
+    private static readonly Color TexturePathColor = new Color(0.9f, 0.5f, 0.5f);
+
     internal static void Show()
     {
         Build(MainCanvasUtil.MainCanvas.transform);
@@ -214,9 +219,7 @@ internal class MissingTexturesWindow : MonoBehaviour
         groupGo.name = $"Group({name})";
 
         var image = groupGo.GetComponent<Image>();
-        image.color = index % 2 == 0
-            ? new Color(0.15f, 0.15f, 0.15f, 0.5f)
-            : new Color(0.1f, 0.1f, 0.1f, 0.5f);
+        image.color = index % 2 == 0 ? GroupBackgroundEven : GroupBackgroundOdd;
         image.type = Image.Type.Sliced;
 
         var layout = groupGo.AddComponent<VerticalLayoutGroup>();
@@ -231,14 +234,14 @@ internal class MissingTexturesWindow : MonoBehaviour
         var bodyGo = UIBuilder.CreateText(groupGo.transform, displayName, 13);
         var bodyTmp = bodyGo.GetComponent<TextMeshProUGUI>();
         bodyTmp.fontStyle = FontStyles.Bold;
-        bodyTmp.color = new Color(1f, 0.8f, 0.3f);
+        bodyTmp.color = BodyNameColor;
 
         // Texture paths
         foreach (var path in texturePaths)
         {
             var pathGo = UIBuilder.CreateText(groupGo.transform, path, 12);
             var pathTmp = pathGo.GetComponent<TextMeshProUGUI>();
-            pathTmp.color = new Color(0.9f, 0.5f, 0.5f);
+            pathTmp.color = TexturePathColor;
         }
     }
 
