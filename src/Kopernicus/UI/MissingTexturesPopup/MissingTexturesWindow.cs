@@ -43,8 +43,10 @@ internal class MissingTexturesWindow : MonoBehaviour
         windowRect.sizeDelta = new Vector2(500, 400);
 
         var windowImage = windowGo.GetComponent<Image>();
-        if (skin.window.normal?.background != null)
-            windowImage.sprite = skin.window.normal.background;
+        var opaqueBackground = skin.customStyles?.FirstOrDefault(s => s?.name == "List Item")
+            ?.normal?.background ?? skin.window.normal?.background;
+        if (opaqueBackground != null)
+            windowImage.sprite = opaqueBackground;
         windowImage.type = Image.Type.Sliced;
 
         windowGo.AddComponent<CanvasGroup>();
