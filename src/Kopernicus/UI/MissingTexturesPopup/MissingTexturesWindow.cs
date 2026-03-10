@@ -197,7 +197,7 @@ internal class MissingTexturesWindow : MonoBehaviour
         {
             var bodyName = group.Key?.name ?? "<no body>";
             var displayName = group.Key != null
-                ? group.Key.celestialBody.bodyDisplayName.Replace("^N", "")
+                ? Localizer.Format(group.Key.celestialBody.displayName).Replace("^N", "")
                 : "<no body>";
             CreateBodyGroup(parent, bodyName, displayName, group.Select(e => e.TexturePath), groupIndex);
             groupIndex++;
