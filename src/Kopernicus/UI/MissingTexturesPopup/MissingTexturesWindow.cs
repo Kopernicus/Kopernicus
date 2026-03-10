@@ -194,7 +194,7 @@ internal class MissingTexturesWindow : MonoBehaviour
     {
         var entries = MissingTextureLog.Entries;
 
-        var grouped = entries.GroupBy(e => e.Body).OrderBy(g => g.Key?.name ?? " " + NoBodyLabel);
+        var grouped = entries.GroupBy(e => e.Body).OrderBy(g => g.Key?.name ?? NoBodyLabel);
         int groupIndex = 0;
         foreach (var group in grouped)
         {
@@ -202,7 +202,7 @@ internal class MissingTexturesWindow : MonoBehaviour
             var displayName = group.Key != null
                 ? Localizer.Format(group.Key.celestialBody.displayName).Replace("^N", "")
                 : NoBodyLabel;
-            CreateBodyGroup(parent, bodyName, displayName, group.Select(e => e.TexturePath), groupIndex);
+            CreateBodyGroup(parent, bodyName, displayName, group.Select(e => e.TexturePath).Distinct(), groupIndex);
             groupIndex++;
         }
     }
