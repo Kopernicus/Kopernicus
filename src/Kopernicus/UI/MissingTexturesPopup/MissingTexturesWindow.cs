@@ -13,6 +13,7 @@ namespace Kopernicus.UI.MissingTexturesPopup;
 internal class MissingTexturesWindow : MonoBehaviour
 {
     private static readonly string WindowTitle = Localizer.Format("#Kopernicus_UI_MissingTextures_Title");
+    private static readonly string NoBodyLabel = Localizer.Format("#Kopernicus_UI_MissingTextures_NoBody");
 
     internal static void Show()
     {
@@ -193,14 +194,14 @@ internal class MissingTexturesWindow : MonoBehaviour
     {
         var entries = MissingTextureLog.Entries;
 
-        var grouped = entries.GroupBy(e => e.Body).OrderBy(g => g.Key?.name ?? " <no body>");
+        var grouped = entries.GroupBy(e => e.Body).OrderBy(g => g.Key?.name ?? " " + NoBodyLabel);
         int groupIndex = 0;
         foreach (var group in grouped)
         {
-            var bodyName = group.Key?.name ?? "<no body>";
+            var bodyName = group.Key?.name ?? NoBodyLabel;
             var displayName = group.Key != null
                 ? Localizer.Format(group.Key.celestialBody.displayName).Replace("^N", "")
-                : "<no body>";
+                : NoBodyLabel;
             CreateBodyGroup(parent, bodyName, displayName, group.Select(e => e.TexturePath), groupIndex);
             groupIndex++;
         }
