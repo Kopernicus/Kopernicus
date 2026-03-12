@@ -132,7 +132,7 @@ public abstract class MapSOParserBase<T> : BaseLoader, IParsable, ITypeParser<T>
             // This keeps its value alive in KSPTextureLoader's internal cache. Otherwise the
             // texture won't be reused if garbage collection happens to run between now and the
             // next time the same texture is requested.
-            _ = GCHandle.Alloc(handle.Acquire());
+            TextureHandleStorage.Instance.Store(handle.Acquire());
         }
         else
         {
@@ -141,11 +141,11 @@ public abstract class MapSOParserBase<T> : BaseLoader, IParsable, ITypeParser<T>
                 Hint = TextureLoadHint.Synchronous,
                 Unreadable = false
             };
-            var handle = TextureLoader.LoadTexture<Texture2D>(s, options);
+            using var handle = TextureLoader.LoadTexture<Texture2D>(s, options);
             Texture2D map;
             try
             {
-                map = handle.TakeTexture();
+                map = handle.GetTexture();
             }
             catch (Exception e)
             {
