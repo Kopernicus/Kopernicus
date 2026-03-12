@@ -202,4 +202,31 @@ internal static class BuildInfo
       <FileWrites Include="$(IntermediateOutputPath)/Kopernicus.BuildInfo.cs" />
     </ItemGroup>
   </Target>
+
+  <Target Name="GenerateVersionConfig" AfterTargets="KSPBT_CopyDLLsToPluginFolder">
+    <PropertyGroup>
+      <VersionConfigFileContent>
+KOP_VERSION
+{
+    name = Kopernicus_Version
+    description = Kopernicus Version
+    KopernicusVersion = $(KopernicusRelease)
+}
+
+// Kept to ensure that Kopernicus_Version is present as mod id
+@KOP_VERSION:FOR[Kopernicus_Version] { }
+      </VersionConfigFileContent>
+    </PropertyGroup>
+
+    <WriteLinesToFile
+      File="$(KSPBT_ModRoot)/Config/00Version.cfg"
+      Lines="$(VersionConfigFileContent)"
+      Overwrite="true"
+      WriteOnlyWhenDifferent="true"
+    />
+
+    <ItemGroup>
+      <FileWrites Include="$(KSPBT_ModRoot)/Config/00Version.cfg" />
+    </ItemGroup>
+  </Target>
 </Project>

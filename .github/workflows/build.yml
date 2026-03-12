@@ -1,0 +1,40 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: KSPModdingLibs/KSPBuildTools/.github/actions/setup-ckan@1.1.1
+
+      - name: Download KSP libs
+        run: |
+          wget --quiet https://github.com/KSPModdingLibs/KSPLibs/raw/main/KSP-1.12.5.zip -O /tmp/ksp.zip
+          unzip -q -P "" /tmp/ksp.zip -d /tmp/ksp
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet msbuild -m:1 -p:"Configuration=1.9+ Release" -p:KSPBT_ManagedPath=/tmp/ksp/KSP_x64_Data/Managed
+
+      - uses: KSPModdingLibs/KSPBuildTools/.github/actions/assemble-release@1.1.1
+        with:
+          output-file-name: Kopernicus
+          artifacts: build/KSP19PLUS/GameData
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Kopernicus
+          path: /tmp/release/Kopernicus
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Kopernicus.version
+          path: build/KSP19PLUS/GameData/Kopernicus/Plugins/Kopernicus.version
