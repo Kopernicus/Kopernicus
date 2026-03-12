@@ -25,6 +25,8 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
+using Kopernicus.Components;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.ConfigParser.Interfaces;
@@ -106,6 +108,31 @@ public abstract class MapSOParserBase<T> : BaseLoader, IParsable, ITypeParser<T>
             OnDemandStorage.AddMap(generatedBody.name, map);
             Value = (T)(MapSO)map;
             return;
+        }
+        else if (typeof(KopernicusMapSO).IsAssignableFrom(typeof(T)) || typeof(T) == typeof(MapSO))
+        {
+            var options = new TextureLoadOptions
+            {
+                Hint = TextureLoadHint.Synchronous,
+                Unreadable = false
+            };
+            using var handle = TextureLoader.LoadCPUTexture(s, options);
+
+            KopernicusMapSO map;
+            if (typeof(T) == typeof(MapSO))
+                map = ScriptableObject.CreateInstance<KopernicusMapSO>();
+            else
+                map = (KopernicusMapSO)(MapSO)ScriptableObject.CreateInstance<T>();
+
+            map.CreateMap(Depth, handle.GetTexture());
+            Value = (T)(MapSO)map;
+
+            // Explicitly leak the handle.
+            //
+            // This keeps its value alive in KSPTextureLoader's internal cache. Otherwise the
+            // texture won't be reused if garbage collection happens to run between now and the
+            // next time the same texture is requested.
+            _ = GCHandle.Alloc(handle.Acquire());
         }
         else
         {
