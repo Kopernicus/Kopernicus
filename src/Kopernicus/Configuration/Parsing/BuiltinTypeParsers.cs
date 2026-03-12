@@ -110,6 +110,9 @@ namespace Kopernicus.Configuration.Parsing
         /// </summary>
         public Texture2D Value { get; set; }
 
+        private static PSystemBody CurrentBody =>
+            Parser.GetState<Body>("Kopernicus:currentBody")?.GeneratedBody;
+
         /// <summary>
         /// Parse the Value from a string
         /// </summary>
@@ -138,6 +141,7 @@ namespace Kopernicus.Configuration.Parsing
 
                 Debug.LogError("[Kopernicus] Could not find built-in texture " + textureName);
                 Logger.Active.Log("Could not find built-in texture " + textureName);
+                Utility.LogMissingTexture(CurrentBody, s);
                 return;
             }
 
@@ -174,6 +178,7 @@ namespace Kopernicus.Configuration.Parsing
                 Debug.LogError($"[Kopernicus] Failed to load texture {s}");
                 Logger.Active.Log($"Failed load texture {s}");
                 Logger.Active.LogException(e);
+                Utility.LogMissingTexture(CurrentBody, s);
             }
 
             // Texture was not found

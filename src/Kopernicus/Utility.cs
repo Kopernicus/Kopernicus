@@ -33,9 +33,12 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using Kopernicus.ConfigParser;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.Configuration;
 using Kopernicus.OnDemand;
 using Kopernicus.RuntimeUtility;
+using Kopernicus.UI.MissingTexturesPopup;
 using KSPTextureLoader;
 using Unity.Jobs;
 using UnityEngine;
@@ -944,14 +947,17 @@ namespace Kopernicus
             }
 
             string[] abs = TextureLoader.GetAssetBundlesForPath(path);
-            if (abs.Length == 0)
-            {
-                throw new Exception($"OnDemand texture {path} does not exist on disk");
-            }
-            else
-            {
-                throw new Exception($"OnDemand texture {path} does not exist on disk or in any applicable asset bundle");
-            }
+            var body = Parser.GetState<Body>("Kopernicus:currentBody")?.GeneratedBody;
+
+            var message = abs.Length == 0
+                ? $"OnDemand texture {path} does not exist on disk"
+                : $"OnDemand texture {path} does not exist on disk or in any applicable asset bundle";
+
+            Debug.LogError($"[Kopernicus] {message}");
+            Logger.Active.Log(message);
+            Utility.LogMissingTexture(body, path);
+
+            return path;
         }
 
         [Obsolete]
@@ -1490,6 +1496,19 @@ namespace Kopernicus
                 lon = 0.0;
 
             return body.BiomeMap.GetAtt(lat, lon);
+        }
+
+        /// <summary>
+        /// Log an error for a missing texture. Use this to have your texture
+        /// included in the list of textures that failed to load.
+        /// </summary>
+        /// <param name="body">
+        ///   The <see cref="PSystemBody"/> this texture was associated with.
+        /// </param>
+        /// <param name="path">The path to the texture that failed to load.</param>
+        public static void LogMissingTexture(PSystemBody body, string path)
+        {
+            MissingTextureLog.Log(body, path);
         }
     }
 
