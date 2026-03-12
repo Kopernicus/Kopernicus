@@ -44,8 +44,11 @@ namespace Kopernicus.OnDemand
 
         private static CelestialBody activeBody;
 
-        static long GetUnloadTime()
+        long GetUnloadTime()
         {
+            if (sphere.isActive)
+                return 0;
+
             return Stopwatch.GetTimestamp() +
                    Stopwatch.Frequency * OnDemandStorage.OnDemandUnloadDelay;
         }
@@ -75,35 +78,30 @@ namespace Kopernicus.OnDemand
             Debug.Log($"[OD] Enabling Body {sphere.name}");
         }
 
-        // Disabling
-        public override void OnSphereInactive()
-        {
-            // Don't update, if the Injector is still running
-            if (!_isLoaded)
-            {
-                return;
-            }
-
-            // Set the time at which to unload
-            _unloadTime = GetUnloadTime();
-        }
-
         // Enabling
-        public override void OnQuadPreBuild(PQ quad)
+        public override void OnSphereActive()
         {
-            // It is supposed to be loaded now so clear the unload time
-            _unloadTime = 0;
-
-            // Don't update, if the Injector is still running
             if (_isLoaded)
                 return;
+
+            Activate();
 
             // Enable the maps
             if (!OnDemandStorage.EnableBodyPqs(sphere.name))
                 return;
 
-            _isLoaded = true;
             Debug.Log($"[OD] Enabling Body {sphere.name}");
+        }
+
+        // Disabling
+        public override void OnSphereInactive()
+        {
+            // Don't update, if the Injector is still running
+            if (!_isLoaded)
+                return;
+
+            // Set the time at which to unload
+            _unloadTime = GetUnloadTime();
         }
 
         public override void OnVertexBuildHeight(PQS.VertexBuildData data) =>
