@@ -30,8 +30,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using DDSHeaders;
-using Kopernicus.ConfigParser;
-using Kopernicus.Configuration;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -44,7 +42,10 @@ namespace Kopernicus.OnDemand
     {
         // Lists
         private static readonly Dictionary<String, List<ILoadOnDemand>> Maps = [];
-        private static readonly Dictionary<ILoadOnDemand, PQS> MapBodies =
+
+        // We store body names as strings here because we only have references to
+        // the prefabs when this map is populated.
+        private static readonly Dictionary<ILoadOnDemand, string> MapBodyNames =
             new(ReferenceEqualityComparer.Instance);
 
         // Whole file buffer management
@@ -80,8 +81,7 @@ namespace Kopernicus.OnDemand
             {
                 list.Add(map);
 
-                var generatedBody = Parser.GetState<Body>("Kopernicus:currentBody")?.GeneratedBody;
-                MapBodies[map] = generatedBody?.pqsVersion;
+                MapBodyNames[map] = body;
 
                 // Log
                 Debug.Log("[OD] Adding for body " + body + " map named " + map.Name + " of path = " + map.Path);
@@ -108,6 +108,7 @@ namespace Kopernicus.OnDemand
                 if (Maps[body].Contains(map))
                 {
                     Maps[body].Remove(map);
+                    MapBodyNames.Remove(map);
                 }
                 else
                 {
@@ -237,13 +238,14 @@ namespace Kopernicus.OnDemand
 
         internal static void ActivateMap(ILoadOnDemand map)
         {
-            if (!MapBodies.TryGetValue(map, out var pqs))
+            if (!MapBodyNames.TryGetValue(map, out var bodyName))
                 return;
 
-            if (pqs.IsNullOrDestroyed())
+            var cb = FlightGlobals.GetBodyByName(bodyName);
+            if (cb.IsNullOrDestroyed() || cb.pqsController.IsNullOrDestroyed())
                 return;
 
-            var ondemand = Utility.GetMod<PQSMod_OnDemandHandler>(pqs);
+            var ondemand = Utility.GetMod<PQSMod_OnDemandHandler>(cb.pqsController);
             if (ondemand.IsNullOrDestroyed())
                 return;
 
