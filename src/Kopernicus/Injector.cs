@@ -27,6 +27,7 @@ using HarmonyLib;
 using Kopernicus.ConfigParser;
 using Kopernicus.Configuration;
 using Kopernicus.Constants;
+using Kopernicus.OnDemand;
 using KSPTextureLoader;
 using SentinelMission;
 using System;
@@ -168,6 +169,10 @@ namespace Kopernicus
 
                 // Add a handler so that we can do post spawn fixups.
                 PSystemManager.Instance.OnPSystemReady.Add(PostSpawnFixups);
+
+                // RuntimeUtility will do the same once it spawns, but that doesn't happen until
+                // the MainMenu scene, we do it here until that happens.
+                Events.OnMapSOLoad.Add(ActivateOnDemandStorage);
 
                 // Fire Post-Load Event
                 Events.OnPostLoad.Fire(PSystemManager.Instance.systemPrefab);
@@ -456,10 +461,15 @@ namespace Kopernicus
                 "OK", true, UISkinManager.GetSkin("MainMenuSkin"));
         }
 
+
+        void ActivateOnDemandStorage(ILoadOnDemand map) =>
+            OnDemandStorage.ActivateMap(map);
+
         // Log the destruction of the injector
         public void OnDestroy()
         {
             PSystemManager.Instance.OnPSystemReady.Remove(PostSpawnFixups);
+            Events.OnMapSOLoad.Remove(ActivateOnDemandStorage);
             Logger.Default.Log("Injector.OnDestroy(): Complete");
             Logger.Default.Flush();
         }
