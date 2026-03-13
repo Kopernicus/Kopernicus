@@ -476,32 +476,30 @@ namespace Kopernicus.Configuration
                     Hint = TextureLoadHint.Synchronous,
                     Unreadable = false
                 };
-                using (var handle = TextureLoader.LoadTexture<Texture2D>(_biomeMap, options))
+                using var handle = TextureLoader.LoadCPUTexture(_biomeMap, options);
+                CPUTexture2D texture;
+                try
                 {
-                    Texture2D texture;
-                    try
-                    {
-                        texture = handle.GetTexture();
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Active.Log($"Failed to load biomeMap '{_biomeMap}'");
-                        Logger.Active.LogException(ex);
-                        return null;
-                    }
-
-                    // This needs to happen after calling GetTexture because a sync asset bundle
-                    // load will let other coroutines run in the meantime. Since we're running in
-                    // Awake, this can potentially call Resources.UnloadUnusedAssets.
-                    //
-                    // Resources.UnloadUnusedAssets does not check for ScriptableObjects that are
-                    // only referenced by stack variables, which kopernicusBiomeMap is, so it ends
-                    // up getting deleted out from under our feet.
-                    //
-                    // We avoid this by creating it after we have loaded the texture.
-                    kopernicusBiomeMap = ScriptableObject.CreateInstance<KopernicusCBAttributeMapSO>();
-                    kopernicusBiomeMap.CreateMapWithAttributes(texture, mapAttributes);
+                    texture = handle.GetTexture();
                 }
+                catch (Exception ex)
+                {
+                    Logger.Active.Log($"Failed to load biomeMap '{_biomeMap}'");
+                    Logger.Active.LogException(ex);
+                    return null;
+                }
+
+                // This needs to happen after calling GetTexture because a sync asset bundle
+                // load will let other coroutines run in the meantime. Since we're running in
+                // Awake, this can potentially call Resources.UnloadUnusedAssets.
+                //
+                // Resources.UnloadUnusedAssets does not check for ScriptableObjects that are
+                // only referenced by stack variables, which kopernicusBiomeMap is, so it ends
+                // up getting deleted out from under our feet.
+                //
+                // We avoid this by creating it after we have loaded the texture.
+                kopernicusBiomeMap = ScriptableObject.CreateInstance<KopernicusCBAttributeMapSO>();
+                kopernicusBiomeMap.CreateMapWithAttributes(texture, mapAttributes);
             }
 
             return kopernicusBiomeMap;
