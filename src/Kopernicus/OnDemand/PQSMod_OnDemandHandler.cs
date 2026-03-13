@@ -62,7 +62,10 @@ namespace Kopernicus.OnDemand
 
                 // Refresh unload time at most once every 5 frames per OnDemandHandler.
                 if (_lastCheckFrame + 5 < Time.frameCount)
+                {
                     _unloadTime = GetUnloadTime();
+                    _lastCheckFrame = Time.frameCount;
+                }
 
                 return;
             }
