@@ -26,7 +26,19 @@ namespace Kopernicus.Components
     [BurstCompile]
     public class KopernicusCBAttributeMapSO : CBAttributeMapSO
     {
+        /// <summary>
+        /// If possible we attempt to use a more compressed texture format
+        /// for the outputs of CompileToTexture.
+        /// </summary>
+        enum Quantization
+        {
+            RGBA32,
+            RGB565,
+        }
+
         private static readonly double lessThanOneDouble = Utility.BitDecrement(1.0);
+
+        private Quantization quantization = Quantization.RGBA32;
 
         /// <summary>
         /// Return the biome definition at the given position defined in normalized [0, 1] texture coordinates,
@@ -212,6 +224,8 @@ namespace Kopernicus.Components
                     nonExactThreshold = nonExactThreshold
                 };
 
+                QuantizeBiomeColors();
+
                 job.Schedule().Complete();
             }
 
@@ -290,6 +304,46 @@ namespace Kopernicus.Components
             return GetBiomeIndexStockBilinearSampling(biomeColors, c00, c10, c01, c11, midX, midY, GetIntNonExactThreshold(nonExactThreshold));
         }
 
+        private void QuantizeBiomeColors()
+        {
+            if (SystemInfo.SupportsTextureFormat(TextureFormat.RGB565))
+            {
+                if (QuantizeBiomeColorsRGB565())
+                {
+                    quantization = Quantization.RGB565;
+                    return;
+                }
+            }
+
+            quantization = Quantization.RGBA32;
+        }
+
+        private unsafe bool QuantizeBiomeColorsRGB565()
+        {
+            var count = Attributes.Length;
+            var quantized = stackalloc ushort[count];
+
+            for (int i = 0; i < count; ++i)
+                quantized[i] = ConvertToRGB565(Attributes[i].mapColor);
+
+            for (int i = 0; i < count; ++i)
+                for (int j = i + 1; j < count; ++j)
+                    if (quantized[i] == quantized[j])
+                        return false;
+
+            // Update the attribute colors to their quantized equivalents
+            for (int i = 0; i < Attributes.Length; ++i)
+            {
+                var color = Attributes[i].mapColor;
+                var r = Mathf.RoundToInt(color.r * 31f) * (1f / 31f);
+                var g = Mathf.RoundToInt(color.g * 63f) * (1f / 63f);
+                var b = Mathf.RoundToInt(color.b * 31f) * (1f / 31f);
+                Attributes[i].mapColor = new Color(r, g, b, 1f);
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// Create a 1 Bpp biome map from a texture and the biome definitions
         /// </summary>
@@ -340,7 +394,6 @@ namespace Kopernicus.Components
                 var nfrom = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(pfromData, fromData.Length, Allocator.Invalid);
                 var ndata = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(pdata, _data.Length, Allocator.Invalid);
 
-
                 var job = new ConvertFromStockMapJob
                 {
                     badPixelsCount = &badPixelsCount,
@@ -353,6 +406,9 @@ namespace Kopernicus.Components
                     inputRowWidth = stockMap.RowWidth,
                     nonExactThreshold = stockMap.nonExactThreshold
                 };
+
+                QuantizeBiomeColors();
+
                 job.Schedule().Complete();
             }
 
@@ -646,32 +702,87 @@ namespace Kopernicus.Components
             return (byte)(v * 255f + 0.5f);
         }
 
-        // Custom 24-bit struct matching the expected data layout.
-        [StructLayout(LayoutKind.Sequential)]
-        private struct RGB
-        {
-            public byte r;
-            public byte g;
-            public byte b;
-        }
-
         [BurstCompile]
-        unsafe struct CompileRGBJob : IJobParallelFor
+        private struct CompileRGBA32Job : IJobParallelFor
         {
             [ReadOnly]
-            public RGB* attributeColors;
+            [DeallocateOnJobCompletion]
+            public NativeArray<Color32> colors;
 
             [ReadOnly]
-            public byte* data;
+            public NativeArray<byte> data;
 
             [WriteOnly]
-            public RGB* textureData;
+            public NativeArray<Color32> pixels;
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public void Execute(int index)
             {
-                textureData[index] = attributeColors[data[index]];
+                pixels[index] = colors[data[index]];
             }
+        }
+
+        [BurstCompile]
+        private struct CompileRGB565Job : IJobParallelFor
+        {
+            [ReadOnly]
+            [DeallocateOnJobCompletion]
+            public NativeArray<ushort> colors;
+
+            [ReadOnly]
+            public NativeArray<byte> data;
+
+            [WriteOnly]
+            public NativeArray<ushort> pixels;
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public void Execute(int index)
+            {
+                pixels[index] = colors[data[index]];
+            }
+        }
+
+        private struct MakeColorsRGBA32Job : IJob
+        {
+            public ObjectHandle<MapAttribute[]> attributes;
+            public NativeArray<Color32> colors;
+
+            public void Execute()
+            {
+                using var handle = this.attributes;
+                var attributes = this.attributes.Target;
+
+                for (int i = 0; i < attributes.Length; ++i)
+                    colors[i] = attributes[i].mapColor with { a = 1f };
+            }
+        }
+
+        private struct MakeColorsRGB565Job : IJob
+        {
+            public ObjectHandle<MapAttribute[]> attributes;
+            public NativeArray<ushort> colors;
+
+            public void Execute()
+            {
+                using var handle = this.attributes;
+                var attributes = this.attributes.Target;
+
+                for (int i = 0; i < attributes.Length; ++i)
+                    colors[i] = ConvertToRGB565(attributes[i].mapColor);
+            }
+        }
+
+        static ushort ConvertToRGB565(Color color)
+        {
+            var r = Mathf.RoundToInt(color.r * 31f);
+            var g = Mathf.RoundToInt(color.g * 63f);
+            var b = Mathf.RoundToInt(color.b * 31f);
+
+            var v = ((b & 0x1F) << 0)
+                  | ((g & 0x3F) << 5)
+                  | ((r & 0x1F) << 11);
+
+            return (ushort)v;
         }
 
         struct JobCompleteGuard : IDisposable
@@ -687,101 +798,111 @@ namespace Kopernicus.Components
             }
         }
 
-        public override unsafe Texture2D CompileRGB()
+        struct AsyncNativeArrayDisposeGuard<T>(NativeArray<T> array) : IDisposable
+            where T : unmanaged
         {
-            var pixelData = new NativeArray<RGB>(
-                _data.Length,
-                Allocator.TempJob,
-                NativeArrayOptions.UninitializedMemory
-            );
-
-            // By just allocating 256 entries we don't need to worry about
-            // possibly accessing out of bounds.
-            RGB* attributeColors = stackalloc RGB[256];
-            for (int i = 0; i < Attributes.Length; ++i)
-            {
-                Color pixelColor = Attributes[i].mapColor;
-                attributeColors[i] = new RGB
-                {
-                    r = RoundToPixelValue(pixelColor.r),
-                    g = RoundToPixelValue(pixelColor.g),
-                    b = RoundToPixelValue(pixelColor.b)
-                };
-            }
-
-            Texture2D texture2D;
-            NativeArray<RGB> textureData;
-            fixed (byte* data = _data)
-            {
-                var job = new CompileRGBJob
-                {
-                    attributeColors = attributeColors,
-                    data = data,
-                    textureData = (RGB*)pixelData.GetUnsafePtr()
-                };
-
-                var batchSize = Math.Max(_data.Length / 128, 4096);
-                var handle = job.Schedule(_data.Length, batchSize);
-                // In case of any exceptions we want to make sure that the
-                // job completes before any of the data it is using is
-                // deallocated.
-                using (var guard = new JobCompleteGuard(handle))
-                {
-                    // Make sure the jobs actually start.
-                    JobHandle.ScheduleBatchedJobs();
-
-                    texture2D = CreateUninitializedTexture(_width, _height, TextureFormat.RGB24, mipChain: false);
-                    texture2D.name = _name;
-
-                    // This is the single slowest operation in this whole thing, dwarfing
-                    // literally anything else. We try and hide the latency a bit by doing
-                    // it in parallel with the job.
-                    textureData = texture2D.GetRawTextureData<RGB>();
-                }
-            }
-
-            if (textureData.Length != pixelData.Length)
-                throw new IndexOutOfRangeException("texture length did not match data length");
-
-            textureData.CopyFrom(pixelData);
-            texture2D.Apply(updateMipmaps: false, makeNoLongerReadable: true);
-
-            // Disposing of this takes some time so let another thread deal with it.
-            pixelData.Dispose(default);
-            JobHandle.ScheduleBatchedJobs();
-
-            return texture2D;
+            public void Dispose() => array.Dispose(default);
         }
+
+        // RGB24 textures get converted to RGBA32 on the GPU anyway, so theres's
+        // no point implementing them separately.
+        public override unsafe Texture2D CompileRGB() => CompileRGBA();
 
         public override unsafe Texture2D CompileRGBA()
         {
-            Texture2D texture2D = CreateUninitializedTexture(_width, _height, TextureFormat.RGBA32, mipChain: false);
+            var format = quantization switch
+            {
+                Quantization.RGB565 => TextureFormat.RGB565,
+                Quantization.RGBA32 => TextureFormat.RGBA32,
+                _ => throw new NotImplementedException($"unknown cb attribute map quantization {quantization}")
+            };
+
+            Texture2D texture2D = CreateUninitializedTexture(_width, _height, format, mipChain: false);
             texture2D.name = _name;
-            // Texture2D texture2D = new Texture2D(_width, _height, TextureFormat.RGBA32, mipChain: false);
-            NativeArray<Color32> textureData = texture2D.GetRawTextureData<Color32>();
 
-            if (textureData.Length != _data.Length)
-                throw new IndexOutOfRangeException("texture length did not match data length");
-
-            Color32* attributeColors = stackalloc Color32[256];
-            for (int i = 0; i < Attributes.Length; ++i)
+            fixed (byte* pdata = _data)
             {
-                Color pixelColor = Attributes[i].mapColor;
-                attributeColors[i] = new Color32
+                var data = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(pdata, _data.Length, Allocator.Invalid);
+                switch (quantization)
                 {
-                    r = RoundToPixelValue(pixelColor.r),
-                    g = RoundToPixelValue(pixelColor.g),
-                    b = RoundToPixelValue(pixelColor.b),
-                    a = 255
-                };
-            }
+                    case Quantization.RGB565:
+                        {
+                            var colors = new NativeArray<ushort>(256, Allocator.TempJob);
+                            var pixels = new NativeArray<ushort>(_data.Length, Allocator.TempJob);
+                            using var pguard = new AsyncNativeArrayDisposeGuard<ushort>(pixels);
 
-            fixed (byte* data = _data)
-            {
-                Color32* texData = (Color32*)textureData.GetUnsafePtr();
+                            var job1 = new MakeColorsRGB565Job
+                            {
+                                colors = colors,
+                                attributes = new(Attributes)
+                            };
+                            var handle = job1.Schedule();
+                            var job2 = new CompileRGB565Job
+                            {
+                                colors = colors,
+                                data = data,
+                                pixels = pixels
+                            };
 
-                for (int i = 0; i < _data.Length; ++i)
-                    texData[i] = attributeColors[data[i]];
+                            var batchSize = Math.Max(_data.Length / 128, 4096);
+                            handle = job2.Schedule(_data.Length, batchSize, handle);
+                            JobHandle.ScheduleBatchedJobs();
+
+                            // In case of any exceptions we want to make sure that the
+                            // job completes before any of the data it is using is
+                            // deallocated.
+                            using var guard = new JobCompleteGuard(handle);
+
+                            // This is the single slowest operation in this whole thing, dwarfing
+                            // literally anything else. We try and hide the latency a bit by doing
+                            // it in parallel with the job.
+                            var texdata = texture2D.GetRawTextureData<ushort>();
+                            if (texdata.Length != pixels.Length)
+                                throw new IndexOutOfRangeException("texture length did not match data length");
+                            handle.Complete();
+                            texdata.CopyFrom(pixels);
+                            break;
+                        }
+
+                    case Quantization.RGBA32:
+                        {
+                            var colors = new NativeArray<Color32>(256, Allocator.TempJob);
+                            var pixels = new NativeArray<Color32>(_data.Length, Allocator.TempJob);
+                            using var pguard = new AsyncNativeArrayDisposeGuard<Color32>(pixels);
+
+                            var job1 = new MakeColorsRGBA32Job
+                            {
+                                colors = colors,
+                                attributes = new(Attributes)
+                            };
+                            var handle = job1.Schedule();
+                            var job2 = new CompileRGBA32Job
+                            {
+                                colors = colors,
+                                data = data,
+                                pixels = pixels
+                            };
+
+                            var batchSize = Math.Max(_data.Length / 128, 4096);
+                            handle = job2.Schedule(_data.Length, batchSize, handle);
+                            JobHandle.ScheduleBatchedJobs();
+
+                            // In case of any exceptions we want to make sure that the
+                            // job completes before any of the data it is using is
+                            // deallocated.
+                            using var guard = new JobCompleteGuard(handle);
+
+                            // This is the single slowest operation in this whole thing, dwarfing
+                            // literally anything else. We try and hide the latency a bit by doing
+                            // it in parallel with the job.
+                            var texdata = texture2D.GetRawTextureData<Color32>();
+                            if (texdata.Length != pixels.Length)
+                                throw new IndexOutOfRangeException("texture length did not match data length");
+                            handle.Complete();
+                            texdata.CopyFrom(pixels);
+                            break;
+                        }
+                }
             }
 
             texture2D.Apply(updateMipmaps: false, makeNoLongerReadable: true);
