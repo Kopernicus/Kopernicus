@@ -42,8 +42,6 @@ namespace Kopernicus.OnDemand
         // State
         private bool _isLoaded;
 
-        private static CelestialBody activeBody;
-
         long GetUnloadTime()
         {
             if (sphere.isActive)
@@ -78,15 +76,11 @@ namespace Kopernicus.OnDemand
             _isLoaded = true;
             _unloadTime = GetUnloadTime();
             _lastCheckFrame = Time.frameCount;
-            Debug.Log($"[OD] Enabling Body {sphere.name}");
         }
 
         // Enabling
         public override void OnSphereActive()
         {
-            if (_isLoaded)
-                return;
-
             Activate();
 
             // Enable the maps
@@ -112,15 +106,10 @@ namespace Kopernicus.OnDemand
 
         private void LateUpdate()
         {
-            // If we are in flight with a vessel, update the cached active body.
-            if (FlightGlobals.ActiveVessel.IsNotNullOrDestroyed())
-            {
-                activeBody = FlightGlobals.ActiveVessel.mainBody;
-            }
-
             // If we are the currently active body, do not unload.
-            if (sphere.IsNotNullOrDestroyed())
+            if (sphere.IsNotNullOrDestroyed() && FlightGlobals.ActiveVessel.IsNotNullOrDestroyed())
             {
+                var activeBody = FlightGlobals.ActiveVessel.mainBody;
                 if (activeBody.RefEquals(sphere.GetCelestialBody()))
                     return;
             }
