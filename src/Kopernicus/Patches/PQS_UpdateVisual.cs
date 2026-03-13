@@ -21,21 +21,16 @@ internal static class PQS_UpdateVisual
         return matcher.Instructions();
     }
 
-    // PQS.Start calls GetSurfaceHeight for every body in the system, this includes ones that
-    // have no conceivable chance of being near the camera. This ends up being incredibly
-    // slow because it is necessary to load the heightmaps for all the planets in the system.
+    // PQS.UpdateVisual calls GetSurfaceHeight in lots of cases where it doesn't
+    // really need the actual surface height because the planet is so far away it
+    // just doesn't matter. However, calling this actually ends up slowing down
+    // everything by quite a bit because it ends up loading heightmap textures
+    // for every single body.
     //
-    // This is a modified version of GetSurfaceHeight that skips returning the height if we're
-    // still in the loading screen and the planet is far enough away that it wouldn't be
-    // subdivided anyway.
-    //
-    // UpdateVisual gets called every frame during regular gameplay anyways, so this has no
-    // effect on anything outside of the main menu scene.
+    // To prevent this, we skip returning the height if the planet is far enough
+    // away that it wasn't going to be enabled anyway.
     static double GetSurfaceHeightIfNecessary(PQS pqs, Vector3d radialVector)
     {
-        if (HighLogic.LoadedScene != GameScenes.LOADING)
-            return pqs.GetSurfaceHeight(radialVector);
-
         if (pqs.targetAltitude <= pqs.maxDetailDistance * pqs.radius)
             return pqs.GetSurfaceHeight(radialVector);
 
