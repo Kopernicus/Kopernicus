@@ -126,7 +126,14 @@ namespace Kopernicus.OnDemand
 
                 // We will never unload ourselves while the PQS sphere is loaded.
                 if (sphere.isActive)
+                {
+                    // Make sure we periodically update the stats so that we don't
+                    // immediately unload the textures when the sphere goes inactive.
+                    if (_lastUpdateFrame + UpdateInterval < Time.frameCount)
+                        UpdateUnloadTime();
+
                     continue;
+                }
 
                 // If we are the currently active body, do not unload.
                 if (sphere.IsNotNullOrDestroyed() && FlightGlobals.ActiveVessel.IsNotNullOrDestroyed())
