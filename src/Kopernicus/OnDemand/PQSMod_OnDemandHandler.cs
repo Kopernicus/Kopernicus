@@ -33,11 +33,15 @@ namespace Kopernicus.OnDemand
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class PQSMod_OnDemandHandler : PQSMod
     {
+        // A minimum frame delay so that we don't unload if there is a large lag spike.
+        const int UnloadFrameDelay = 30;
+
         // Delayed unload
         // If non-zero the textures will be unloaded once the timer exceeds the value
         private long _unloadTime;
+        private int _unloadFrame;
 
-        private int _lastCheckFrame = 0;
+        private int _lastUpdateFrame = 0;
 
         // State
         private bool _isLoaded;
@@ -51,31 +55,42 @@ namespace Kopernicus.OnDemand
                    Stopwatch.Frequency * OnDemandStorage.OnDemandUnloadDelay;
         }
 
+        void UpdateUnloadTime()
+        {
+            if (sphere.isActive)
+            {
+                _unloadTime = 0;
+                _unloadFrame = 0;
+            }
+            else
+            {
+                _unloadTime = Stopwatch.GetTimestamp() +
+                              Stopwatch.Frequency * OnDemandStorage.OnDemandUnloadDelay;
+                _unloadFrame = Time.frameCount + UnloadFrameDelay;
+            }
+
+            _lastUpdateFrame = Time.frameCount;
+        }
+
         internal void Activate()
         {
             if (_isLoaded)
             {
-                if (_unloadTime == 0)
-                    return;
-
                 // Refresh unload time at most once every 5 frames per OnDemandHandler.
-                if (_lastCheckFrame + 5 < Time.frameCount)
-                {
-                    _unloadTime = GetUnloadTime();
-                    _lastCheckFrame = Time.frameCount;
-                }
+                if (_lastUpdateFrame + 5 >= Time.frameCount)
+                    return;
+            }
+            else
+            {
+                // Occasionally KSP or other mods will call GetSurfaceHeight on an
+                // inactive celestial body. This starts a timer so any MapSOs loaded
+                // as a result of that will get unloaded eventually instead of
+                // hanging around forever.
 
-                return;
+                _isLoaded = true;
             }
 
-            // Occasionally KSP or other mods will call GetSurfaceHeight on an
-            // inactive celestial body. This starts a timer so any MapSOs loaded
-            // as a result of that will get unloaded eventually instead of
-            // hanging around forever.
-
-            _isLoaded = true;
-            _unloadTime = GetUnloadTime();
-            _lastCheckFrame = Time.frameCount;
+            UpdateUnloadTime();
         }
 
         // Enabling
@@ -106,6 +121,10 @@ namespace Kopernicus.OnDemand
 
         private void LateUpdate()
         {
+            // If we aren't loaded or we're not wanting to unload then do nothing
+            if (!_isLoaded || _unloadTime == 0)
+                return;
+
             // If we are the currently active body, do not unload.
             if (sphere.IsNotNullOrDestroyed() && FlightGlobals.ActiveVessel.IsNotNullOrDestroyed())
             {
@@ -114,8 +133,9 @@ namespace Kopernicus.OnDemand
                     return;
             }
 
-            // If we aren't loaded or we're not wanting to unload then do nothing
-            if (!_isLoaded || _unloadTime == 0)
+            // Check if the necessary number of frames have passed to prevent
+            // lag spikes from causing us to unload textures.
+            if (Time.frameCount <= _unloadFrame)
                 return;
 
             // If we're past the unload time then unload
