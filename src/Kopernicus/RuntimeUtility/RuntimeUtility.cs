@@ -1043,7 +1043,11 @@ namespace Kopernicus.RuntimeUtility
 
             ConfigReader defaults = new();
             if (nodes.Length != 0)
-                ConfigNode.LoadObjectFromConfig(defaults, nodes[0]);
+            {
+                ConfigNode node = null;
+                if (nodes[0].TryGetNode("Kopernicus-config", ref node))
+                    ConfigNode.LoadObjectFromConfig(defaults, node);
+            }
 
             Debug.Log("[Kopernicus] Writing out Kopernicus_Config.cfg");
             using (StreamWriter configFile = new StreamWriter(configPath))
