@@ -56,6 +56,10 @@ namespace Kopernicus.RuntimeUtility
     /// related has been engaged, but I suspect this still is the source of some issues, especially with terrain/PQS.
     /// To get the precise vessel position, we use the same code as in OrbitDriver.updateFromParameters().
     /// </summary>
+    /// 
+
+    //RTB -- This causes issues with burstPQS so disabling as of 3/20/2026
+    /*
     [HarmonyPatch(typeof(FlightDriver), "Start")]
     static class PreciseFlightFloatingOrigin
     {
@@ -81,4 +85,5 @@ namespace Kopernicus.RuntimeUtility
             FloatingOrigin.SetOffset(vesselPos);
         }
     }
+    */
 }
