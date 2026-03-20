@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security.Policy;
 using System.Threading;
-using KSPTextureLoader;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
@@ -181,34 +180,9 @@ namespace Kopernicus.Components
         /// </summary>
         public override unsafe void CreateMap(MapDepth depth, Texture2D tex)
         {
-            Color32[] colorData = tex.GetPixels32();
-
-            fixed (Color32* pcolorData = colorData)
-            {
-                var ncolorData = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<Color32>(pcolorData, colorData.Length, Allocator.Invalid);
-                CreateMap(depth, ncolorData, tex.width, tex.height, tex.name);
-            }
-        }
-
-        /// <summary>
-        /// Create a "compiled" biome map from a <see cref="CPUTexture2D"/>. Attributes **must** be populated prior to calling this.
-        /// Note that the depth param is ignored, as we always encode biomes in a 1 Bpp array.
-        /// </summary>
-        public void CreateMap(MapDepth depth, CPUTexture2D tex)
-        {
-            using var colorData = tex.GetPixels32(0, Allocator.Temp);
-            CreateMap(depth, colorData, tex.Width, tex.Height);
-        }
-
-        /// <summary>
-        /// Create a "compiled" biome map from a <see cref="NativeArray{Color32}"/>. Attributes **must** be populated prior to calling this.
-        /// Note that the depth param is ignored, as we always encode biomes in a 1 Bpp array.
-        /// </summary>
-        unsafe void CreateMap(MapDepth depth, NativeArray<Color32> colorData, int width, int height, string name = null)
-        {
-            _name = name;
-            _width = width;
-            _height = height;
+            _name = tex.name;
+            _width = tex.width;
+            _height = tex.height;
             _bpp = 1;
             _rowWidth = _width;
             _isCompiled = true;
@@ -226,19 +200,23 @@ namespace Kopernicus.Components
                 biomeColors[i] = Attributes[i].mapColor;
 
             int size = _height * _width;
+
+            Color32[] colorData = tex.GetPixels32();
             _data = new byte[size];
 
             int badPixelsCount = 0;
 
+            fixed (Color32* pcolorData = colorData)
             fixed (byte* pdata = _data)
             {
+                var ncolorData = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<Color32>(pcolorData, colorData.Length, Allocator.Invalid);
                 var ndata = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(pdata, _data.Length, Allocator.Invalid);
 
                 var job = new ConvertFromTextureJob
                 {
                     badPixelsCount = &badPixelsCount,
                     output = ndata,
-                    input = colorData,
+                    input = ncolorData,
                     biomeColors = biomeColors,
 
                     width = _width,
@@ -374,15 +352,6 @@ namespace Kopernicus.Components
         public void CreateMapWithAttributes(Texture2D texture, MapAttribute[] biomeDefinitions)
         {
             name = texture.name;
-            Attributes = biomeDefinitions;
-            CreateMap(MapDepth.RGB, texture);
-        }
-
-        /// <summary>
-        /// Create a 1 Bpp biome map from a <see cref="CPUTexture2D"/> and the biome definitions
-        /// </summary>
-        public void CreateMapWithAttributes(CPUTexture2D texture, MapAttribute[] biomeDefinitions)
-        {
             Attributes = biomeDefinitions;
             CreateMap(MapDepth.RGB, texture);
         }
