@@ -27,7 +27,8 @@ jobs:
         run: |
           VERSION="${{ github.event.release.tag_name }}"
           VERSION="${VERSION#release-}"
-          zip -r "Kopernicus-1.12.1-${VERSION}.zip" Kopernicus
+          cp
+          zip -r "Kopernicus-1.12.1-${VERSION}.zip" Kopernicus/*
 
       - name: Upload release assets
         env:
