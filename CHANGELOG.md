@@ -4,6 +4,7 @@
 1. Worked around a floating point hack that was interfering with burstPQS (resulting in gemoetric looking terrain in flight), now they play nicely.
 2. A handful of tweaks to OnDemand, allowing it to swap textures in/out more efficiently.
 3. We now use a CI to make releases.  It should be fine! (Pray for our automated souls, just in case).
+4. We now have a nice new error popup when textures don't exist.
 
 ## 241
 1. Hotfixed a bug where using a BUILTIN/ texture path once could render it unusable in the future.  
