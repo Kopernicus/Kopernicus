@@ -1032,67 +1032,98 @@ namespace Kopernicus.RuntimeUtility
 
         public static void WriteConfigIfNoneExists()
         {
-            if (!File.Exists(PluginPath + "/../Config/Kopernicus_Config.cfg"))
-            {
-                UpdateConfig();
-            }
         }
 
         public static void UpdateConfig()
         {
-            if (File.Exists(PluginPath + "/../Config/Kopernicus_Config.cfg"))
+            string configPath = Path.Combine(PluginPath, "../Config/Kopernicus_Config.cfg");
+
+            // Compare current settings against defaults to find overrides
+            var nodes = GameDatabase.Instance.GetConfigNodes("Kopernicus_config_backup");
+
+            ConfigReader defaults = new();
+            if (nodes.Length != 0)
             {
-                File.Delete(PluginPath + "/../Config/Kopernicus_Config.cfg");
+                ConfigNode node = null;
+                if (nodes[0].TryGetNode("Kopernicus-config", ref node))
+                    ConfigNode.LoadObjectFromConfig(defaults, node);
             }
-            if (!File.Exists(PluginPath + "/../Config/Kopernicus_Config.cfg"))
+
+            Debug.Log("[Kopernicus] Writing out Kopernicus_Config.cfg");
+            using (StreamWriter configFile = new StreamWriter(configPath))
             {
-                Debug.Log("[Kopernicus] Writing out updated Kopernicus_Config.cfg");
-                using (StreamWriter configFile = new StreamWriter(PluginPath + "/../Config/Kopernicus_Config.cfg"))
-                {
-                    configFile.WriteLine("// Kopernicus base configuration. Provides ability to flag things and set user options. Generates at defaults for stock settings and warnings config.");
-                    configFile.WriteLine("// This file is rewritten/created when the game exits. This means any manual (not in the in-game GUI) edits made to this file while playing the game will not be preserved. Edit this file only with the game exited, please.");
-                    configFile.WriteLine("// Some (but not all) of these settings can also be changed through the in-game GUI. Changes through the in-game GUI will be preserved.");
-                    configFile.WriteLine("Kopernicus_config");
-                    configFile.WriteLine("{");
-                    configFile.WriteLine("	HomeWorldName = " + KopernicusConfig.HomeWorldName + " //String with the home bodies name. Allows for directly changing the home body to a differently named body. Default is Kerbin.");
-                    configFile.WriteLine("	EnforceShaders = " + KopernicusConfig.EnforceShaders.ToString() + " //Boolean. Whether or not to force the user into EnforcedShaderLevel, not allowing them to change settings.");
-                    configFile.WriteLine("	WarnShaders = " + KopernicusConfig.WarnShaders.ToString() + " //Boolean. Whether or not to warn the user with a message if not using EnforcedShaderLevel.");
-                    configFile.WriteLine("	EnforcedShaderLevel = " + KopernicusConfig.EnforcedShaderLevel.ToString() + " //Integer. A number defining the enforced shader level for the above parameters. 0=Low,1=Medium,2=High,3=Ultra.");
-                    if ((!KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("true")) && (!KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("false")) && (!KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("stock")))
-                    {
-                        configFile.WriteLine("	UseKopernicusAsteroidSystem = True //String with three valid values, True,False, and Stock. True means use the old customizable Kopernicus asteroid generator with no comet support (many packs use this so it's the default). False means don't generate anything, or wait for an external generator. Stock means use the internal games generator, which supports comets, but usually only works well in stock based systems with Dres and Kerbin present.");
-                    }
-                    else
-                    {
-                        configFile.WriteLine("	UseKopernicusAsteroidSystem = " + KopernicusConfig.UseKopernicusAsteroidSystem + " //String with three valid values, True,False, and Stock. True means use the old customizable Kopernicus asteroid generator with no comet support (many packs use this so it's the default). False means don't generate anything, or wait for an external generator. Stock means use the internal games generator, which supports comets, but usually only works well in stock based systems with Dres and Kerbin present.");
-                    }
-                    configFile.WriteLine("	SolarRefreshRate = " + KopernicusConfig.SolarRefreshRate.ToString() + " //Integer. A number defining the number of seconds between EC calculations when using the multistar cfg file. Can be used to finetune performance (higher runs faster). Otherwise irrelevant.");
-                    configFile.WriteLine("	EnableKopernicusShadowManager = " + KopernicusConfig.EnableKopernicusShadowManager.ToString() + " //Boolean. Whether or not to run the Internal Kopernicus Shadow System. True by default, users using mods that do their own shadows (scatterer etc) may want to disable this to save a small bit of performance.");
-                    configFile.WriteLine("	ShadowRangeCap = " + KopernicusConfig.ShadowRangeCap + " //Integer. A number defining the maximum distance at which shadows may be cast. Lower numbers yield less shadow cascading artifacts, but higher numbers cast shadows farther. Default at 50000 is an approximation of stock. Only works if EnableKopernicusShadowManager is true.");
-                    configFile.WriteLine("	DisableMainMenuMunScene = " + KopernicusConfig.DisableMainMenuMunScene.ToString() + " //Boolean. Whether or not to disable the Mun main menu scene. Only set to false if you want that scene back.");
-                    configFile.WriteLine("	KSCLightsAlwaysOn = " + KopernicusConfig.KSCLightsAlwaysOn.ToString() + " //Boolean. Whether or not to force the KSC Lights to always be on. Default false.");
-                    configFile.WriteLine("	UseOriginalKSC2 = " + KopernicusConfig.UseOriginalKSC2.ToString() + " //Boolean. Whether or not to force the original, uncompacted KSC2 to load.  Will not be editable in any form by Kopernicus.");
-                    configFile.WriteLine("	HandleHomeworldAtmosphericUnitDisplay = " + KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay.ToString() + " //Boolean. This is for calculating 1atm unit at home world. Normally should be true, but mods like PlanetaryInfoPlus may want to set this false.");
-                    configFile.WriteLine("	UseIncorrectScatterDensityLogic = " + KopernicusConfig.UseIncorrectScatterDensityLogic.ToString() + " //Boolean. This is a compatability option for old modpacks that were built with the old (wrong) density logic in mind. Turn on if scatters seem too dense. Please do not use in new releases.");
-                    configFile.WriteLine("	DisableFarAwayColliders = " + KopernicusConfig.DisableFarAwayColliders.ToString() + " //Boolean. Fix a raycast physics bug occuring in large systems, notably resulting in wheels and landing legs falling through the ground.");
-                    configFile.WriteLine("	EnableAtmosphericExtinction = " + KopernicusConfig.EnableAtmosphericExtinction.ToString() + " //Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.");
-                    configFile.WriteLine("	UseStockMohoTemplate = " + KopernicusConfig.UseStockMohoTemplate.ToString() + " //Boolean. This uses the stock Moho template with the Mohole bug/feature. Planet packs may customize this as desired. Be aware disabling this disables the Mohole.");
-                    configFile.WriteLine("	UseOnDemandLoader = " + KopernicusConfig.UseOnDemandLoader.ToString() + " //Boolean. Default False. Turning this on can save ram and thus improve perforamnce situationally but can break some mods requiring long distance viewing.");
-                    configFile.WriteLine("	UseRealWorldDensity = " + KopernicusConfig.UseRealWorldDensity.ToString() + " //Boolean. Default False. Turning this on will calculate realistic body gravity and densities for all or Kerbolar/stock bodies based on size of said body. Don't turn this on unless you understand what it does.");
-                    configFile.WriteLine("	ApplyDensityMultToMinorObjects = " + KopernicusConfig.ApplyDensityMultToMinorObjects.ToString() + " //Float. Default 1.0. Turning this on will multiply body densities for all asteroids and/or comet type objects that spawn by this number. It does not apply to already spawned objects. 50.0 is a fairly realistic value. Don't turn this on unless you understand what it does.");
-                    configFile.WriteLine("	RecomputeSOIAndHillSpheres = " + KopernicusConfig.RecomputeSOIAndHillSpheres.ToString() + " //Boolean. Default False. Turning this on will recompute hill spheres and SOIs using standard math for bodies that have been modified for density in anyway by UseRealWorldDensity. Global effect/Not affected by LimitRWDensityToStockBodies. Leave alone if you don't understand.");
-                    configFile.WriteLine("	PrincipiaFriendlySOIComputation = " + KopernicusConfig.PrincipiaFriendlySOIComputation.ToString() + " //Boolean. Default False. Turning this on will recompute hill spheres and SOIs using standard math constantly, updating them when they hit a deviation of more than 5%. This has a performance penalty, and is only useful for Principia. Leave alone if you don't understand.");
-                    configFile.WriteLine("	LimitRWDensityToStockBodies = " + KopernicusConfig.LimitRWDensityToStockBodies.ToString() + " //Boolean. Default True. Turning this on will limit density corrections to stock/Kerbolar bodies only. Don't mess with this unless you understand what it does.");
-                    configFile.WriteLine("	UseOlderRWScalingLogic = " + KopernicusConfig.UseOlderRWScalingLogic.ToString() + " //Boolean. Default False. Turning this on will use the old gas giant rescale logic that was less scientifically correct. Don't mess with this unless you understand what it does.");
-                    configFile.WriteLine("	RescaleFactor = " + KopernicusConfig.RescaleFactor.ToString() + " //Float. Default 1.0. Set this to the rescale factor of your system if using UseRealWorldDensity, otherwise ignore.");
-                    configFile.WriteLine("	RealWorldSizeFactor = " + KopernicusConfig.RealWorldSizeFactor.ToString() + " //Float. Default 10.625. This is the size the density multiplier considers a 'normal' real world system. Don't change unless you know what you are doing.");
-                    configFile.WriteLine("	SelectedPQSQuality = " + PQSCache.PresetList.preset);
-                    configFile.WriteLine("	SettingsWindowXcoord = " + KopernicusConfig.SettingsWindowXcoord.ToString());
-                    configFile.WriteLine("	SettingsWindowYcoord = " + KopernicusConfig.SettingsWindowYcoord.ToString());
-                    configFile.WriteLine("}");
-                    configFile.Flush();
-                    configFile.Close();
-                }
+                configFile.WriteLine("// Kopernicus user setting overrides.");
+                configFile.WriteLine("// This file is auto-generated when the game exits. Only values that differ");
+                configFile.WriteLine("// from the defaults in DefaultConfig.cfg are written here as a MM patch.");
+                configFile.WriteLine("// Manual edits to this file will be preserved only if made while the game");
+                configFile.WriteLine("// is not running.");
+                configFile.WriteLine("@Kopernicus_config:LAST[zKopernicus]");
+                configFile.WriteLine("{");
+
+                if (KopernicusConfig.EnforceShaders != defaults.EnforceShaders)
+                    configFile.WriteLine("\t%EnforceShaders = " + KopernicusConfig.EnforceShaders);
+                if (KopernicusConfig.WarnShaders != defaults.WarnShaders)
+                    configFile.WriteLine("\t%WarnShaders = " + KopernicusConfig.WarnShaders);
+                if (KopernicusConfig.EnforcedShaderLevel != defaults.EnforcedShaderLevel)
+                    configFile.WriteLine("\t%EnforcedShaderLevel = " + KopernicusConfig.EnforcedShaderLevel);
+
+                // Validate UseKopernicusAsteroidSystem before comparing
+                string asteroidSystem = KopernicusConfig.UseKopernicusAsteroidSystem;
+                if (!asteroidSystem.ToLower().Equals("true") && !asteroidSystem.ToLower().Equals("false") && !asteroidSystem.ToLower().Equals("stock"))
+                    asteroidSystem = defaults.UseKopernicusAsteroidSystem;
+                if (asteroidSystem != defaults.UseKopernicusAsteroidSystem)
+                    configFile.WriteLine("\t%UseKopernicusAsteroidSystem = " + asteroidSystem);
+
+                if (KopernicusConfig.SolarRefreshRate != defaults.SolarRefreshRate)
+                    configFile.WriteLine("\t%SolarRefreshRate = " + KopernicusConfig.SolarRefreshRate);
+                if (KopernicusConfig.EnableKopernicusShadowManager != defaults.EnableKopernicusShadowManager)
+                    configFile.WriteLine("\t%EnableKopernicusShadowManager = " + KopernicusConfig.EnableKopernicusShadowManager);
+                if (KopernicusConfig.ShadowRangeCap != defaults.ShadowRangeCap)
+                    configFile.WriteLine("\t%ShadowRangeCap = " + KopernicusConfig.ShadowRangeCap);
+                if (KopernicusConfig.DisableMainMenuMunScene != defaults.DisableMainMenuMunScene)
+                    configFile.WriteLine("\t%DisableMainMenuMunScene = " + KopernicusConfig.DisableMainMenuMunScene);
+                if (KopernicusConfig.KSCLightsAlwaysOn != defaults.KSCLightsAlwaysOn)
+                    configFile.WriteLine("\t%KSCLightsAlwaysOn = " + KopernicusConfig.KSCLightsAlwaysOn);
+                if (KopernicusConfig.UseOriginalKSC2 != defaults.UseOriginalKSC2)
+                    configFile.WriteLine("\t%UseOriginalKSC2 = " + KopernicusConfig.UseOriginalKSC2);
+                if (KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay != defaults.HandleHomeworldAtmosphericUnitDisplay)
+                    configFile.WriteLine("\t%HandleHomeworldAtmosphericUnitDisplay = " + KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay);
+                if (KopernicusConfig.UseIncorrectScatterDensityLogic != defaults.UseIncorrectScatterDensityLogic)
+                    configFile.WriteLine("\t%UseIncorrectScatterDensityLogic = " + KopernicusConfig.UseIncorrectScatterDensityLogic);
+                if (KopernicusConfig.DisableFarAwayColliders != defaults.DisableFarAwayColliders)
+                    configFile.WriteLine("\t%DisableFarAwayColliders = " + KopernicusConfig.DisableFarAwayColliders);
+                if (KopernicusConfig.EnableAtmosphericExtinction != defaults.EnableAtmosphericExtinction)
+                    configFile.WriteLine("\t%EnableAtmosphericExtinction = " + KopernicusConfig.EnableAtmosphericExtinction);
+                if (KopernicusConfig.UseStockMohoTemplate != defaults.UseStockMohoTemplate)
+                    configFile.WriteLine("\t%UseStockMohoTemplate = " + KopernicusConfig.UseStockMohoTemplate);
+                if (KopernicusConfig.UseOnDemandLoader != defaults.UseOnDemandLoader)
+                    configFile.WriteLine("\t%UseOnDemandLoader = " + KopernicusConfig.UseOnDemandLoader);
+                if (KopernicusConfig.UseRealWorldDensity != defaults.UseRealWorldDensity)
+                    configFile.WriteLine("\t%UseRealWorldDensity = " + KopernicusConfig.UseRealWorldDensity);
+                if (KopernicusConfig.ApplyDensityMultToMinorObjects != defaults.ApplyDensityMultToMinorObjects)
+                    configFile.WriteLine("\t%ApplyDensityMultToMinorObjects = " + KopernicusConfig.ApplyDensityMultToMinorObjects);
+                if (KopernicusConfig.RecomputeSOIAndHillSpheres != defaults.RecomputeSOIAndHillSpheres)
+                    configFile.WriteLine("\t%RecomputeSOIAndHillSpheres = " + KopernicusConfig.RecomputeSOIAndHillSpheres);
+                if (KopernicusConfig.PrincipiaFriendlySOIComputation != defaults.PrincipiaFriendlySOIComputation)
+                    configFile.WriteLine("\t%PrincipiaFriendlySOIComputation = " + KopernicusConfig.PrincipiaFriendlySOIComputation);
+                if (KopernicusConfig.LimitRWDensityToStockBodies != defaults.LimitRWDensityToStockBodies)
+                    configFile.WriteLine("\t%LimitRWDensityToStockBodies = " + KopernicusConfig.LimitRWDensityToStockBodies);
+                if (KopernicusConfig.UseOlderRWScalingLogic != defaults.UseOlderRWScalingLogic)
+                    configFile.WriteLine("\t%UseOlderRWScalingLogic = " + KopernicusConfig.UseOlderRWScalingLogic);
+                if (KopernicusConfig.RescaleFactor != defaults.RescaleFactor)
+                    configFile.WriteLine("\t%RescaleFactor = " + KopernicusConfig.RescaleFactor);
+                if (KopernicusConfig.RealWorldSizeFactor != defaults.RealWorldSizeFactor)
+                    configFile.WriteLine("\t%RealWorldSizeFactor = " + KopernicusConfig.RealWorldSizeFactor);
+                if (PQSCache.PresetList.preset != defaults.SelectedPQSQuality)
+                    configFile.WriteLine("\t%SelectedPQSQuality = " + PQSCache.PresetList.preset);
+                if (KopernicusConfig.SettingsWindowXcoord != defaults.SettingsWindowXcoord)
+                    configFile.WriteLine("\t%SettingsWindowXcoord = " + KopernicusConfig.SettingsWindowXcoord);
+                if (KopernicusConfig.SettingsWindowYcoord != defaults.SettingsWindowYcoord)
+                    configFile.WriteLine("\t%SettingsWindowYcoord = " + KopernicusConfig.SettingsWindowYcoord);
+
+                configFile.WriteLine("}");
+                configFile.Flush();
+                configFile.Close();
             }
         }
 
