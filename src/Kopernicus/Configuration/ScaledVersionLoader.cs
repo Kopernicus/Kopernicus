@@ -389,10 +389,12 @@ namespace Kopernicus.Configuration
         }
 
         [KittopiaAction("Rebuild ScaledSpace Mesh")]
-        public void RebuildScaledSpace()
+        public void RebuildScaledSpace() => RebuildScaledSpace(null);
+
+        public void RebuildScaledSpace(String hash)
         {
             Utility.UpdateScaledMesh(Value.scaledBody, Value.pqsController, Value, Body.SCALED_SPACE_CACHE_DIRECTORY,
-                Value.Get("cacheFile", ""), Value.Get("exportMesh", true), SphericalModel);
+                Value.Get("cacheFile", ""), Value.Get("exportMesh", true), SphericalModel, hash);
         }
 
         [KittopiaAction("Rebuild ScaledSpace Textures")]
