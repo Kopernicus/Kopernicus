@@ -154,9 +154,6 @@ namespace Kopernicus
                 // Fire Pre-Load Event
                 Events.OnPreLoad.Fire();
 
-                // Load mesh hashes for cache validation
-                RuntimeUtility.MeshHashManager.LoadHashes();
-
                 // Get the current time
                 DateTime start = DateTime.Now;
 
@@ -176,9 +173,6 @@ namespace Kopernicus
                 // RuntimeUtility will do the same once it spawns, but that doesn't happen until
                 // the MainMenu scene, we do it here until that happens.
                 Events.OnMapSOLoad.Add(ActivateOnDemandStorage);
-
-                // Save mesh hashes after all bodies are loaded
-                RuntimeUtility.MeshHashManager.SaveHashes();
 
                 // Fire Post-Load Event
                 Events.OnPostLoad.Fire(PSystemManager.Instance.systemPrefab);

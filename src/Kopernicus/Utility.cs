@@ -32,7 +32,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security.Principal;
 using System.Text.RegularExpressions;
 using Kopernicus.ConfigParser;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
@@ -330,7 +329,7 @@ namespace Kopernicus
         }
 
         public static void UpdateScaledMesh(GameObject scaledVersion, PQS pqs, CelestialBody body, String path,
-            String cacheFile, Boolean exportMesh, Boolean useSpherical, String hash = null)
+            String cacheFile, Boolean exportMesh, Boolean useSpherical)
         {
             const Double R_JOOL = 6000000.0;
             const Single R_SCALED = 1000.0f;
@@ -355,24 +354,7 @@ namespace Kopernicus
 
             Directory.CreateDirectory(cacheDirectory ?? throw new InvalidOperationException());
 
-            // Compute relative cache path for hash lookup
-            String gameDataRoot = KSPUtil.ApplicationRootPath + "GameData/";
-            String relativeCachePath = cacheFile.StartsWith(gameDataRoot)
-                ? cacheFile.Substring(gameDataRoot.Length)
-                : cacheFile;
-
-            // Check if cached mesh is still valid via hash
-            bool cacheValid = File.Exists(cacheFile) && exportMesh && hash is not null;
-            if (cacheValid)
-            {
-                if (!RuntimeUtility.MeshHashManager.IsValid(relativeCachePath, hash))
-                {
-                    Logger.Active.Log("Body hash changed! Regenerating scaled space mesh");
-                    cacheValid = false;
-                }
-            }
-
-            if (cacheValid)
+            if (File.Exists(cacheFile) && exportMesh)
             {
                 Logger.Active.Log("Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + body.name);
                 scaledVersion.GetComponent<MeshFilter>().sharedMesh = MeshPreloader.Meshes.ContainsKey(cacheFile)
@@ -393,10 +375,6 @@ namespace Kopernicus
                 if (exportMesh)
                 {
                     SerializeMesh(scaledMesh, cacheFile);
-                    if (hash != null)
-                    {
-                        RuntimeUtility.MeshHashManager.SetHash(relativeCachePath, hash);
-                    }
                 }
             }
 
