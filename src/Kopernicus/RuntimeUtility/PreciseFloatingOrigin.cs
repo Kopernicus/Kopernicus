@@ -58,8 +58,6 @@ namespace Kopernicus.RuntimeUtility
     /// </summary>
     /// 
 
-    //RTB -- This causes issues with burstPQS so disabling as of 3/20/2026
-    /*
     [HarmonyPatch(typeof(FlightDriver), "Start")]
     static class PreciseFlightFloatingOrigin
     {
@@ -85,5 +83,4 @@ namespace Kopernicus.RuntimeUtility
             FloatingOrigin.SetOffset(vesselPos);
         }
     }
-    */
 }
