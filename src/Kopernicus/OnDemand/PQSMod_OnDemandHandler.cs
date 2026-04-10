@@ -113,8 +113,19 @@ namespace Kopernicus.OnDemand
 
         public override void OnQuadPreBuild(PQ quad) => Activate();
 
-        public override void OnVertexBuildHeight(PQS.VertexBuildData data) =>
+        public override void OnVertexBuildHeight(PQS.VertexBuildData data)
+        {
+            // Linx's texture exporter calls OnVertexBuildHeight on multiple
+            // and on invalid objects. We can't really handle that correctly,
+            // but what we can do is avoid throwing an exception in that case.
+            //
+            // It's already known not to be compatible with OnDemand, so this
+            // should make things (maybe?) work in the remaining cases.
+            if (this.IsDestroyed() || sphere.IsDestroyed())
+                return;
+
             Activate();
+        }
 
         IEnumerator UnloadWatcher()
         {
