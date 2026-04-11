@@ -23,6 +23,13 @@
  * https://kerbalspaceprogram.com
  */
 
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
 using Contracts;
 using Expansions;
 using Kopernicus.Components;
@@ -38,12 +45,6 @@ using KSP.UI.Screens.Mapview.MapContextMenuOptions;
 using KSP.UI.Screens.Settings.Controls;
 using ModularFI;
 using SentinelMission;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -1124,6 +1125,35 @@ namespace Kopernicus.RuntimeUtility
                 configFile.WriteLine("}");
                 configFile.Flush();
                 configFile.Close();
+            }
+        }
+        //returns true if KSP Assembly-CSharp is probably a cleaned/deobfuscated image
+        public static bool cleanedDll
+        {
+            get
+            {
+                String dllPath = "";
+                if (Application.platform == RuntimePlatform.WindowsPlayer)
+                {
+                    dllPath = KSPUtil.ApplicationRootPath + "KSP_x64_Data/Managed/Assembly-CSharp.dll";
+                }
+                else if (Application.platform == RuntimePlatform.OSXPlayer)
+                {
+                    dllPath = KSPUtil.ApplicationRootPath + "KSP.app/Contents/Resources/Data/Managed/Assembly-CSharp.dll";
+                }
+                else if (Application.platform == RuntimePlatform.LinuxPlayer)
+                {
+                    dllPath = KSPUtil.ApplicationRootPath + "KSP_Data/Managed/Assembly-CSharp.dll";
+                }
+                if (File.Exists(dllPath))
+                {
+                    Byte[] data = File.ReadAllBytes(dllPath);
+                    if ((data.Length < 10485760) && Versioning.version_major.Equals(12))
+                    {
+                        return true; //certainly a home-cleaned dll, no official 1.12.x build of Assembly-CSharp is less than 10MBs.
+                    }
+                }
+                return false;
             }
         }
 
