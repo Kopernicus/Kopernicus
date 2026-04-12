@@ -86,16 +86,16 @@ internal static class PQS_ResetAndWait
         // Find the first ldc.i4.0 + ret (the default "return false" for unknown states).
         matcher.MatchStartForward(
             new CodeMatch(OpCodes.Ldc_I4_0),
-            new CodeMatch(OpCodes.Ret));
+            new CodeMatch(OpCodes.Ret)).ThrowIfInvalid("Could not execute find opcodes on PQS_ResetAndWaitPatch");
 
         matcher.Insert(
             new CodeInstruction(OpCodes.Ldloc_0),
             new CodeInstruction(OpCodes.Ldc_I4, CustomState),
-            new CodeInstruction(OpCodes.Beq, customResumeLabel));
+            new CodeInstruction(OpCodes.Beq, customResumeLabel)).ThrowIfInvalid("Could not execute insert opcodes on PQS_ResetAndWaitPatch");
 
         // Insert scene switch check before StartSphere.
         matcher.MatchStartForward(
-            new CodeMatch(OpCodes.Call, AccessTools.Method(typeof(PQS), "StartSphere")));
+            new CodeMatch(OpCodes.Call, AccessTools.Method(typeof(PQS), "StartSphere"))).ThrowIfInvalid("Could not find function StartSphere for PQS_ResetAndWaitPatch");
 
         matcher.Advance(-2);
 
@@ -125,7 +125,7 @@ internal static class PQS_ResetAndWait
             new CodeInstruction(OpCodes.Ldarg_0).WithLabels(customResumeLabel),
             new CodeInstruction(OpCodes.Ldc_I4_M1),
             new CodeInstruction(OpCodes.Stfld, state)
-        ]);
+        ]).ThrowIfInvalid("Could not execute insert & advance opcodes on PQS_ResetAndWaitPatch");
 
         return matcher.Instructions();
     }
