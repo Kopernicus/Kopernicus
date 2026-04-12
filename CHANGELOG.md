@@ -1,5 +1,10 @@
 # Kopernicus Changelog
 
+## Unreleased
+1. Kopernicus_config.cfg settings are now done properly in ModuleManager style & syntax.  Old configs will be imported.
+2. Reenable a floating origin patch (basically a distant universe stabilization workaround) after a burstPQS change meant it was no longer in conflict with that mod.
+3. Improve transpiler performance and logging with custom Assembly-CSharp bundles (mostly useful for debugging).
+
 ## 242
 1. Worked around a floating point hack that was interfering with burstPQS (resulting in gemoetric looking terrain in flight), now they play nicely.
 2. A handful of tweaks to OnDemand, allowing it to swap textures in/out more efficiently.
