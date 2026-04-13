@@ -1148,7 +1148,7 @@ namespace Kopernicus.RuntimeUtility
                 if (File.Exists(dllPath))
                 {
                     Byte[] data = File.ReadAllBytes(dllPath);
-                    if ((data.Length < 10485760) && Versioning.version_major.Equals(12))
+                    if ((data.Length < 10000000) && Versioning.version_major.Equals(12))
                     {
                         return true; //certainly a home-cleaned dll, no official 1.12.x build of Assembly-CSharp is less than 10MBs.
                     }
