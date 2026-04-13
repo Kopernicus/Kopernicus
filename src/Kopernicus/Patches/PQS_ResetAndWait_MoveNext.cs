@@ -63,11 +63,12 @@ internal static class PQS_ResetAndWait_MoveNext
     static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator gen)
     {
         // KSPCF patches ResetAndWait to start the coroutine by its string name.
-        // As far as I can tell this actually makes it so our patch is never
-        // called. Instead of trying to debug this too hard we just take the
-        // approach here of patching a new state into the state machine for the
-        // returned enumerator. Nobody else is crazy enough to actually do that
-        // so we can know we're safe from being tampered with here.
+        // As far as I can tell this actually makes it so a direct patch to
+        // ResetAndWaitCoroutine is never called. Instead of trying to debug this
+        // too hard we just take the approach here of patching a new state into
+        // the state machine for the returned enumerator. Nobody else is crazy
+        // enough to actually do that so we can know we're safe from being
+        // tampered with here.
 
         var moveNext = AccessTools.EnumeratorMoveNext(SymbolExtensions.GetMethodInfo<PQS>(pqs => pqs.ResetAndWaitCoroutine()));
         var type = moveNext.DeclaringType;
