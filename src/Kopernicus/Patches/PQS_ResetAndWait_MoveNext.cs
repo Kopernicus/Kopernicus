@@ -52,7 +52,7 @@ namespace Kopernicus.Patches;
 // By delaying the call to StartSphere until the scene switch is completed we
 // can avoid this problem.
 [HarmonyPatch]
-internal static class PQS_ResetAndWait
+internal static class PQS_ResetAndWait_MoveNext
 {
     static bool SceneSwitchInProgress => RuntimeUtility.RuntimeUtility.SceneSwitchInProgress;
     const int CustomState = 12331;
@@ -108,7 +108,7 @@ internal static class PQS_ResetAndWait
             new CodeInstruction(OpCodes.Ldarg_0).WithLabels(existingLabels),
             new CodeInstruction(OpCodes.Ldfld, pqs),
             new CodeInstruction(OpCodes.Ldloca, currentLocal),
-            new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(PQS_ResetAndWait), nameof(CheckSceneSwitch))),
+            new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(PQS_ResetAndWait_MoveNext), nameof(CheckSceneSwitch))),
             new CodeInstruction(OpCodes.Brfalse, skipYieldLabel),
 
             // yield return current
