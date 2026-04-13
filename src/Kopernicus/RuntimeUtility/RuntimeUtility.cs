@@ -95,6 +95,7 @@ namespace Kopernicus.RuntimeUtility
     [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     public class RuntimeUtility : MonoBehaviour
     {
+        private static bool? cleanedDllCachedValue = null;
         private static int setPQSTimer = 0;
         private static int hillSphereRecomputeTimer = 0;
         public static PQSCache.PQSPreset pqsLow;
@@ -1128,32 +1129,25 @@ namespace Kopernicus.RuntimeUtility
             }
         }
         //returns true if KSP Assembly-CSharp is probably a cleaned/deobfuscated image
-        public static bool cleanedDll
+        public static bool IsCleanedDll
         {
             get
             {
-                String dllPath = "";
-                if (Application.platform == RuntimePlatform.WindowsPlayer)
+                if (cleanedDllCachedValue != null)
                 {
-                    dllPath = KSPUtil.ApplicationRootPath + "KSP_x64_Data/Managed/Assembly-CSharp.dll";
+                    return (bool)cleanedDllCachedValue;
                 }
-                else if (Application.platform == RuntimePlatform.OSXPlayer)
+                else
                 {
-                    dllPath = KSPUtil.ApplicationRootPath + "KSP.app/Contents/Resources/Data/Managed/Assembly-CSharp.dll";
-                }
-                else if (Application.platform == RuntimePlatform.LinuxPlayer)
-                {
-                    dllPath = KSPUtil.ApplicationRootPath + "KSP_Data/Managed/Assembly-CSharp.dll";
-                }
-                if (File.Exists(dllPath))
-                {
-                    Byte[] data = File.ReadAllBytes(dllPath);
-                    if ((data.Length < 10000000) && Versioning.version_major.Equals(12))
+                    String dllPath = typeof(GameDatabase).Assembly.Location;
+                    if ((new FileInfo(dllPath).Length < 10000000) && Versioning.version_minor.Equals(12))
                     {
+                        cleanedDllCachedValue = true;
                         return true; //certainly a home-cleaned dll, no official 1.12.x build of Assembly-CSharp is less than 10MBs.
                     }
+                    cleanedDllCachedValue = false;
+                    return false;
                 }
-                return false;
             }
         }
 
