@@ -1,4 +1,4 @@
-<img width="75%" alt="kopernicus Logo" src=".github/Kopernicus%20Logo%20(Trans).png" />
+<img width="50%" alt="kopernicus Logo" src=".github/Kopernicus%20Logo(nosubtitle).png" />
 
 ***
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
