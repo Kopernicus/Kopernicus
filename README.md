@@ -1,5 +1,6 @@
-Kopernicus
-==============================
+<img width="75%" alt="kopernicus Logo" src=".github/Kopernicus%20Logo%20(Trans).png" />
+
+***
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: R-T-B & Phantomical.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
