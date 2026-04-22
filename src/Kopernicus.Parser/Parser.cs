@@ -569,13 +569,13 @@ namespace Kopernicus.ConfigParser
                 // If the member type is a field, set the value
                 if (member.MemberType == MemberTypes.Field)
                 {
-                    ((FieldInfo)member).SetValue(o, targetValue);
+                    SetMemberValue((FieldInfo)member, o, targetValue, target.FieldName, node);
                 }
 
                 // If the member wasn't a field, it must be a property.  If the property is writable, set it.
                 else if (((PropertyInfo)member).CanWrite)
                 {
-                    ((PropertyInfo)member).SetValue(o, targetValue, null);
+                    SetMemberValue((PropertyInfo)member, o, targetValue, target.FieldName, node);
                 }
             }
         }
@@ -760,15 +760,49 @@ namespace Kopernicus.ConfigParser
                 // If the member type is a field, set the value
                 if (member.MemberType == MemberTypes.Field)
                 {
-                    ((FieldInfo)member).SetValue(o, targetValue);
+                    SetMemberValue((FieldInfo)member, o, targetValue, target.FieldName, node);
                 }
 
                 // If the member wasn't a field, it must be a property.  If the property is writable, set it.
                 else if (((PropertyInfo)member).CanWrite)
                 {
-                    ((PropertyInfo)member).SetValue(o, targetValue, null);
+                    SetMemberValue((PropertyInfo)member, o, targetValue, target.FieldName, node);
                 }
             }
+        }
+
+        /// <summary>
+        /// Wraps reflection SetValue calls so that exceptions thrown by user-defined setters
+        /// surface with the field name, owning type, and node name instead of a bare
+        /// TargetInvocationException.
+        /// </summary>
+        private static void SetMemberValue(FieldInfo field, Object o, Object value, String fieldName, ConfigNode node)
+        {
+            try
+            {
+                field.SetValue(o, value);
+            }
+            catch (TargetInvocationException ex) when (ex.InnerException != null)
+            {
+                throw new Exception(FormatSetMemberError(o, fieldName, ex.InnerException), ex.InnerException);
+            }
+        }
+
+        private static void SetMemberValue(PropertyInfo property, Object o, Object value, String fieldName, ConfigNode node)
+        {
+            try
+            {
+                property.SetValue(o, value, null);
+            }
+            catch (TargetInvocationException ex) when (ex.InnerException != null)
+            {
+                throw new Exception(FormatSetMemberError(o, fieldName, ex.InnerException), ex.InnerException);
+            }
+        }
+
+        private static String FormatSetMemberError(Object o, String field, Exception ex)
+        {
+            return $"Error setting '{field}' on {o.GetType().FullName}: {ex}";
         }
 
         /// <summary>
