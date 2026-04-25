@@ -136,7 +136,6 @@ namespace Kopernicus.Configuration
         {
             get
             {
-#if (!KSP_VERSION_1_8)
                 switch (GameSettings.TERRAIN_SHADER_QUALITY)
                 {
                     case 3:
@@ -166,120 +165,16 @@ namespace Kopernicus.Configuration
                     default:
                         return Value.surfaceMaterial;
                 }
-#else
-                switch (GameSettings.TERRAIN_SHADER_QUALITY)
-                {
-                    case 2:
-                        if (Value.highQualitySurfaceMaterial != null)
-                        {
-                            return Value.highQualitySurfaceMaterial;
-                        }
-                        goto case 1;
-                    case 1:
-                        if (Value.mediumQualitySurfaceMaterial != null)
-                        {
-                            return Value.mediumQualitySurfaceMaterial;
-                        }
-                        goto case 0;
-                    case 0:
-                        if (Value.lowQualitySurfaceMaterial != null)
-                        {
-                            return Value.lowQualitySurfaceMaterial;
-                        }
-                        goto default;
-                    default:
-                        return Value.surfaceMaterial;
-                }
-#endif
             }
             set
             {
-#if (!KSP_VERSION_1_8)
                 Value.ultraQualitySurfaceMaterial = value;
-#endif
                 Value.highQualitySurfaceMaterial = value;
                 Value.mediumQualitySurfaceMaterial = value;
                 Value.lowQualitySurfaceMaterial = value;
                 Value.surfaceMaterial = value;
             }
         }
-#if (KSP_VERSION_1_8)
-        [PreApply]
-        [ParserTarget("materialType")]
-        [SuppressMessage("ReSharper", "ConvertIfStatementToReturnStatement")]
-        public EnumParser<SurfaceMaterialType> MaterialType
-        {
-            get
-            {
-                if (PQSProjectionSurfaceQuad.UsesSameShader(BasicSurfaceMaterial))
-                {
-                    return SurfaceMaterialType.Vacuum;
-                }
-                if (PQSProjectionAerialQuadRelative.UsesSameShader(BasicSurfaceMaterial))
-                {
-                    return SurfaceMaterialType.Basic;
-                }
-                if (PQSMainShader.UsesSameShader(BasicSurfaceMaterial))
-                {
-                    return SurfaceMaterialType.Main;
-                }
-                if (PQSMainOptimised.UsesSameShader(BasicSurfaceMaterial))
-                {
-                    return SurfaceMaterialType.Optimized;
-                }
-                if (PQSMainExtras.UsesSameShader(BasicSurfaceMaterial))
-                {
-                    return SurfaceMaterialType.Extra;
-                }
-                if (PQSMainOptimisedFastBlend.UsesSameShader(BasicSurfaceMaterial))
-                {
-                    return SurfaceMaterialType.OptimizedFastBlend;
-                }
-                if (PQSTriplanarZoomRotation.UsesSameShader(BasicSurfaceMaterial))
-                {
-                    return SurfaceMaterialType.Triplanar;
-                }
-                throw new Exception("The shader '" + BasicSurfaceMaterial.shader.name + "' is not supported.");
-            }
-            set
-            {
-                Boolean isVaccum = PQSProjectionSurfaceQuad.UsesSameShader(BasicSurfaceMaterial);
-                Boolean isBasic = PQSProjectionAerialQuadRelative.UsesSameShader(BasicSurfaceMaterial);
-                Boolean isMain = PQSMainShader.UsesSameShader(BasicSurfaceMaterial);
-                Boolean isOptimised = PQSMainOptimised.UsesSameShader(BasicSurfaceMaterial);
-                Boolean isExtra = PQSMainExtras.UsesSameShader(BasicSurfaceMaterial);
-                Boolean isOptimisedFastBlend = PQSMainOptimisedFastBlend.UsesSameShader(BasicSurfaceMaterial);
-                Boolean isTriplanar = PQSTriplanarZoomRotation.UsesSameShader(BasicSurfaceMaterial);
-                switch (value.Value)
-                {
-                    case SurfaceMaterialType.Vacuum when !isVaccum:
-                        BasicSurfaceMaterial = new PQSProjectionSurfaceQuadLoader();
-                        break;
-                    case SurfaceMaterialType.Basic when !isBasic:
-                        BasicSurfaceMaterial = new PQSProjectionAerialQuadRelativeLoader();
-                        break;
-                    case SurfaceMaterialType.Main when !isMain:
-                        BasicSurfaceMaterial = new PQSMainShaderLoader();
-                        break;
-                    case SurfaceMaterialType.Optimized when !isOptimised:
-                        BasicSurfaceMaterial = new PQSMainOptimisedLoader();
-                        break;
-                    case SurfaceMaterialType.Extra when !isExtra:
-                        BasicSurfaceMaterial = new PQSMainExtrasLoader();
-                        break;
-                    case SurfaceMaterialType.OptimizedFastBlend when !isOptimisedFastBlend:
-                        BasicSurfaceMaterial = new PQSMainOptimisedFastBlendLoader();
-                        break;
-                    case SurfaceMaterialType.Triplanar when !isTriplanar:
-                        BasicSurfaceMaterial = new PQSTriplanarZoomRotationLoader();
-                        break;
-                    default:
-                        return;
-                }
-            }
-        }
-#endif
-#if (!KSP_VERSION_1_8)
         [PreApply]
         [ParserTarget("materialType")]
         [SuppressMessage("ReSharper", "ConvertIfStatementToReturnStatement")]
@@ -370,7 +265,6 @@ namespace Kopernicus.Configuration
                 }
             }
         }
-#endif
         // Surface Material of the PQS
         [ParserTarget("Material", AllowMerge = true, GetChild = false)]
         [KittopiaUntouchable]
@@ -383,43 +277,10 @@ namespace Kopernicus.Configuration
                 Boolean isMain = BasicSurfaceMaterial is PQSMainShaderLoader;
                 Boolean isOptimised = BasicSurfaceMaterial is PQSMainOptimisedLoader;
                 Boolean isExtra = BasicSurfaceMaterial is PQSMainExtrasLoader;
-#if (!KSP_VERSION_1_8)
                 isMainFastBlend = BasicSurfaceMaterial is PQSMainFastBlendLoader;
-#endif
                 Boolean isOptimisedFastBlend = BasicSurfaceMaterial is PQSMainOptimisedFastBlendLoader;
                 Boolean isTriplanar = BasicSurfaceMaterial is PQSTriplanarZoomRotationLoader;
-#if (!KSP_VERSION_1_8)
                 isTriplanarAtlas = BasicSurfaceMaterial is PQSTriplanarZoomRotationTextureArrayLoader;
-#endif
-#if (KSP_VERSION_1_8)
-                switch (MaterialType.Value)
-                {
-                    case SurfaceMaterialType.Vacuum when !isVaccum:
-                        BasicSurfaceMaterial = new PQSProjectionSurfaceQuadLoader(BasicSurfaceMaterial);
-                        goto default;
-                    case SurfaceMaterialType.Basic when !isBasic:
-                        BasicSurfaceMaterial = new PQSProjectionAerialQuadRelativeLoader(BasicSurfaceMaterial);
-                        goto default;
-                    case SurfaceMaterialType.Main when !isMain:
-                        BasicSurfaceMaterial = new PQSMainShaderLoader(BasicSurfaceMaterial);
-                        goto default;
-                    case SurfaceMaterialType.Optimized when !isOptimised:
-                        BasicSurfaceMaterial = new PQSMainOptimisedLoader(BasicSurfaceMaterial);
-                        goto default;
-                    case SurfaceMaterialType.Extra when !isExtra:
-                        BasicSurfaceMaterial = new PQSMainExtrasLoader(BasicSurfaceMaterial);
-                        goto default;
-                    case SurfaceMaterialType.OptimizedFastBlend when !isOptimisedFastBlend:
-                        BasicSurfaceMaterial = new PQSMainOptimisedFastBlendLoader(BasicSurfaceMaterial);
-                        goto default;
-                    case SurfaceMaterialType.Triplanar when !isTriplanar:
-                        BasicSurfaceMaterial = new PQSTriplanarZoomRotationLoader(BasicSurfaceMaterial);
-                        goto default;
-                    default:
-                        return BasicSurfaceMaterial;
-                }
-#endif
-#if (!KSP_VERSION_1_8)
                 switch (NewMaterialType.Value)
                 {
                     case NewShaderSurfaceMaterialType.Vacuum when !isVaccum:
@@ -452,7 +313,6 @@ namespace Kopernicus.Configuration
                     default:
                         return BasicSurfaceMaterial;
                 }
-#endif
             }
             set
             {
@@ -461,52 +321,18 @@ namespace Kopernicus.Configuration
                 Boolean isMain = value is PQSMainShaderLoader;
                 Boolean isOptimised = value is PQSMainOptimisedLoader;
                 Boolean isExtra = value is PQSMainExtrasLoader;
-#if (!KSP_VERSION_1_8)
                 if (!(Versioning.version_minor < 9))
                 {
                     isMainFastBlend = value is PQSMainFastBlendLoader;
                 }
-#endif
                 Boolean isOptimisedFastBlend = value is PQSMainOptimisedFastBlendLoader;
                 Boolean isTriplanar = value is PQSTriplanarZoomRotationLoader;
-#if (!KSP_VERSION_1_8)
                 if (!(Versioning.version_minor < 9))
                 {
                     isTriplanarAtlas = value is PQSTriplanarZoomRotationTextureArrayLoader;
                 }
-#endif
                 // We need to set the material before we check it, so we can reuse the code in MaterialType
                 BasicSurfaceMaterial = value;
-#if (KSP_VERSION_1_8)
-                switch (MaterialType.Value)
-                {
-                    case SurfaceMaterialType.Vacuum when !isVaccum:
-                        BasicSurfaceMaterial = new PQSProjectionSurfaceQuadLoader(value);
-                        break;
-                    case SurfaceMaterialType.Basic when !isBasic:
-                        BasicSurfaceMaterial = new PQSProjectionAerialQuadRelativeLoader(value);
-                        break;
-                    case SurfaceMaterialType.Main when !isMain:
-                        BasicSurfaceMaterial = new PQSMainShaderLoader(value);
-                        break;
-                    case SurfaceMaterialType.Optimized when !isOptimised:
-                        BasicSurfaceMaterial = new PQSMainOptimisedLoader(value);
-                        break;
-                    case SurfaceMaterialType.Extra when !isExtra:
-                        BasicSurfaceMaterial = new PQSMainExtrasLoader(value);
-                        break;
-                    case SurfaceMaterialType.OptimizedFastBlend when !isOptimisedFastBlend:
-                        BasicSurfaceMaterial = new PQSMainOptimisedFastBlendLoader(value);
-                        break;
-                    case SurfaceMaterialType.Triplanar when !isTriplanar:
-                        BasicSurfaceMaterial = new PQSTriplanarZoomRotationLoader(value);
-                        break;
-                    default:
-                        BasicSurfaceMaterial = value;
-                        break;
-                }
-#endif
-#if (!KSP_VERSION_1_8)
                 switch (NewMaterialType.Value)
                 {
                     case NewShaderSurfaceMaterialType.Vacuum when !isVaccum:
@@ -540,7 +366,6 @@ namespace Kopernicus.Configuration
                         BasicSurfaceMaterial = value;
                         break;
                 }
-#endif
             }
         }
 
@@ -661,7 +486,6 @@ namespace Kopernicus.Configuration
                 Utility.AddMod<PQSMod_OnDemandHandler>(Value, 0);
             }
             // Add fixes for TextureAtlas
-#if (!KSP_VERSION_1_8)
             if (!(Versioning.version_minor < 9))
             {
                 if (!Utility.HasMod<PQSMod_TextureAtlasFixer>(Value))
@@ -669,7 +493,6 @@ namespace Kopernicus.Configuration
                     Utility.AddMod<PQSMod_TextureAtlasFixer>(Value, 0);
                 }
             }
-#endif
             // hacky hack
             if (generatedBody.celestialBody.name.Equals(RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName) && (Value.gameObject.GetChild("KSC") == null))
             {
@@ -805,7 +628,6 @@ namespace Kopernicus.Configuration
             {
                 Utility.AddMod<PQSMod_OnDemandHandler>(Value, 0);
             }
-#if (!KSP_VERSION_1_8)
             if (!(Versioning.version_minor < 9))
             {
                 if (!Utility.HasMod<PQSMod_TextureAtlasFixer>(Value))
@@ -813,7 +635,6 @@ namespace Kopernicus.Configuration
                     Utility.AddMod<PQSMod_TextureAtlasFixer>(Value, 0);
                 }
             }
-#endif
             // Add the PQSROCControl mod for surface anomalies
             if (!Utility.HasMod<PQSROCControl>(Value))
             {

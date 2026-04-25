@@ -48,11 +48,7 @@ namespace Kopernicus.Constants
     {
         // Compatible version
         internal const string VERSION_MAJOR = "1";
-#if !KSP_VERSION_1_8
         internal const string VERSION_MINOR = "12";
-#else
-        internal const string VERSION_MINOR = "8";
-#endif
         internal const string VERSION_MINOR_LOWER_LIMIT = "8";
         internal const string REVISION = "1";
         internal const string KOPERNICUS = BuildInfo.KopernicusRelease;
@@ -86,13 +82,11 @@ namespace Kopernicus.Constants
             // If Kopernicus isn't compatible, no longer activate the cats (RIP)
             if (IsCompatible())
             {
-#if !KSP_VERSION_1_8
                 // warn about unsupported versions
                 if (((Versioning.version_minor == 11) && (Versioning.Revision > 2)) || ((Versioning.version_minor == 12) && (Versioning.Revision > 5)) || (Versioning.version_minor > 12))
                 {
                     PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "Kopernicus", "Kopernicus", "Kopernicus is in beta on this version of KSP...  Bugs may be present!", "OK", false, UISkinManager.defaultSkin);
                 }
-#endif
                 return;
             }
 

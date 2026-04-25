@@ -38,11 +38,7 @@ namespace Kopernicus.Constants
         {
             get
             {
-#if (!KSP_VERSION_1_8)
                 return "Release-" + CompatibilityChecker.KOPERNICUS;
-#else
-                return "LEGACY18_Release-" + CompatibilityChecker.KOPERNICUS;
-#endif
             }
         }
 

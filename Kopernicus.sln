@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34018.315
@@ -15,19 +15,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kopernicus.Parser", "src\Ko
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		1.8 Release|Any CPU = 1.8 Release|Any CPU
-		1.8 Release|x64 = 1.8 Release|x64
 		1.9+ Release|Any CPU = 1.9+ Release|Any CPU
 		1.9+ Release|x64 = 1.9+ Release|x64
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.8 Release|Any CPU.ActiveCfg = ReleaseKSP18|x64
-		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.8 Release|Any CPU.Build.0 = ReleaseKSP18|x64
-		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.8 Release|x64.ActiveCfg = ReleaseKSP19Plus|x64
-		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.8 Release|x64.Build.0 = ReleaseKSP19Plus|x64
-		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.8 Release|x64.Deploy.0 = ReleaseKSP19Plus|x64
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.9+ Release|Any CPU.ActiveCfg = ReleaseKSP19Plus|x64
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.9+ Release|Any CPU.Build.0 = ReleaseKSP19Plus|x64
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.9+ Release|x64.ActiveCfg = ReleaseKSP19Plus|x64
@@ -37,10 +30,6 @@ Global
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.Debug|Any CPU.Build.0 = Debug|x64
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.Debug|x64.ActiveCfg = Debug|x64
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.Debug|x64.Build.0 = Debug|x64
-		{F9968D87-83DA-453C-8E28-B632367EACD3}.1.8 Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F9968D87-83DA-453C-8E28-B632367EACD3}.1.8 Release|Any CPU.Build.0 = Release|Any CPU
-		{F9968D87-83DA-453C-8E28-B632367EACD3}.1.8 Release|x64.ActiveCfg = Release|Any CPU
-		{F9968D87-83DA-453C-8E28-B632367EACD3}.1.8 Release|x64.Build.0 = Release|Any CPU
 		{F9968D87-83DA-453C-8E28-B632367EACD3}.1.9+ Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9968D87-83DA-453C-8E28-B632367EACD3}.1.9+ Release|Any CPU.Build.0 = Release|Any CPU
 		{F9968D87-83DA-453C-8E28-B632367EACD3}.1.9+ Release|x64.ActiveCfg = Release|Any CPU
