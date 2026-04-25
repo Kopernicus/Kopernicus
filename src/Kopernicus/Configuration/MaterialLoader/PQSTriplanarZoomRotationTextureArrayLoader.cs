@@ -33,7 +33,6 @@ using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.Configuration.Parsing;
 using Kopernicus.UI;
 using UnityEngine;
-#if (!KSP_VERSION_1_8)
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
@@ -302,4 +301,3 @@ namespace Kopernicus.Configuration.MaterialLoader
         }
     }
 }
-#endif

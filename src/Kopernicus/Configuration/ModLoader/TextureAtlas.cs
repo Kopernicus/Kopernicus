@@ -22,7 +22,6 @@
  *
  * https://kerbalspaceprogram.com
  */
-#if (!KSP_VERSION_1_8)
 using System.Diagnostics.CodeAnalysis;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.Enumerations;
@@ -89,4 +88,3 @@ namespace Kopernicus.Configuration.ModLoader
         }
     }
 }
-#endif

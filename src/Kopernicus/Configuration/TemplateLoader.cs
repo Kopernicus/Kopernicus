@@ -184,7 +184,6 @@ namespace Kopernicus.Configuration
             // If we have a PQS
             if (Body.pqsVersion != null)
             {
-#if (!KSP_VERSION_1_8)
                 // We only support one surface material per body, so use the one with the highest quality available
                 if (GameSettings.TERRAIN_SHADER_QUALITY == 3)
                 {
@@ -212,7 +211,6 @@ namespace Kopernicus.Configuration
                     Body.pqsVersion.lowQualitySurfaceMaterial = surfaceMaterial;
                     Body.pqsVersion.surfaceMaterial = surfaceMaterial;
                 }
-#endif
                 if (GameSettings.TERRAIN_SHADER_QUALITY == 2)
                 {
                     Material surfaceMaterial = Body.pqsVersion.highQualitySurfaceMaterial;
@@ -230,9 +228,7 @@ namespace Kopernicus.Configuration
                         surfaceMaterial = Body.pqsVersion.surfaceMaterial;
                     }
 
-#if (!KSP_VERSION_1_8)
                     Body.pqsVersion.ultraQualitySurfaceMaterial = surfaceMaterial;
-#endif
                     Body.pqsVersion.highQualitySurfaceMaterial = surfaceMaterial;
                     Body.pqsVersion.mediumQualitySurfaceMaterial = surfaceMaterial;
                     Body.pqsVersion.lowQualitySurfaceMaterial = surfaceMaterial;
@@ -251,9 +247,7 @@ namespace Kopernicus.Configuration
                         surfaceMaterial = Body.pqsVersion.surfaceMaterial;
                     }
 
-#if (!KSP_VERSION_1_8)
                     Body.pqsVersion.ultraQualitySurfaceMaterial = surfaceMaterial;
-#endif
                     Body.pqsVersion.highQualitySurfaceMaterial = surfaceMaterial;
                     Body.pqsVersion.mediumQualitySurfaceMaterial = surfaceMaterial;
                     Body.pqsVersion.lowQualitySurfaceMaterial = surfaceMaterial;
@@ -272,9 +266,7 @@ namespace Kopernicus.Configuration
                         surfaceMaterial = Body.pqsVersion.surfaceMaterial;
                     }
 
-#if (!KSP_VERSION_1_8)
                     Body.pqsVersion.ultraQualitySurfaceMaterial = surfaceMaterial;
-#endif
                     Body.pqsVersion.highQualitySurfaceMaterial = surfaceMaterial;
                     Body.pqsVersion.mediumQualitySurfaceMaterial = surfaceMaterial;
                     Body.pqsVersion.lowQualitySurfaceMaterial = surfaceMaterial;
@@ -289,7 +281,6 @@ namespace Kopernicus.Configuration
                         .First(pqs => pqs != Body.pqsVersion);
                     PQSMod_CelestialBodyTransform cbt = Body.pqsVersion
                         .GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true).First();
-#if (!KSP_VERSION_1_8)
                     if (GameSettings.TERRAIN_SHADER_QUALITY == 3)
                     {
 
@@ -317,7 +308,6 @@ namespace Kopernicus.Configuration
                         ocean.lowQualitySurfaceMaterial = surfaceMaterial;
                         ocean.surfaceMaterial = surfaceMaterial;
                     }
-#endif
                     if (GameSettings.TERRAIN_SHADER_QUALITY == 2)
                     {
                         Material surfaceMaterial = ocean.highQualitySurfaceMaterial;
@@ -334,9 +324,7 @@ namespace Kopernicus.Configuration
                         {
                             surfaceMaterial = ocean.surfaceMaterial;
                         }
-#if (!KSP_VERSION_1_8)
                         ocean.ultraQualitySurfaceMaterial = surfaceMaterial;
-#endif
                         ocean.highQualitySurfaceMaterial = surfaceMaterial;
                         ocean.mediumQualitySurfaceMaterial = surfaceMaterial;
                         ocean.lowQualitySurfaceMaterial = surfaceMaterial;
@@ -354,9 +342,7 @@ namespace Kopernicus.Configuration
                         {
                             surfaceMaterial = ocean.surfaceMaterial;
                         }
-#if (!KSP_VERSION_1_8)
                         ocean.ultraQualitySurfaceMaterial = surfaceMaterial;
-#endif
                         ocean.highQualitySurfaceMaterial = surfaceMaterial;
                         ocean.mediumQualitySurfaceMaterial = surfaceMaterial;
                         ocean.lowQualitySurfaceMaterial = surfaceMaterial;
@@ -374,9 +360,7 @@ namespace Kopernicus.Configuration
                         {
                             surfaceMaterial = ocean.surfaceMaterial;
                         }
-#if (!KSP_VERSION_1_8)
                         ocean.ultraQualitySurfaceMaterial = surfaceMaterial;
-#endif
                         ocean.highQualitySurfaceMaterial = surfaceMaterial;
                         ocean.mediumQualitySurfaceMaterial = surfaceMaterial;
                         ocean.lowQualitySurfaceMaterial = surfaceMaterial;

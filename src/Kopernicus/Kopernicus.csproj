@@ -30,7 +30,7 @@
     <KSPBT_GenerateDependencyAttributes>false</KSPBT_GenerateDependencyAttributes>
 
     <!-- Configurations and Platforms  -->
-    <Configurations>Debug;ReleaseKSP18;ReleaseKSP19Plus</Configurations>
+    <Configurations>Debug;ReleaseKSP19Plus</Configurations>
     <Platforms>Any CPU;x64</Platforms>
   </PropertyGroup>
 
@@ -50,26 +50,10 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)' == 'ReleaseKSP18' ">
-    <OutputPath>bin\Release18\</OutputPath>
-    <DefineConstants>KSP_VERSION_1_8</DefineConstants>
-    <Optimize>true</Optimize>
+  <PropertyGroup>
+    <MFIPath>$(DepDirPath)\MFI_latest\ModularFlightIntegrator.dll</MFIPath>
+    <ModOutDir>KSP19PLUS</ModOutDir>
   </PropertyGroup>
-
-  <Choose>
-    <When Condition="'$(Configuration)' == 'ReleaseKSP18'">
-      <PropertyGroup>
-        <MFIPath>$(DepDirPath)\MFI_1.2.7_KSP1.8\ModularFlightIntegrator.dll</MFIPath>
-        <ModOutDir>KSP18</ModOutDir>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup>
-        <MFIPath>$(DepDirPath)\MFI_latest\ModularFlightIntegrator.dll</MFIPath>
-        <ModOutDir>KSP19PLUS</ModOutDir>
-      </PropertyGroup>
-    </Otherwise>
-  </Choose>
 
   <PropertyGroup>
     <KSPBT_ModRoot>$(RepoRootPath)\build\$(ModOutDir)\GameData\$(MSBuildProjectName)</KSPBT_ModRoot>
