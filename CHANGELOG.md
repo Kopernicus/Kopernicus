@@ -1,9 +1,10 @@
 # Kopernicus Changelog
 
-## Unreleased
+## 243
 1. Kopernicus_config.cfg settings are now done properly in ModuleManager style & syntax.  Old configs will be imported.
 2. Reenable a floating origin patch (basically a distant universe stabilization workaround) after a burstPQS change meant it was no longer in conflict with that mod.
 3. Improve transpiler performance and logging with custom Assembly-CSharp bundles (mostly useful for debugging).
+4. The "missing textures" warning that pops up on broken texture paths in a mod has been reworded slightly to indictate that it may sometimes be a planet pack issue, and not neccasrily the installers fault (though it still can be your fault, obviously, I believe in you!).
 
 ## 242
 1. Worked around a floating point hack that was interfering with burstPQS (resulting in gemoetric looking terrain in flight), now they play nicely.

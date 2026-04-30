@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <!-- Release number. Bump this when making a new version. -->
-    <KopernicusRelease>242</KopernicusRelease>
+    <KopernicusRelease>243</KopernicusRelease>
 
     <!-- Assembly metadata -->
     <Version>1.0.$(KopernicusRelease)</Version>
