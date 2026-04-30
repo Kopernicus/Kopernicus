@@ -1,4 +1,4 @@
-name: Release-Test
+ame: Release-Test
 
 on:
   push:
@@ -28,7 +28,8 @@ jobs:
 
       - name: Create release zip
         run: |
-          zip -r "Kopernicus-1.12.1-${VERSION}.zip" Kopernicus/*
+          cd Kopernicus
+          zip -r "../Kopernicus-1.12.1-${VERSION}.zip" *
 
       - uses: actions/upload-artifact@v7
         with:
