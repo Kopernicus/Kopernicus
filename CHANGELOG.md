@@ -1,5 +1,8 @@
 # Kopernicus Changelog
 
+## 244
+1. Restore NativeByteArray class, because some major mods still use it (RSS).
+
 ## 243
 1. Kopernicus_config.cfg settings are now done properly in ModuleManager style & syntax.  Old configs will be imported.
 2. Reenable a floating origin patch (basically a distant universe stabilization workaround) after a burstPQS change meant it was no longer in conflict with that mod.
