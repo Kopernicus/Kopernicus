@@ -1,6 +1,6 @@
 Known Bugs:
 
-1.) BetterDensity is deprecated as of release-203, due to a incompatability with heatEmitter, lethalRadius, and possibly other scatter based features.  Avoid using it when possible, use the other density facilisties.
+1.) BetterDensity is deprecated as of release-203, due to a incompatability with heatEmitter, lethalRadius, and possibly other scatter based features.  Avoid using it when possible, use the other density facilities.
 
 2.) For most use cases, the homeworld must be named "Kerbin" and must orbit the root star.  You can rename it via displayName property for most purposes.  We are working on a true fix for this that will allow you to have homeworlds properly on moons and on bodies not named Kerbin, but the fixes are not ready yet (there is a prerelease that supports renamed homeworlds).  Until they are, see options cbNameLater, and postSpawnOrbit, but be aware they are buggy, and overall deprecated.
 
@@ -14,9 +14,7 @@ Known Bugs:
 
 7.) When you uninstall a mod that had installed a Terrain Detail preset you were using, it may be listed still in the Graphics settings as "New Text." This is by design. If it bothers you, please reinstall the mod that setup that preset, or delete settings.cfg and let it regenerate.
 
-8.) Some mods that used custom Terrain Presets may require you to delete your settings.cfg file and reset your settings with this release. This is rare, but can happen. See [this](https://forum.kerbalspaceprogram.com/index.php?/topic/200143-112x-kopernicus-stable-branch-last-updated-march-7th-2023/&do=findComment&comment=4258139) post for details.
-
-9.) There are numerous bugs involving the use of PQSCity2 nodes. I'd advise you avoid using this type if possible.
+8.) Some mods that used custom Terrain Presets may require you to delete your settings.cfg file and reset your settings. This is rare, but can happen. See [this](https://forum.kerbalspaceprogram.com/index.php?/topic/200143-112x-kopernicus-stable-branch-last-updated-march-7th-2023/&do=findComment&comment=4258139) post for details.
 
 Known Caveats:
 
@@ -32,7 +30,7 @@ Known Caveats:
 
 6.) The particle system was hopelessly broken and has been since sometime past 1.10.x. Few mods used it, so it has been removed completely as of Release-146.
 
-7.) Because we now unpack multipart PQSCity's correctly, you may rarely find some PQSCity structures in mods are in the earth or floating. Report such bugs to your planet pack author as this is an intended change (only cosmetic).
+7.) Because we now unpack multipart PQSCity's correctly, you may rarely find some PQSCity structures in mods are in the earth or floating, especially in rescale scenarios. Report such bugs to your planet pack author as this is an intended change (only cosmetic).
 
 8.) The Kopernicus_Config.cfg file is rewritten/created when the game exits. This means any manual (not in the GUI) edits made while playing the game will not be preserved. Edit the file only with the game exited, please.
 
