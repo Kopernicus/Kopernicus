@@ -3,6 +3,9 @@ name: Release
 on:
   release:
     types: [published]
+  pull_request:
+    paths:
+      - .github/workflows/release.yml
 
 jobs:
   build:
@@ -23,17 +26,34 @@ jobs:
         with:
           name: Kopernicus.version
 
-      - name: Create release zip
+      - name: Get version from release tag
+        if: github.event_name == 'release'
         run: |
           VERSION="${{ github.event.release.tag_name }}"
           VERSION="${VERSION#release-}"
-          zip -r "Kopernicus-1.12.1-${VERSION}.zip" Kopernicus/*
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Read version from 00Version.cfg
+        if: github.event_name != 'release'
+        run: |
+          VERSION=$(grep -oP 'KopernicusVersion\s*=\s*\K\d+' Kopernicus/GameData/Kopernicus/Config/00Version.cfg)
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Create release zip
+        run: |
+          cd Kopernicus
+          zip -r "../Kopernicus-1.12.1-${VERSION}.zip" *
 
       - name: Upload release assets
+        if: github.event_name == 'release'
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
-          VERSION="${{ github.event.release.tag_name }}"
-          VERSION="${VERSION#release-}"
           gh release upload "${{ github.event.release.tag_name }}" "Kopernicus-1.12.1-${VERSION}.zip" Kopernicus.version
+
+      - uses: actions/upload-artifact@v7
+        if: github.event_name != 'release'
+        with:
+          name: Kopernicus-1.12.1-${{ env.VERSION }}
+          path: Kopernicus-1.12.1-${{ env.VERSION }}.zip
