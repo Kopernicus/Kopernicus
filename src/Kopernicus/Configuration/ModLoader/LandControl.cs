@@ -53,11 +53,17 @@ namespace Kopernicus.Configuration.ModLoader
         // Loader for a Ground Scatter
         [RequireConfigType(ConfigType.Node)]
         [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
-        public class LandClassScatterLoader : IPatchable, ITypeParser<PQSLandControl.LandClassScatter>
+        public class LandClassScatterLoader : IPatchable, ITypeParser<PQSLandControl.LandClassScatter>, IParserPostApplyEventSubscriber
         {
             // The value we are editing
             public PQSLandControl.LandClassScatter Value { get; set; }
             public ModularScatter Scatter { get; set; }
+
+            // Backing storage for the parsed material loader. Committed to
+            // Value.material in PostApply.
+            private BaseMaterialLoader _material;
+
+            private Material CurrentMaterial => _material?.Value ?? Value.material;
 
             /// <summary>
             /// Returns the currently edited PQS
@@ -98,211 +104,110 @@ namespace Kopernicus.Configuration.ModLoader
             {
                 get
                 {
-                    if (NormalDiffuse.UsesSameShader(Value.material))
-                    {
-                        return ScatterMaterialType.Diffuse;
-                    }
-                    if (NormalBumped.UsesSameShader(Value.material))
-                    {
-                        return ScatterMaterialType.BumpedDiffuse;
-                    }
-                    if (NormalDiffuseDetail.UsesSameShader(Value.material))
-                    {
-                        return ScatterMaterialType.DiffuseDetail;
-                    }
-                    if (DiffuseWrap.UsesSameShader(Value.material))
-                    {
-                        return ScatterMaterialType.DiffuseWrapped;
-                    }
-                    if (AlphaTestDiffuse.UsesSameShader(Value.material))
-                    {
-                        return ScatterMaterialType.CutoutDiffuse;
-                    }
-                    if (AerialTransCutout.UsesSameShader(Value.material))
-                    {
-                        return ScatterMaterialType.AerialCutout;
-                    }
-                    if (Standard.UsesSameShader(Value.material))
-                    {
-                        return ScatterMaterialType.Standard;
-                    }
-                    if (StandardSpecular.UsesSameShader(Value.material))
-                    {
-                        return ScatterMaterialType.StandardSpecular;
-                    }
-                    if (KSPBumped.UsesSameShader(Value.material))
-                    {
-                        return ScatterMaterialType.KSPBumped;
-                    }
-                    if (KSPBumpedSpecular.UsesSameShader(Value.material))
-                    {
-                        return ScatterMaterialType.KSPBumpedSpecular;
-                    }
+                    Material material = CurrentMaterial;
 
-                    throw new Exception("The shader '" + Value.material.shader.name + "' is not supported.");
+                    if (NormalDiffuse.UsesSameShader(material))
+                        return ScatterMaterialType.Diffuse;
+                    if (NormalBumped.UsesSameShader(material))
+                        return ScatterMaterialType.BumpedDiffuse;
+                    if (NormalDiffuseDetail.UsesSameShader(material))
+                        return ScatterMaterialType.DiffuseDetail;
+                    if (DiffuseWrap.UsesSameShader(material))
+                        return ScatterMaterialType.DiffuseWrapped;
+                    if (AlphaTestDiffuse.UsesSameShader(material))
+                        return ScatterMaterialType.CutoutDiffuse;
+                    if (AerialTransCutout.UsesSameShader(material))
+                        return ScatterMaterialType.AerialCutout;
+                    if (Standard.UsesSameShader(material))
+                        return ScatterMaterialType.Standard;
+                    if (StandardSpecular.UsesSameShader(material))
+                        return ScatterMaterialType.StandardSpecular;
+                    if (KSPBumped.UsesSameShader(material))
+                        return ScatterMaterialType.KSPBumped;
+                    if (KSPBumpedSpecular.UsesSameShader(material))
+                        return ScatterMaterialType.KSPBumpedSpecular;
+
+                    throw new Exception("The shader '" + material.shader.name + "' is not supported.");
                 }
                 set
                 {
-                    Boolean isDiffuse = NormalDiffuse.UsesSameShader(Value.material);
-                    Boolean isBumped = NormalBumped.UsesSameShader(Value.material);
-                    Boolean isDetail = NormalDiffuseDetail.UsesSameShader(Value.material);
-                    Boolean isWrapped = DiffuseWrap.UsesSameShader(Value.material);
-                    Boolean isCutout = AlphaTestDiffuse.UsesSameShader(Value.material);
-                    Boolean isAerial = AerialTransCutout.UsesSameShader(Value.material);
-                    Boolean isStandard = Standard.UsesSameShader(Value.material);
-                    Boolean isStandardSpecular = StandardSpecular.UsesSameShader(Value.material);
-                    Boolean isKspBumped = KSPBumped.UsesSameShader(Value.material);
-                    Boolean isKspBumpedSpecular = KSPBumpedSpecular.UsesSameShader(Value.material);
+                    if (UsesScatterShader(value.Value, CurrentMaterial))
+                        return;
 
-                    switch (value.Value)
+                    _material = value.Value switch
                     {
-                        case ScatterMaterialType.Diffuse when !isDiffuse:
-                            Value.material = new NormalDiffuseLoader();
-                            break;
-                        case ScatterMaterialType.BumpedDiffuse when !isBumped:
-                            Value.material = new NormalBumpedLoader();
-                            break;
-                        case ScatterMaterialType.DiffuseDetail when !isDetail:
-                            Value.material = new NormalDiffuseDetailLoader();
-                            break;
-                        case ScatterMaterialType.DiffuseWrapped when !isWrapped:
-                            Value.material = new DiffuseWrapLoader();
-                            break;
-                        case ScatterMaterialType.CutoutDiffuse when !isCutout:
-                            Value.material = new AlphaTestDiffuseLoader();
-                            break;
-                        case ScatterMaterialType.AerialCutout when !isAerial:
-                            Value.material = new AerialTransCutoutLoader();
-                            break;
-                        case ScatterMaterialType.Standard when !isStandard:
-                            Value.material = new StandardLoader();
-                            break;
-                        case ScatterMaterialType.StandardSpecular when !isStandardSpecular:
-                            Value.material = new StandardSpecularLoader();
-                            break;
-                        case ScatterMaterialType.KSPBumped when !isKspBumped:
-                            Value.material = new KSPBumpedLoader();
-                            break;
-                        case ScatterMaterialType.KSPBumpedSpecular when !isKspBumpedSpecular:
-                            Value.material = new KSPBumpedSpecularLoader();
-                            break;
-                        default:
-                            return;
-                    }
+                        ScatterMaterialType.Diffuse => new NormalDiffuseLoader(),
+                        ScatterMaterialType.BumpedDiffuse => new NormalBumpedLoader(),
+                        ScatterMaterialType.DiffuseDetail => new NormalDiffuseDetailLoader(),
+                        ScatterMaterialType.DiffuseWrapped => new DiffuseWrapLoader(),
+                        ScatterMaterialType.CutoutDiffuse => new AlphaTestDiffuseLoader(),
+                        ScatterMaterialType.AerialCutout => new AerialTransCutoutLoader(),
+                        ScatterMaterialType.Standard => new StandardLoader(),
+                        ScatterMaterialType.StandardSpecular => new StandardSpecularLoader(),
+                        ScatterMaterialType.KSPBumped => new KSPBumpedLoader(),
+                        ScatterMaterialType.KSPBumpedSpecular => new KSPBumpedSpecularLoader(),
+                        _ => _material,
+                    };
                 }
             }
 
+            private static Boolean UsesScatterShader(ScatterMaterialType type, Material material) => type switch
+            {
+                ScatterMaterialType.Diffuse => NormalDiffuse.UsesSameShader(material),
+                ScatterMaterialType.BumpedDiffuse => NormalBumped.UsesSameShader(material),
+                ScatterMaterialType.DiffuseDetail => NormalDiffuseDetail.UsesSameShader(material),
+                ScatterMaterialType.DiffuseWrapped => DiffuseWrap.UsesSameShader(material),
+                ScatterMaterialType.CutoutDiffuse => AlphaTestDiffuse.UsesSameShader(material),
+                ScatterMaterialType.AerialCutout => AerialTransCutout.UsesSameShader(material),
+                ScatterMaterialType.Standard => Standard.UsesSameShader(material),
+                ScatterMaterialType.StandardSpecular => StandardSpecular.UsesSameShader(material),
+                ScatterMaterialType.KSPBumped => KSPBumped.UsesSameShader(material),
+                ScatterMaterialType.KSPBumpedSpecular => KSPBumpedSpecular.UsesSameShader(material),
+                _ => false,
+            };
+
             // Custom scatter material
             [ParserTarget("Material", AllowMerge = true)]
-            public Material Material
+            public BaseMaterialLoader Material
             {
                 get
                 {
-                    Boolean isDiffuse = Value.material is NormalDiffuseLoader;
-                    Boolean isBumped = Value.material is NormalBumpedLoader;
-                    Boolean isDetail = Value.material is NormalDiffuseDetailLoader;
-                    Boolean isWrapped = Value.material is DiffuseWrapLoader;
-                    Boolean isCutout = Value.material is AlphaTestDiffuseLoader;
-                    Boolean isAerial = Value.material is AerialTransCutoutLoader;
-                    Boolean isStandard = Value.material is StandardLoader;
-                    Boolean isStandardSpecular = Value.material is StandardSpecularLoader;
-                    Boolean isKspBumped = Value.material is KSPBumpedLoader;
-                    Boolean isKspBumpedSpecular = Value.material is KSPBumpedSpecularLoader;
+                    if (_material != null)
+                        return _material;
 
-                    switch (Type.Value)
+                    Material existing = Value.material;
+                    _material = Type.Value switch
                     {
-                        case ScatterMaterialType.Diffuse when !isDiffuse:
-                            Value.material = new NormalDiffuseLoader(Value.material);
-                            goto default;
-                        case ScatterMaterialType.BumpedDiffuse when !isBumped:
-                            Value.material = new NormalBumpedLoader(Value.material);
-                            goto default;
-                        case ScatterMaterialType.DiffuseDetail when !isDetail:
-                            Value.material = new NormalDiffuseDetailLoader(Value.material);
-                            goto default;
-                        case ScatterMaterialType.DiffuseWrapped when !isWrapped:
-                            Value.material = new DiffuseWrapLoader(Value.material);
-                            goto default;
-                        case ScatterMaterialType.CutoutDiffuse when !isCutout:
-                            Value.material = new AlphaTestDiffuseLoader(Value.material);
-                            goto default;
-                        case ScatterMaterialType.AerialCutout when !isAerial:
-                            Value.material = new AerialTransCutoutLoader(Value.material);
-                            goto default;
-                        case ScatterMaterialType.Standard when !isStandard:
-                            Value.material = new StandardLoader(Value.material);
-                            goto default;
-                        case ScatterMaterialType.StandardSpecular when !isStandardSpecular:
-                            Value.material = new StandardSpecularLoader(Value.material);
-                            goto default;
-                        case ScatterMaterialType.KSPBumped when !isKspBumped:
-                            Value.material = new KSPBumpedLoader(Value.material);
-                            goto default;
-                        case ScatterMaterialType.KSPBumpedSpecular when !isKspBumpedSpecular:
-                            Value.material = new KSPBumpedSpecularLoader(Value.material);
-                            goto default;
-                        default:
-                            return Value.material;
-                    }
+                        ScatterMaterialType.Diffuse => new NormalDiffuseLoader(existing),
+                        ScatterMaterialType.BumpedDiffuse => new NormalBumpedLoader(existing),
+                        ScatterMaterialType.DiffuseDetail => new NormalDiffuseDetailLoader(existing),
+                        ScatterMaterialType.DiffuseWrapped => new DiffuseWrapLoader(existing),
+                        ScatterMaterialType.CutoutDiffuse => new AlphaTestDiffuseLoader(existing),
+                        ScatterMaterialType.AerialCutout => new AerialTransCutoutLoader(existing),
+                        ScatterMaterialType.Standard => new StandardLoader(existing),
+                        ScatterMaterialType.StandardSpecular => new StandardSpecularLoader(existing),
+                        ScatterMaterialType.KSPBumped => new KSPBumpedLoader(existing),
+                        ScatterMaterialType.KSPBumpedSpecular => new KSPBumpedSpecularLoader(existing),
+                        _ => throw new Exception("Unsupported scatter material type: " + Type.Value),
+                    };
+                    return _material;
                 }
-                set
-                {
-                    Boolean isDiffuse = value is NormalDiffuseLoader;
-                    Boolean isBumped = value is NormalBumpedLoader;
-                    Boolean isDetail = value is NormalDiffuseDetailLoader;
-                    Boolean isWrapped = value is DiffuseWrapLoader;
-                    Boolean isCutout = value is AlphaTestDiffuseLoader;
-                    Boolean isAerial = value is AerialTransCutoutLoader;
-                    Boolean isStandard = value is StandardLoader;
-                    Boolean isStandardSpecular = value is StandardSpecularLoader;
-                    Boolean isKspBumped = Value.material is KSPBumpedLoader;
-                    Boolean isKspBumpedSpecular = Value.material is KSPBumpedSpecularLoader;
-
-                    switch (Type.Value)
-                    {
-                        case ScatterMaterialType.Diffuse when !isDiffuse:
-                            Value.material = new NormalDiffuseLoader(value);
-                            break;
-                        case ScatterMaterialType.BumpedDiffuse when !isBumped:
-                            Value.material = new NormalBumpedLoader(value);
-                            break;
-                        case ScatterMaterialType.DiffuseDetail when !isDetail:
-                            Value.material = new NormalDiffuseDetailLoader(value);
-                            break;
-                        case ScatterMaterialType.DiffuseWrapped when !isWrapped:
-                            Value.material = new DiffuseWrapLoader(value);
-                            break;
-                        case ScatterMaterialType.CutoutDiffuse when !isCutout:
-                            Value.material = new AlphaTestDiffuseLoader(value);
-                            break;
-                        case ScatterMaterialType.AerialCutout when !isAerial:
-                            Value.material = new AerialTransCutoutLoader(value);
-                            break;
-                        case ScatterMaterialType.Standard when !isStandard:
-                            Value.material = new StandardLoader(value);
-                            break;
-                        case ScatterMaterialType.StandardSpecular when !isStandardSpecular:
-                            Value.material = new StandardSpecularLoader(value);
-                            break;
-                        case ScatterMaterialType.KSPBumped when !isKspBumped:
-                            Value.material = new KSPBumpedLoader(value);
-                            break;
-                        case ScatterMaterialType.KSPBumpedSpecular when !isKspBumpedSpecular:
-                            Value.material = new KSPBumpedSpecularLoader(value);
-                            break;
-                        default:
-                            Value.material = value;
-                            break;
-                    }
-                }
+                set { _material = value; }
             }
 
             // Stock material
             [ParserTarget("material", AllowMerge = true)]
             public StockMaterialParser StockMaterial
             {
-                get { return Material; }
-                set { Material = value; }
+                get { return Material?.Value; }
+                set
+                {
+                    Material stock = value;
+                    if (stock == null)
+                        return;
+                    Value.material = stock;
+                    _material = null;
+                }
             }
 
             // The biome list of the landclass
@@ -591,6 +496,12 @@ namespace Kopernicus.Configuration.ModLoader
             public static implicit operator LandClassScatterLoader(PQSLandControl.LandClassScatter value)
             {
                 return new LandClassScatterLoader(value);
+            }
+
+            void IParserPostApplyEventSubscriber.PostApply(ConfigNode node)
+            {
+                if (_material != null)
+                    Value.material = _material.Value;
             }
         }
 

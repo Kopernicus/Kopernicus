@@ -24,133 +24,127 @@
  */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using Kopernicus.Components.MaterialWrapper;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using UnityEngine;
 
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class KSPBumpedLoader : KSPBumped
+    public class KSPBumpedLoader : BaseMaterialLoader
     {
+        private const String SHADER_NAME = "KSP/Bumped";
+        private static readonly Shader Shader = Shader.Find(SHADER_NAME);
+        public static bool UsesSameShader(Material m) => m != null && m.shader.name == SHADER_NAME;
+
         // Base (RGB), default = "white" { }
         [ParserTarget("mainTex")]
-        public Texture2DParser MainTexSetter
+        public MaterialTextureParser MainTexSetter
         {
-            get { return MainTex; }
-            set { MainTex = value; }
+            get => null;
+            set => SetTexture("_MainTex", value);
         }
 
         [ParserTarget("mainTexScale")]
         public Vector2Parser MainTexScaleSetter
         {
-            get { return MainTexScale; }
-            set { MainTexScale = value; }
+            get => GetTextureScale("_MainTex");
+            set => SetTextureScale("_MainTex", value);
         }
 
         [ParserTarget("mainTexOffset")]
         public Vector2Parser MainTexOffsetSetter
         {
-            get { return MainTexOffset; }
-            set { MainTexOffset = value; }
+            get => GetTextureOffset("_MainTex");
+            set => SetTextureOffset("_MainTex", value);
         }
 
         // Normal map, default = "bump" { }
         [ParserTarget("bumpMap")]
-        public Texture2DParser BumpMapSetter
+        public MaterialTextureParser BumpMapSetter
         {
-            get { return BumpMap; }
-            set { BumpMap = value; }
+            get => null;
+            set => SetTexture("_BumpMap", value);
         }
 
         [ParserTarget("bumpMapScale")]
         public Vector2Parser BumpMapScaleSetter
         {
-            get { return BumpMapScale; }
-            set { BumpMapScale = value; }
+            get => GetTextureScale("_BumpMap");
+            set => SetTextureScale("_BumpMap", value);
         }
 
         [ParserTarget("bumpMapOffset")]
         public Vector2Parser BumpMapOffsetSetter
         {
-            get { return BumpMapOffset; }
-            set { BumpMapOffset = value; }
+            get => GetTextureOffset("_BumpMap");
+            set => SetTextureOffset("_BumpMap", value);
         }
 
         // Main Color, default = (1,1,1,1)
         [ParserTarget("color")]
         public ColorParser ColorSetter
         {
-            get { return Color; }
-            set { Color = value; }
+            get => GetColor("_Color");
+            set => SetColor("_Color", value);
         }
 
         // _Opacity, default = 1
         [ParserTarget("opacity")]
-        public NumericParser<Single> OpacitySetter
+        public NumericParser<float> OpacitySetter
         {
-            get { return Opacity; }
-            set { Opacity = value; }
+            get => GetFloat("_Opacity");
+            set => SetFloat("_Opacity", value);
         }
 
         // _RimFalloff, default = 0.1
         [ParserTarget("rimFalloff")]
-        public NumericParser<Single> RimFalloffSetter
+        public NumericParser<float> RimFalloffSetter
         {
-            get { return RimFalloff; }
-            set { RimFalloff = value; }
+            get => GetFloat("_RimFalloff");
+            set => SetFloat("_RimFalloff", value);
         }
 
         // _RimColor, default = (0,0,0,0)
         [ParserTarget("rimColor")]
         public ColorParser RimColorSetter
         {
-            get { return RimColor; }
-            set { RimColor = value; }
+            get => GetColor("_RimColor");
+            set => SetColor("_RimColor", value);
         }
 
         // _TemperatureColor, default = (0,0,0,0)
         [ParserTarget("temperatureColor")]
         public ColorParser TemperatureColorSetter
         {
-            get { return TemperatureColor; }
-            set { TemperatureColor = value; }
+            get => GetColor("_TemperatureColor");
+            set => SetColor("_TemperatureColor", value);
         }
 
         // Burn Color, default = (1,1,1,1)
         [ParserTarget("burnColor")]
         public ColorParser BurnColorSetter
         {
-            get { return BurnColor; }
-            set { BurnColor = value; }
+            get => GetColor("_BurnColor");
+            set => SetColor("_BurnColor", value);
         }
 
         // Underwater Fog Factor, default = 0
         [ParserTarget("underwaterFogFactor")]
-        public NumericParser<Single> UnderwaterFogFactorSetter
+        public NumericParser<float> UnderwaterFogFactorSetter
         {
-            get { return UnderwaterFogFactor; }
-            set { UnderwaterFogFactor = value; }
+            get => GetFloat("_UnderwaterFogFactor");
+            set => SetFloat("_UnderwaterFogFactor", value);
         }
+
+        public override ShaderParser ShaderParser { get; set; } = Shader;
 
         // Constructors
-        public KSPBumpedLoader()
-        {
-        }
+        public KSPBumpedLoader() { }
 
-        [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public KSPBumpedLoader(String contents) : base(contents)
-        {
-        }
-
-        public KSPBumpedLoader(Material material) : base(material)
-        {
-        }
+        public KSPBumpedLoader(Material material) => Value = new(material);
     }
 }

@@ -22,37 +22,54 @@
  *
  * https://kerbalspaceprogram.com
  */
+
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Kopernicus.Components.MaterialWrapper;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using Kopernicus.UI;
 using UnityEngine;
+
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class PQSTriplanarZoomRotationTextureArrayLoader : PQSTriplanarZoomRotationTextureArray
+    public class PQSTriplanarZoomRotationTextureArrayLoader : BaseMaterialLoader
     {
+        private const String SHADER_NAME = "Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array";
+        private static readonly Shader Shader = Shader.Find(SHADER_NAME);
+
+        // The texture-atlas mod (see ModLoader/TextureAtlas.cs) hot-swaps the shader to one of
+        // the "- N Blend" permutations at runtime. They share the same property layout as the
+        // base shader, so they all map to this loader/wrapper.
+        public static bool UsesSameShader(Material m)
+        {
+            if (m == null) return false;
+            String n = m.shader.name;
+            return n == SHADER_NAME
+                || n == SHADER_NAME + " - 1 Blend"
+                || n == SHADER_NAME + " - 2 Blend"
+                || n == SHADER_NAME + " - 3 Blend"
+                || n == SHADER_NAME + " - 4 Blend";
+        }
+
         // Color Lerp Modifier, default = 1
         [ParserTarget("colorLerpModifier")]
-        public NumericParser<Single> ColorLerpModifierSetter
+        public NumericParser<float> ColorLerpModifierSetter
         {
-            get { return ColorLerpModifier; }
-            set { ColorLerpModifier = value; }
+            get => GetFloat("_ColorLerpModifier");
+            set => SetFloat("_ColorLerpModifier", value);
         }
+
         // Atlas Texture, default = 100000
         [ParserTarget("atlasTiling")]
-        public NumericParser<Single> AtlasTilingSetter
+        public NumericParser<float> AtlasTilingSetter
         {
-            get { return AtlasTiling; }
-            set { AtlasTiling = value; }
+            get => GetFloat("_AtlasTiling");
+            set => SetFloat("_AtlasTiling", value);
         }
 
         // Atlas Texture, default = "white" { }
@@ -70,7 +87,7 @@ namespace Kopernicus.Configuration.MaterialLoader
                 }
 
                 List<Texture2D> textures = value.Select(t => Utility.CreateReadable(t.Value)).ToList();
-                AtlasTex = KSPUtil.GenerateTexture2DArray(textures, TextureFormat.RGBA32, true);
+                Value.SetTexture("_AtlasTex", KSPUtil.GenerateTexture2DArray(textures, TextureFormat.RGBA32, true));
             }
         }
 
@@ -89,215 +106,209 @@ namespace Kopernicus.Configuration.MaterialLoader
                 }
 
                 List<Texture2D> textures = value.Select(t => Utility.CreateReadable(t.Value)).ToList();
-                NormalTex = KSPUtil.GenerateTexture2DArray(textures, TextureFormat.RGBA32, true);
+                Value.SetTexture("_NormalTex", KSPUtil.GenerateTexture2DArray(textures, TextureFormat.RGBA32, true));
             }
         }
+
         // Factor, default = 10
         [ParserTarget("factor")]
-        public NumericParser<Single> FactorSetter
+        public NumericParser<float> FactorSetter
         {
-            get { return Factor; }
-            set { Factor = value; }
+            get => GetFloat("_factor");
+            set => SetFloat("_factor", value);
         }
 
         // Factor Blend Width, default = 0.1
         [ParserTarget("factorBlendWidth")]
-        public NumericParser<Single> FactorBlendWidthSetter
+        public NumericParser<float> FactorBlendWidthSetter
         {
-            get { return FactorBlendWidth; }
-            set { FactorBlendWidth = value; }
+            get => GetFloat("_factorBlendWidth");
+            set => SetFloat("_factorBlendWidth", value);
         }
 
         // Factor Rotation, default = 30
         [ParserTarget("factorRotation")]
-        public NumericParser<Single> FactorRotationSetter
+        public NumericParser<float> FactorRotationSetter
         {
-            get { return FactorRotation; }
-            set { FactorRotation = value; }
+            get => GetFloat("_factorRotation");
+            set => SetFloat("_factorRotation", value);
         }
 
         // Saturation, default = 1
         [ParserTarget("saturation")]
-        public NumericParser<Single> SaturationSetter
+        public NumericParser<float> SaturationSetter
         {
-            get { return Saturation; }
-            set { Saturation = value; }
+            get => GetFloat("_saturation");
+            set => SetFloat("_saturation", value);
         }
 
         // Contrast, default = 1
         [ParserTarget("contrast")]
-        public NumericParser<Single> ContrastSetter
+        public NumericParser<float> ContrastSetter
         {
-            get { return Contrast; }
-            set { Contrast = value; }
+            get => GetFloat("_contrast");
+            set => SetFloat("_contrast", value);
         }
 
         // Colour Unsaturation (A = Factor), default = (1,1,1,0)
         [ParserTarget("tintColor")]
         public ColorParser TintColorSetter
         {
-            get { return TintColor; }
-            set { TintColor = value; }
+            get => GetColor("_tintColor");
+            set => SetColor("_tintColor", value);
         }
 
         // Specular Color, default = (0.2,0.2,0.2,0.2)
         [ParserTarget("specularColor")]
         public ColorParser SpecularColorSetter
         {
-            get { return SpecularColor; }
-            set { SpecularColor = value; }
+            get => GetColor("_specularColor");
+            set => SetColor("_specularColor", value);
         }
 
         // Brightness, default = 2
         [ParserTarget("albedoBrightness")]
-        public NumericParser<Single> AlbedoBrightnessSetter
+        public NumericParser<float> AlbedoBrightnessSetter
         {
-            get { return AlbedoBrightness; }
-            set { AlbedoBrightness = value; }
+            get => GetFloat("_albedoBrightness");
+            set => SetFloat("_albedoBrightness", value);
         }
 
         // Steep Blend, default = 1
         [ParserTarget("steepPower")]
-        public NumericParser<Single> SteepPowerSetter
+        public NumericParser<float> SteepPowerSetter
         {
-            get { return SteepPower; }
-            set { SteepPower = value; }
+            get => GetFloat("_steepPower");
+            set => SetFloat("_steepPower", value);
         }
 
         // Steep Fade Start, default = 20000
         [ParserTarget("steepTexStart")]
-        public NumericParser<Single> SteepTexStartSetter
+        public NumericParser<float> SteepTexStartSetter
         {
-            get { return SteepTexStart; }
-            set { SteepTexStart = value; }
+            get => GetFloat("_steepTexStart");
+            set => SetFloat("_steepTexStart", value);
         }
 
         // Steep Fade End, default = 30000
         [ParserTarget("steepTexEnd")]
-        public NumericParser<Single> SteepTexEndSetter
+        public NumericParser<float> SteepTexEndSetter
         {
-            get { return SteepTexEnd; }
-            set { SteepTexEnd = value; }
+            get => GetFloat("_steepTexEnd");
+            set => SetFloat("_steepTexEnd", value);
         }
 
         // Steep Texture, default = "white" { }
         [ParserTarget("steepTex")]
-        public Texture2DParser SteepTexSetter
+        public MaterialTextureParser SteepTexSetter
         {
-            get { return SteepTex; }
-            set { SteepTex = value; }
+            get => null;
+            set => SetTexture("_steepTex", value);
         }
 
         [ParserTarget("steepTexScale")]
         public Vector2Parser SteepTexScaleSetter
         {
-            get { return SteepTexScale; }
-            set { SteepTexScale = value; }
+            get => GetTextureScale("_steepTex");
+            set => SetTextureScale("_steepTex", value);
         }
 
         [ParserTarget("steepTexOffset")]
         public Vector2Parser SteepTexOffsetSetter
         {
-            get { return SteepTexOffset; }
-            set { SteepTexOffset = value; }
+            get => GetTextureOffset("_steepTex");
+            set => SetTextureOffset("_steepTex", value);
         }
 
         // Steep Bump Map, default = "bump" { }
         [ParserTarget("steepBumpMap")]
-        public Texture2DParser SteepBumpMapSetter
+        public MaterialTextureParser SteepBumpMapSetter
         {
-            get { return SteepBumpMap; }
-            set { SteepBumpMap = value; }
+            get => null;
+            set => SetTexture("_steepBumpMap", value);
         }
 
         [ParserTarget("steepBumpMapScale")]
         public Vector2Parser SteepBumpMapScaleSetter
         {
-            get { return SteepBumpMapScale; }
-            set { SteepBumpMapScale = value; }
+            get => GetTextureScale("_steepBumpMap");
+            set => SetTextureScale("_steepBumpMap", value);
         }
 
         [ParserTarget("steepBumpMapOffset")]
         public Vector2Parser SteepBumpMapOffsetSetter
         {
-            get { return SteepBumpMapOffset; }
-            set { SteepBumpMapOffset = value; }
+            get => GetTextureOffset("_steepBumpMap");
+            set => SetTextureOffset("_steepBumpMap", value);
         }
 
         // Steep Near Tiling, default = 1
         [ParserTarget("steepNearTiling")]
-        public NumericParser<Single> SteepNearTilingSetter
+        public NumericParser<float> SteepNearTilingSetter
         {
-            get { return SteepNearTiling; }
-            set { SteepNearTiling = value; }
+            get => GetFloat("_steepNearTiling");
+            set => SetFloat("_steepNearTiling", value);
         }
 
         // Steep Far Tiling, default = 1
         [ParserTarget("steepTiling")]
-        public NumericParser<Single> SteepTilingSetter
+        public NumericParser<float> SteepTilingSetter
         {
-            get { return SteepTiling; }
-            set { SteepTiling = value; }
+            get => GetFloat("_steepTiling");
+            set => SetFloat("_steepTiling", value);
         }
 
         // AP Global Density, default = 1
         [ParserTarget("globalDensity")]
-        public NumericParser<Single> GlobalDensitySetter
+        public NumericParser<float> GlobalDensitySetter
         {
-            get { return GlobalDensity; }
-            set { GlobalDensity = value; }
+            get => GetFloat("_globalDensity");
+            set => SetFloat("_globalDensity", value);
         }
 
         // FogColorRamp, default = "white" { }
         [ParserTarget("fogColorRamp")]
-        public Texture2DParser FogColorRampSetter
+        public MaterialTextureParser FogColorRampSetter
         {
-            get { return FogColorRamp; }
-            set { FogColorRamp = value; }
+            get => null;
+            set => SetTexture("_fogColorRamp", value);
         }
 
         [ParserTarget("fogColorRampScale")]
         public Vector2Parser FogColorRampScaleSetter
         {
-            get { return FogColorRampScale; }
-            set { FogColorRampScale = value; }
+            get => GetTextureScale("_fogColorRamp");
+            set => SetTextureScale("_fogColorRamp", value);
         }
 
         [ParserTarget("fogColorRampOffset")]
         public Vector2Parser FogColorRampOffsetSetter
         {
-            get { return FogColorRampOffset; }
-            set { FogColorRampOffset = value; }
+            get => GetTextureOffset("_fogColorRamp");
+            set => SetTextureOffset("_fogColorRamp", value);
         }
 
         // PlanetOpacity, default = 1
         [ParserTarget("planetOpacity")]
-        public NumericParser<Single> PlanetOpacitySetter
+        public NumericParser<float> PlanetOpacitySetter
         {
-            get { return PlanetOpacity; }
-            set { PlanetOpacity = value; }
+            get => GetFloat("_PlanetOpacity");
+            set => SetFloat("_PlanetOpacity", value);
         }
 
         // Ocean Fog Dist, default = 1000
         [ParserTarget("oceanFogDistance")]
-        public NumericParser<Single> OceanFogDistanceSetter
+        public NumericParser<float> OceanFogDistanceSetter
         {
-            get { return OceanFogDistance; }
-            set { OceanFogDistance = value; }
+            get => GetFloat("_oceanFogDistance");
+            set => SetFloat("_oceanFogDistance", value);
         }
+
+        public override ShaderParser ShaderParser { get; set; } = Shader;
 
         // Constructors
-        public PQSTriplanarZoomRotationTextureArrayLoader()
-        {
-        }
+        public PQSTriplanarZoomRotationTextureArrayLoader() { }
 
-        [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public PQSTriplanarZoomRotationTextureArrayLoader(String contents) : base(contents)
-        {
-        }
-
-        public PQSTriplanarZoomRotationTextureArrayLoader(Material material) : base(material)
-        {
-        }
+        public PQSTriplanarZoomRotationTextureArrayLoader(Material material) => Value = new(material);
     }
 }

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -24,11 +24,10 @@
  */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using Kopernicus.Components.MaterialWrapper;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using Kopernicus.UI;
 using UnityEngine;
@@ -37,340 +36,342 @@ using Gradient = Kopernicus.Configuration.Parsing.Gradient;
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class PQSMainOptimisedLoader : PQSMainOptimised
+    public class PQSMainOptimisedLoader : BaseMaterialLoader
     {
+        private const String SHADER_NAME = "Terrain/PQS/PQS Main - Optimised";
+        private static readonly Shader Shader = Shader.Find(SHADER_NAME);
+        public static bool UsesSameShader(Material m) => m != null && m.shader.name == SHADER_NAME;
+
         // Saturation, default = 1
         [ParserTarget("saturation")]
-        public NumericParser<Single> SaturationSetter
+        public NumericParser<float> SaturationSetter
         {
-            get { return Saturation; }
-            set { Saturation = value; }
+            get => GetFloat("_saturation");
+            set => SetFloat("_saturation", value);
         }
 
         // Contrast, default = 1
         [ParserTarget("contrast")]
-        public NumericParser<Single> ContrastSetter
+        public NumericParser<float> ContrastSetter
         {
-            get { return Contrast; }
-            set { Contrast = value; }
+            get => GetFloat("_contrast");
+            set => SetFloat("_contrast", value);
         }
 
         // Colour Unsaturation (A = Factor), default = (1,1,1,0)
         [ParserTarget("tintColor")]
         public ColorParser TintColorSetter
         {
-            get { return TintColor; }
-            set { TintColor = value; }
+            get => GetColor("_tintColor");
+            set => SetColor("_tintColor", value);
         }
 
         // Near Blend, default = 0.5
         [ParserTarget("powerNear")]
-        public NumericParser<Single> PowerNearSetter
+        public NumericParser<float> PowerNearSetter
         {
-            get { return PowerNear; }
-            set { PowerNear = value; }
+            get => GetFloat("_powerNear");
+            set => SetFloat("_powerNear", value);
         }
 
         // Far Blend, default = 0.5
         [ParserTarget("powerFar")]
-        public NumericParser<Single> PowerFarSetter
+        public NumericParser<float> PowerFarSetter
         {
-            get { return PowerFar; }
-            set { PowerFar = value; }
+            get => GetFloat("_powerFar");
+            set => SetFloat("_powerFar", value);
         }
 
         // NearFar Start, default = 2000
         [ParserTarget("groundTexStart")]
-        public NumericParser<Single> GroundTexStartSetter
+        public NumericParser<float> GroundTexStartSetter
         {
-            get { return GroundTexStart; }
-            set { GroundTexStart = value; }
+            get => GetFloat("_groundTexStart");
+            set => SetFloat("_groundTexStart", value);
         }
 
         // NearFar End, default = 10000
         [ParserTarget("groundTexEnd")]
-        public NumericParser<Single> GroundTexEndSetter
+        public NumericParser<float> GroundTexEndSetter
         {
-            get { return GroundTexEnd; }
-            set { GroundTexEnd = value; }
+            get => GetFloat("_groundTexEnd");
+            set => SetFloat("_groundTexEnd", value);
         }
 
         // Steep Blend, default = 1
         [ParserTarget("steepPower")]
-        public NumericParser<Single> SteepPowerSetter
+        public NumericParser<float> SteepPowerSetter
         {
-            get { return SteepPower; }
-            set { SteepPower = value; }
+            get => GetFloat("_steepPower");
+            set => SetFloat("_steepPower", value);
         }
 
         // Steep Fade Start, default = 20000
         [ParserTarget("steepTexStart")]
-        public NumericParser<Single> SteepTexStartSetter
+        public NumericParser<float> SteepTexStartSetter
         {
-            get { return SteepTexStart; }
-            set { SteepTexStart = value; }
+            get => GetFloat("_steepTexStart");
+            set => SetFloat("_steepTexStart", value);
         }
 
         // Steep Fade End, default = 30000
         [ParserTarget("steepTexEnd")]
-        public NumericParser<Single> SteepTexEndSetter
+        public NumericParser<float> SteepTexEndSetter
         {
-            get { return SteepTexEnd; }
-            set { SteepTexEnd = value; }
+            get => GetFloat("_steepTexEnd");
+            set => SetFloat("_steepTexEnd", value);
         }
 
         // Steep Texture, default = "white" { }
         [ParserTarget("steepTex")]
-        public Texture2DParser SteepTexSetter
+        public MaterialTextureParser SteepTexSetter
         {
-            get { return SteepTex; }
-            set { SteepTex = value; }
+            get => null;
+            set => SetTexture("_steepTex", value);
         }
 
         [ParserTarget("steepTexScale")]
         public Vector2Parser SteepTexScaleSetter
         {
-            get { return SteepTexScale; }
-            set { SteepTexScale = value; }
+            get => GetTextureScale("_steepTex");
+            set => SetTextureScale("_steepTex", value);
         }
 
         [ParserTarget("steepTexOffset")]
         public Vector2Parser SteepTexOffsetSetter
         {
-            get { return SteepTexOffset; }
-            set { SteepTexOffset = value; }
+            get => GetTextureOffset("_steepTex");
+            set => SetTextureOffset("_steepTex", value);
         }
 
         // Steep Bump Map, default = "bump" { }
         [ParserTarget("steepBumpMap")]
-        public Texture2DParser SteepBumpMapSetter
+        public MaterialTextureParser SteepBumpMapSetter
         {
-            get { return SteepBumpMap; }
-            set { SteepBumpMap = value; }
+            get => null;
+            set => SetTexture("_steepBumpMap", value);
         }
 
         [ParserTarget("steepBumpMapScale")]
         public Vector2Parser SteepBumpMapScaleSetter
         {
-            get { return SteepBumpMapScale; }
-            set { SteepBumpMapScale = value; }
+            get => GetTextureScale("_steepBumpMap");
+            set => SetTextureScale("_steepBumpMap", value);
         }
 
         [ParserTarget("steepBumpMapOffset")]
         public Vector2Parser SteepBumpMapOffsetSetter
         {
-            get { return SteepBumpMapOffset; }
-            set { SteepBumpMapOffset = value; }
+            get => GetTextureOffset("_steepBumpMap");
+            set => SetTextureOffset("_steepBumpMap", value);
         }
 
         // Steep Near Tiling, default = 1
         [ParserTarget("steepNearTiling")]
-        public NumericParser<Single> SteepNearTilingSetter
+        public NumericParser<float> SteepNearTilingSetter
         {
-            get { return SteepNearTiling; }
-            set { SteepNearTiling = value; }
+            get => GetFloat("_steepNearTiling");
+            set => SetFloat("_steepNearTiling", value);
         }
 
         // Steep Far Tiling, default = 1
         [ParserTarget("steepTiling")]
-        public NumericParser<Single> SteepTilingSetter
+        public NumericParser<float> SteepTilingSetter
         {
-            get { return SteepTiling; }
-            set { SteepTiling = value; }
+            get => GetFloat("_steepTiling");
+            set => SetFloat("_steepTiling", value);
         }
 
         // Low Texture, default = "white" { }
         [ParserTarget("lowTex")]
-        public Texture2DParser LowTexSetter
+        public MaterialTextureParser LowTexSetter
         {
-            get { return LowTex; }
-            set { LowTex = value; }
+            get => null;
+            set => SetTexture("_lowTex", value);
         }
 
         [ParserTarget("lowTexScale")]
         public Vector2Parser LowTexScaleSetter
         {
-            get { return LowTexScale; }
-            set { LowTexScale = value; }
+            get => GetTextureScale("_lowTex");
+            set => SetTextureScale("_lowTex", value);
         }
 
         [ParserTarget("lowTexOffset")]
         public Vector2Parser LowTexOffsetSetter
         {
-            get { return LowTexOffset; }
-            set { LowTexOffset = value; }
+            get => GetTextureOffset("_lowTex");
+            set => SetTextureOffset("_lowTex", value);
         }
 
         // Low Near Tiling, default = 1000
         [ParserTarget("lowNearTiling")]
-        public NumericParser<Single> LowNearTilingSetter
+        public NumericParser<float> LowNearTilingSetter
         {
-            get { return LowNearTiling; }
-            set { LowNearTiling = value; }
+            get => GetFloat("_lowNearTiling");
+            set => SetFloat("_lowNearTiling", value);
         }
 
         // Low Far Tiling, default = 10
         [ParserTarget("lowMultiFactor")]
-        public NumericParser<Single> LowMultiFactorSetter
+        public NumericParser<float> LowMultiFactorSetter
         {
-            get { return LowMultiFactor; }
-            set { LowMultiFactor = value; }
+            get => GetFloat("_lowMultiFactor");
+            set => SetFloat("_lowMultiFactor", value);
         }
 
         // Mid Texture, default = "white" { }
         [ParserTarget("midTex")]
-        public Texture2DParser MidTexSetter
+        public MaterialTextureParser MidTexSetter
         {
-            get { return MidTex; }
-            set { MidTex = value; }
+            get => null;
+            set => SetTexture("_midTex", value);
         }
 
         [ParserTarget("midTexScale")]
         public Vector2Parser MidTexScaleSetter
         {
-            get { return MidTexScale; }
-            set { MidTexScale = value; }
+            get => GetTextureScale("_midTex");
+            set => SetTextureScale("_midTex", value);
         }
 
         [ParserTarget("midTexOffset")]
         public Vector2Parser MidTexOffsetSetter
         {
-            get { return MidTexOffset; }
-            set { MidTexOffset = value; }
+            get => GetTextureOffset("_midTex");
+            set => SetTextureOffset("_midTex", value);
         }
 
         // Mid Bump Map, default = "bump" { }
         [ParserTarget("midBumpMap")]
-        public Texture2DParser MidBumpMapSetter
+        public MaterialTextureParser MidBumpMapSetter
         {
-            get { return MidBumpMap; }
-            set { MidBumpMap = value; }
+            get => null;
+            set => SetTexture("_midBumpMap", value);
         }
 
         [ParserTarget("midBumpMapScale")]
         public Vector2Parser MidBumpMapScaleSetter
         {
-            get { return MidBumpMapScale; }
-            set { MidBumpMapScale = value; }
+            get => GetTextureScale("_midBumpMap");
+            set => SetTextureScale("_midBumpMap", value);
         }
 
         [ParserTarget("midBumpMapOffset")]
         public Vector2Parser MidBumpMapOffsetSetter
         {
-            get { return MidBumpMapOffset; }
-            set { MidBumpMapOffset = value; }
+            get => GetTextureOffset("_midBumpMap");
+            set => SetTextureOffset("_midBumpMap", value);
         }
 
         // Mid Near Tiling, default = 1000
         [ParserTarget("midNearTiling")]
-        public NumericParser<Single> MidNearTilingSetter
+        public NumericParser<float> MidNearTilingSetter
         {
-            get { return MidNearTiling; }
-            set { MidNearTiling = value; }
+            get => GetFloat("_midNearTiling");
+            set => SetFloat("_midNearTiling", value);
         }
 
         // Mid Far Tiling, default = 10
         [ParserTarget("midMultiFactor")]
-        public NumericParser<Single> MidMultiFactorSetter
+        public NumericParser<float> MidMultiFactorSetter
         {
-            get { return MidMultiFactor; }
-            set { MidMultiFactor = value; }
+            get => GetFloat("_midMultiFactor");
+            set => SetFloat("_midMultiFactor", value);
         }
 
         // Mid Bump Near Tiling, default = 1
         [ParserTarget("midBumpNearTiling")]
-        public NumericParser<Single> MidBumpNearTilingSetter
+        public NumericParser<float> MidBumpNearTilingSetter
         {
-            get { return MidBumpNearTiling; }
-            set { MidBumpNearTiling = value; }
+            get => GetFloat("_midBumpNearTiling");
+            set => SetFloat("_midBumpNearTiling", value);
         }
 
         // High Texture, default = "white" { }
         [ParserTarget("highTex")]
-        public Texture2DParser HighTexSetter
+        public MaterialTextureParser HighTexSetter
         {
-            get { return HighTex; }
-            set { HighTex = value; }
+            get => null;
+            set => SetTexture("_highTex", value);
         }
 
         [ParserTarget("highTexScale")]
         public Vector2Parser HighTexScaleSetter
         {
-            get { return HighTexScale; }
-            set { HighTexScale = value; }
+            get => GetTextureScale("_highTex");
+            set => SetTextureScale("_highTex", value);
         }
 
         [ParserTarget("highTexOffset")]
         public Vector2Parser HighTexOffsetSetter
         {
-            get { return HighTexOffset; }
-            set { HighTexOffset = value; }
+            get => GetTextureOffset("_highTex");
+            set => SetTextureOffset("_highTex", value);
         }
 
         // High Near Tiling, default = 1000
         [ParserTarget("highNearTiling")]
-        public NumericParser<Single> HighNearTilingSetter
+        public NumericParser<float> HighNearTilingSetter
         {
-            get { return HighNearTiling; }
-            set { HighNearTiling = value; }
+            get => GetFloat("_highNearTiling");
+            set => SetFloat("_highNearTiling", value);
         }
 
         // High Far Tiling, default = 10
         [ParserTarget("highMultiFactor")]
-        public NumericParser<Single> HighMultiFactorSetter
+        public NumericParser<float> HighMultiFactorSetter
         {
-            get { return HighMultiFactor; }
-            set { HighMultiFactor = value; }
+            get => GetFloat("_highMultiFactor");
+            set => SetFloat("_highMultiFactor", value);
         }
 
         // Low Transition Start, default = 0
         [ParserTarget("lowStart")]
-        public NumericParser<Single> LowStartSetter
+        public NumericParser<float> LowStartSetter
         {
-            get { return LowStart; }
-            set { LowStart = value; }
+            get => GetFloat("_lowStart");
+            set => SetFloat("_lowStart", value);
         }
 
         // Low Transition End, default = 0.3
         [ParserTarget("lowEnd")]
-        public NumericParser<Single> LowEndSetter
+        public NumericParser<float> LowEndSetter
         {
-            get { return LowEnd; }
-            set { LowEnd = value; }
+            get => GetFloat("_lowEnd");
+            set => SetFloat("_lowEnd", value);
         }
 
         // High Transition Start, default = 0.8
         [ParserTarget("highStart")]
-        public NumericParser<Single> HighStartSetter
+        public NumericParser<float> HighStartSetter
         {
-            get { return HighStart; }
-            set { HighStart = value; }
+            get => GetFloat("_highStart");
+            set => SetFloat("_highStart", value);
         }
 
         // High Transition End, default = 1
         [ParserTarget("highEnd")]
-        public NumericParser<Single> HighEndSetter
+        public NumericParser<float> HighEndSetter
         {
-            get { return HighEnd; }
-            set { HighEnd = value; }
+            get => GetFloat("_highEnd");
+            set => SetFloat("_highEnd", value);
         }
 
         // AP Global Density, default = 1
         [ParserTarget("globalDensity")]
-        public NumericParser<Single> GlobalDensitySetter
+        public NumericParser<float> GlobalDensitySetter
         {
-            get { return GlobalDensity; }
-            set { GlobalDensity = value; }
+            get => GetFloat("_globalDensity");
+            set => SetFloat("_globalDensity", value);
         }
 
         // FogColorRamp, default = "white" { }
         [ParserTarget("fogColorRamp")]
-        public Texture2DParser FogColorRampSetter
+        public MaterialTextureParser FogColorRampSetter
         {
-            get { return FogColorRamp; }
-            set { FogColorRamp = value; }
+            get => null;
+            set => SetTexture("_fogColorRamp", value);
         }
 
         // FogColorRamp, default = "white" { }
@@ -378,68 +379,44 @@ namespace Kopernicus.Configuration.MaterialLoader
         [KittopiaHideOption]
         public Gradient FogColorRampGradientSetter
         {
-            set
-            {
-                // Generate the ramp from a gradient
-                Texture2D ramp = new Texture2D(512, 1);
-                Color32[] colors = ramp.GetPixels32(0);
-                for (Int32 i = 0; i < colors.Length; i++)
-                {
-                    // Compute the position in the gradient
-                    Single k = (Single)i / colors.Length;
-                    colors[i] = value.ColorAt(k);
-                }
-
-                ramp.SetPixels32(colors, 0);
-                ramp.Apply(true, false);
-
-                // Set the color ramp
-                FogColorRamp = ramp;
-            }
+            set => SetGradient("_fogColorRamp", value);
         }
 
         [ParserTarget("fogColorRampScale")]
         public Vector2Parser FogColorRampScaleSetter
         {
-            get { return FogColorRampScale; }
-            set { FogColorRampScale = value; }
+            get => GetTextureScale("_fogColorRamp");
+            set => SetTextureScale("_fogColorRamp", value);
         }
 
         [ParserTarget("fogColorRampOffset")]
         public Vector2Parser FogColorRampOffsetSetter
         {
-            get { return FogColorRampOffset; }
-            set { FogColorRampOffset = value; }
+            get => GetTextureOffset("_fogColorRamp");
+            set => SetTextureOffset("_fogColorRamp", value);
         }
 
         // PlanetOpacity, default = 1
         [ParserTarget("planetOpacity")]
-        public NumericParser<Single> PlanetOpacitySetter
+        public NumericParser<float> PlanetOpacitySetter
         {
-            get { return PlanetOpacity; }
-            set { PlanetOpacity = value; }
+            get => GetFloat("_PlanetOpacity");
+            set => SetFloat("_PlanetOpacity", value);
         }
 
         // Ocean Fog Dist, default = 1000
         [ParserTarget("oceanFogDistance")]
-        public NumericParser<Single> OceanFogDistanceSetter
+        public NumericParser<float> OceanFogDistanceSetter
         {
-            get { return OceanFogDistance; }
-            set { OceanFogDistance = value; }
+            get => GetFloat("_oceanFogDistance");
+            set => SetFloat("_oceanFogDistance", value);
         }
+
+        public override ShaderParser ShaderParser { get; set; } = Shader;
 
         // Constructors
-        public PQSMainOptimisedLoader()
-        {
-        }
+        public PQSMainOptimisedLoader() { }
 
-        [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public PQSMainOptimisedLoader(String contents) : base(contents)
-        {
-        }
-
-        public PQSMainOptimisedLoader(Material material) : base(material)
-        {
-        }
+        public PQSMainOptimisedLoader(Material material) => Value = new(material);
     }
 }

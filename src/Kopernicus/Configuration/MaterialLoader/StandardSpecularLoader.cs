@@ -24,368 +24,362 @@
  */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using Kopernicus.Components.MaterialWrapper;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using UnityEngine;
 
 namespace Kopernicus.Configuration.MaterialLoader
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     [RequireConfigType(ConfigType.Node)]
-    public class StandardSpecularLoader : StandardSpecular
+    public class StandardSpecularLoader : BaseMaterialLoader
     {
+        private const String SHADER_NAME = "Standard (Specular setup)";
+        private static readonly Shader Shader = Shader.Find(SHADER_NAME);
+        public static bool UsesSameShader(Material m) => m != null && m.shader.name == SHADER_NAME;
+
         // Color, default = (1.000000,1.000000,1.000000,1.000000)
         [ParserTarget("color")]
         public ColorParser colorSetter
         {
-            get { return Color; }
-            set { Color = value; }
+            get => GetColor("_Color");
+            set => SetColor("_Color", value);
         }
 
         // Albedo, default = "white" { }
         [ParserTarget("mainTex")]
-        public Texture2DParser mainTexSetter
+        public MaterialTextureParser mainTexSetter
         {
-            get { return MainTex; }
-            set { MainTex = value; }
+            get => null;
+            set => SetTexture("_MainTex", value);
         }
 
         [ParserTarget("mainTexScale")]
         public Vector2Parser mainTexScaleSetter
         {
-            get { return MainTexScale; }
-            set { MainTexScale = value; }
+            get => GetTextureScale("_MainTex");
+            set => SetTextureScale("_MainTex", value);
         }
 
         [ParserTarget("mainTexOffset")]
         public Vector2Parser mainTexOffsetSetter
         {
-            get { return MainTexOffset; }
-            set { MainTexOffset = value; }
+            get => GetTextureOffset("_MainTex");
+            set => SetTextureOffset("_MainTex", value);
         }
 
         // Alpha Cutoff, default = 0.500000
         [ParserTarget("cutoff")]
-        public NumericParser<Single> cutoffSetter
+        public NumericParser<float> cutoffSetter
         {
-            get { return Cutoff; }
-            set { Cutoff = value; }
+            get => GetFloat("_Cutoff");
+            set => SetFloat("_Cutoff", value);
         }
 
         // Smoothness, default = 0.500000
         [ParserTarget("glossiness")]
-        public NumericParser<Single> glossinessSetter
+        public NumericParser<float> glossinessSetter
         {
-            get { return Glossiness; }
-            set { Glossiness = value; }
+            get => GetFloat("_Glossiness");
+            set => SetFloat("_Glossiness", value);
         }
 
         // Smoothness Scale, default = 1.000000
         [ParserTarget("glossMapScale")]
-        public NumericParser<Single> glossMapScaleSetter
+        public NumericParser<float> glossMapScaleSetter
         {
-            get { return GlossMapScale; }
-            set { GlossMapScale = value; }
+            get => GetFloat("_GlossMapScale");
+            set => SetFloat("_GlossMapScale", value);
         }
 
         // Smoothness texture channel, default = 0.000000
         [ParserTarget("smoothnessTextureChannel")]
-        public EnumParser<TextureChannel> smoothnessTextureChannelSetter
+        public NumericParser<float> smoothnessTextureChannelSetter
         {
-            get { return SmoothnessTextureChannel; }
-            set { SmoothnessTextureChannel = value; }
+            get => GetFloat("_SmoothnessTextureChannel");
+            set => SetFloat("_SmoothnessTextureChannel", value);
         }
 
         // Specular, default = (0.2,0.2,0.2,1)
         [ParserTarget("specColor")]
         public ColorParser specColorSetter
         {
-            get { return SpecColor; }
-            set { SpecColor = value; }
+            get => GetColor("_SpecColor");
+            set => SetColor("_SpecColor", value);
         }
 
         // Specular, default = "white" { }
         [ParserTarget("specGlossMap")]
-        public Texture2DParser specGlossMapSetter
+        public MaterialTextureParser specGlossMapSetter
         {
-            get { return SpecGlossMap; }
-            set { SpecGlossMap = value; }
+            get => null;
+            set => SetTexture("_SpecGlossMap", value);
         }
 
         [ParserTarget("metallicGlossMapScale")]
         public Vector2Parser metallicGlossMapScaleSetter
         {
-            get { return MetallicGlossMapScale; }
-            set { MetallicGlossMapScale = value; }
+            get => GetTextureScale("_SpecGlossMap");
+            set => SetTextureScale("_SpecGlossMap", value);
         }
 
         [ParserTarget("metallicGlossMapOffset")]
         public Vector2Parser metallicGlossMapOffsetSetter
         {
-            get { return MetallicGlossMapOffset; }
-            set { MetallicGlossMapOffset = value; }
+            get => GetTextureOffset("_SpecGlossMap");
+            set => SetTextureOffset("_SpecGlossMap", value);
         }
 
         // Specular Highlights, default = 1.000000
         [ParserTarget("specularHighlights")]
-        public NumericParser<Boolean> specularHighlightsSetter
+        public NumericParser<float> specularHighlightsSetter
         {
-            get { return SpecularHighlights; }
-            set { SpecularHighlights = value; }
+            get => GetFloat("_SpecularHighlights");
+            set => SetFloat("_SpecularHighlights", value);
         }
 
         // Glossy Reflections, default = 1.000000
         [ParserTarget("glossyReflections")]
-        public NumericParser<Boolean> glossyReflectionsSetter
+        public NumericParser<float> glossyReflectionsSetter
         {
-            get { return GlossyReflections; }
-            set { GlossyReflections = value; }
+            get => GetFloat("_GlossyReflections");
+            set => SetFloat("_GlossyReflections", value);
         }
 
         // Scale, default = 1.000000
         [ParserTarget("bumpScale")]
-        public NumericParser<Single> bumpScaleSetter
+        public NumericParser<float> bumpScaleSetter
         {
-            get { return BumpScale; }
-            set { BumpScale = value; }
+            get => GetFloat("_BumpScale");
+            set => SetFloat("_BumpScale", value);
         }
 
         // Normal Map, default = "bump" { }
         [ParserTarget("bumpMap")]
-        public Texture2DParser bumpMapSetter
+        public MaterialTextureParser bumpMapSetter
         {
-            get { return BumpMap; }
-            set { BumpMap = value; }
+            get => null;
+            set => SetTexture("_BumpMap", value);
         }
 
         [ParserTarget("bumpMapScale")]
         public Vector2Parser bumpMapScaleSetter
         {
-            get { return BumpMapScale; }
-            set { BumpMapScale = value; }
+            get => GetTextureScale("_BumpMap");
+            set => SetTextureScale("_BumpMap", value);
         }
 
         [ParserTarget("bumpMapOffset")]
         public Vector2Parser bumpMapOffsetSetter
         {
-            get { return BumpMapOffset; }
-            set { BumpMapOffset = value; }
+            get => GetTextureOffset("_BumpMap");
+            set => SetTextureOffset("_BumpMap", value);
         }
 
         // Height Scale, default = 0.020000
         [ParserTarget("parallax")]
-        public NumericParser<Single> parallaxSetter
+        public NumericParser<float> parallaxSetter
         {
-            get { return Parallax; }
-            set { Parallax = value; }
+            get => GetFloat("_Parallax");
+            set => SetFloat("_Parallax", value);
         }
 
         // Height Map, default = "black" { }
         [ParserTarget("parallaxMap")]
-        public Texture2DParser parallaxMapSetter
+        public MaterialTextureParser parallaxMapSetter
         {
-            get { return ParallaxMap; }
-            set { ParallaxMap = value; }
+            get => null;
+            set => SetTexture("_ParallaxMap", value);
         }
 
         [ParserTarget("parallaxMapScale")]
         public Vector2Parser parallaxMapScaleSetter
         {
-            get { return ParallaxMapScale; }
-            set { ParallaxMapScale = value; }
+            get => GetTextureScale("_ParallaxMap");
+            set => SetTextureScale("_ParallaxMap", value);
         }
 
         [ParserTarget("parallaxMapOffset")]
         public Vector2Parser parallaxMapOffsetSetter
         {
-            get { return ParallaxMapOffset; }
-            set { ParallaxMapOffset = value; }
+            get => GetTextureOffset("_ParallaxMap");
+            set => SetTextureOffset("_ParallaxMap", value);
         }
 
         // Strength, default = 1.000000
         [ParserTarget("occlusionStrength")]
-        public NumericParser<Single> occlusionStrengthSetter
+        public NumericParser<float> occlusionStrengthSetter
         {
-            get { return OcclusionStrength; }
-            set { OcclusionStrength = value; }
+            get => GetFloat("_OcclusionStrength");
+            set => SetFloat("_OcclusionStrength", value);
         }
 
         // Occlusion, default = "white" { }
         [ParserTarget("occlusionMap")]
-        public Texture2DParser occlusionMapSetter
+        public MaterialTextureParser occlusionMapSetter
         {
-            get { return OcclusionMap; }
-            set { OcclusionMap = value; }
+            get => null;
+            set => SetTexture("_OcclusionMap", value);
         }
 
         [ParserTarget("occlusionMapScale")]
         public Vector2Parser occlusionMapScaleSetter
         {
-            get { return OcclusionMapScale; }
-            set { OcclusionMapScale = value; }
+            get => GetTextureScale("_OcclusionMap");
+            set => SetTextureScale("_OcclusionMap", value);
         }
 
         [ParserTarget("occlusionMapOffset")]
         public Vector2Parser occlusionMapOffsetSetter
         {
-            get { return OcclusionMapOffset; }
-            set { OcclusionMapOffset = value; }
+            get => GetTextureOffset("_OcclusionMap");
+            set => SetTextureOffset("_OcclusionMap", value);
         }
 
         // Color, default = (0.000000,0.000000,0.000000,1.000000)
         [ParserTarget("emissionColor")]
         public ColorParser emissionColorSetter
         {
-            get { return EmissionColor; }
-            set { EmissionColor = value; }
+            get => GetColor("_EmissionColor");
+            set => SetColor("_EmissionColor", value);
         }
 
         // Emission, default = "white" { }
         [ParserTarget("emissionMap")]
-        public Texture2DParser emissionMapSetter
+        public MaterialTextureParser emissionMapSetter
         {
-            get { return EmissionMap; }
-            set { EmissionMap = value; }
+            get => null;
+            set => SetTexture("_EmissionMap", value);
         }
 
         [ParserTarget("emissionMapScale")]
         public Vector2Parser emissionMapScaleSetter
         {
-            get { return EmissionMapScale; }
-            set { EmissionMapScale = value; }
+            get => GetTextureScale("_EmissionMap");
+            set => SetTextureScale("_EmissionMap", value);
         }
 
         [ParserTarget("emissionMapOffset")]
         public Vector2Parser emissionMapOffsetSetter
         {
-            get { return EmissionMapOffset; }
-            set { EmissionMapOffset = value; }
+            get => GetTextureOffset("_EmissionMap");
+            set => SetTextureOffset("_EmissionMap", value);
         }
 
         // Detail Mask, default = "white" { }
         [ParserTarget("detailMask")]
-        public Texture2DParser detailMaskSetter
+        public MaterialTextureParser detailMaskSetter
         {
-            get { return DetailMask; }
-            set { DetailMask = value; }
+            get => null;
+            set => SetTexture("_DetailMask", value);
         }
 
         [ParserTarget("detailMaskScale")]
         public Vector2Parser detailMaskScaleSetter
         {
-            get { return DetailMaskScale; }
-            set { DetailMaskScale = value; }
+            get => GetTextureScale("_DetailMask");
+            set => SetTextureScale("_DetailMask", value);
         }
 
         [ParserTarget("detailMaskOffset")]
         public Vector2Parser detailMaskOffsetSetter
         {
-            get { return DetailMaskOffset; }
-            set { DetailMaskOffset = value; }
+            get => GetTextureOffset("_DetailMask");
+            set => SetTextureOffset("_DetailMask", value);
         }
 
         // Detail Albedo x2, default = "grey" { }
         [ParserTarget("detailAlbedoMap")]
-        public Texture2DParser detailAlbedoMapSetter
+        public MaterialTextureParser detailAlbedoMapSetter
         {
-            get { return DetailAlbedoMap; }
-            set { DetailAlbedoMap = value; }
+            get => null;
+            set => SetTexture("_DetailAlbedoMap", value);
         }
 
         [ParserTarget("detailAlbedoMapScale")]
         public Vector2Parser detailAlbedoMapScaleSetter
         {
-            get { return DetailAlbedoMapScale; }
-            set { DetailAlbedoMapScale = value; }
+            get => GetTextureScale("_DetailAlbedoMap");
+            set => SetTextureScale("_DetailAlbedoMap", value);
         }
 
         [ParserTarget("detailAlbedoMapOffset")]
         public Vector2Parser detailAlbedoMapOffsetSetter
         {
-            get { return DetailAlbedoMapOffset; }
-            set { DetailAlbedoMapOffset = value; }
+            get => GetTextureOffset("_DetailAlbedoMap");
+            set => SetTextureOffset("_DetailAlbedoMap", value);
         }
 
         // Normal Map, default = "bump" { }
         [ParserTarget("detailNormalMap")]
-        public Texture2DParser detailNormalMapSetter
+        public MaterialTextureParser detailNormalMapSetter
         {
-            get { return DetailNormalMap; }
-            set { DetailNormalMap = value; }
+            get => null;
+            set => SetTexture("_DetailNormalMap", value);
         }
 
         // Scale, default = 1.000000
         [ParserTarget("detailNormalMapScale")]
         public Vector2Parser detailNormalMapScaleSetter
         {
-            get { return DetailNormalMapScale; }
-            set { DetailNormalMapScale = value; }
+            get => GetTextureScale("_DetailNormalMap");
+            set => SetTextureScale("_DetailNormalMap", value);
         }
 
         [ParserTarget("detailNormalMapOffset")]
         public Vector2Parser detailNormalMapOffsetSetter
         {
-            get { return DetailNormalMapOffset; }
-            set { DetailNormalMapOffset = value; }
+            get => GetTextureOffset("_DetailNormalMap");
+            set => SetTextureOffset("_DetailNormalMap", value);
         }
 
         // UV Set for secondary textures, default = 0.000000
         [ParserTarget("UVSec")]
-        public EnumParser<UvSet> UVSecSetter
+        public NumericParser<float> UVSecSetter
         {
-            get { return UvSec; }
-            set { UvSec = value; }
+            get => GetFloat("_UVSec");
+            set => SetFloat("_UVSec", value);
         }
 
         // __mode, default = 0.000000
         [ParserTarget("mode")]
-        public EnumParser<BlendMode> modeSetter
+        public NumericParser<float> modeSetter
         {
-            get { return Mode; }
-            set { Mode = value; }
+            get => GetFloat("_Mode");
+            set => SetFloat("_Mode", value);
         }
 
         // __src, default = 1.000000
         [ParserTarget("srcBlend")]
-        public NumericParser<Single> srcBlendSetter
+        public NumericParser<float> srcBlendSetter
         {
-            get { return SrcBlend; }
-            set { SrcBlend = value; }
+            get => GetFloat("_SrcBlend");
+            set => SetFloat("_SrcBlend", value);
         }
 
         // __dst, default = 0.000000
         [ParserTarget("dstBlend")]
-        public NumericParser<Single> dstBlendSetter
+        public NumericParser<float> dstBlendSetter
         {
-            get { return DstBlend; }
-            set { DstBlend = value; }
+            get => GetFloat("_DstBlend");
+            set => SetFloat("_DstBlend", value);
         }
 
         // __zw, default = 1.000000
         [ParserTarget("ZWrite")]
-        public NumericParser<Single> ZWriteSetter
+        public NumericParser<float> ZWriteSetter
         {
-            get { return ZWrite; }
-            set { ZWrite = value; }
+            get => GetFloat("_ZWrite");
+            set => SetFloat("_ZWrite", value);
         }
+
+        public override ShaderParser ShaderParser { get; set; } = Shader;
 
         // Constructors
-        public StandardSpecularLoader()
-        {
-        }
+        public StandardSpecularLoader() { }
 
-        [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public StandardSpecularLoader(String contents) : base(contents)
-        {
-        }
-
-        public StandardSpecularLoader(Material material) : base(material)
-        {
-        }
+        public StandardSpecularLoader(Material material) => Value = new(material);
     }
 }

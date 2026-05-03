@@ -24,133 +24,127 @@
  */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using Kopernicus.Components.MaterialWrapper;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using UnityEngine;
 
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class ScaledPlanetSimpleLoader : ScaledPlanetSimple
+    public class ScaledPlanetSimpleLoader : BaseMaterialLoader
     {
+        private const String SHADER_NAME = "Terrain/Scaled Planet (Simple)";
+        private static readonly Shader Shader = Shader.Find(SHADER_NAME);
+        public static bool UsesSameShader(Material m) => m != null && m.shader.name == SHADER_NAME;
+
         // Main Color, default = (1,1,1,1)
         [ParserTarget("color")]
         public ColorParser ColorSetter
         {
-            get { return Color; }
-            set { Color = value; }
+            get => GetColor("_Color");
+            set => SetColor("_Color", value);
         }
 
         // Specular Color, default = (0.5,0.5,0.5,1)
         [ParserTarget("specColor")]
         public ColorParser SpecColorSetter
         {
-            get { return SpecColor; }
-            set { SpecColor = value; }
+            get => GetColor("_SpecColor");
+            set => SetColor("_SpecColor", value);
         }
 
         // Shininess, default = 0.078125
         [ParserTarget("shininess")]
-        public NumericParser<Single> ShininessSetter
+        public NumericParser<float> ShininessSetter
         {
-            get { return Shininess; }
-            set { Shininess = value; }
+            get => GetFloat("_Shininess");
+            set => SetFloat("_Shininess", value);
         }
 
         // Base (RGB) Gloss (A), default = "white" { }
         [ParserTarget("texture")]
         [ParserTarget("mainTex")]
-        public Texture2DParser MainTexSetter
+        public MaterialTextureParser MainTexSetter
         {
-            get { return MainTex; }
-            set { MainTex = value; }
+            get => null;
+            set => SetTexture("_MainTex", value);
         }
 
         [ParserTarget("mainTexScale")]
         public Vector2Parser MainTexScaleSetter
         {
-            get { return MainTexScale; }
-            set { MainTexScale = value; }
+            get => GetTextureScale("_MainTex");
+            set => SetTextureScale("_MainTex", value);
         }
 
         [ParserTarget("mainTexOffset")]
         public Vector2Parser MainTexOffsetSetter
         {
-            get { return MainTexOffset; }
-            set { MainTexOffset = value; }
+            get => GetTextureOffset("_MainTex");
+            set => SetTextureOffset("_MainTex", value);
         }
 
         // Normal map, default = "bump" { }
         [ParserTarget("normals")]
         [ParserTarget("bumpMap")]
-        public Texture2DParser BumpMapSetter
+        public MaterialTextureParser BumpMapSetter
         {
-            get { return BumpMap; }
-            set { BumpMap = value; }
+            get => null;
+            set => SetTexture("_BumpMap", value);
         }
 
         [ParserTarget("bumpMapScale")]
         public Vector2Parser BumpMapScaleSetter
         {
-            get { return BumpMapScale; }
-            set { BumpMapScale = value; }
+            get => GetTextureScale("_BumpMap");
+            set => SetTextureScale("_BumpMap", value);
         }
 
         [ParserTarget("bumpMapOffset")]
         public Vector2Parser BumpMapOffsetSetter
         {
-            get { return BumpMapOffset; }
-            set { BumpMapOffset = value; }
+            get => GetTextureOffset("_BumpMap");
+            set => SetTextureOffset("_BumpMap", value);
         }
 
         // Opacity, default = 1
         [ParserTarget("opacity")]
-        public NumericParser<Single> OpacitySetter
+        public NumericParser<float> OpacitySetter
         {
-            get { return Opacity; }
-            set { Opacity = value; }
+            get => GetFloat("_Opacity");
+            set => SetFloat("_Opacity", value);
         }
 
         // Resource Map (RGB), default = "black" { }
         [ParserTarget("resourceMap")]
-        public Texture2DParser ResourceMapSetter
+        public MaterialTextureParser ResourceMapSetter
         {
-            get { return ResourceMap; }
-            set { ResourceMap = value; }
+            get => null;
+            set => SetTexture("_ResourceMap", value);
         }
 
         [ParserTarget("resourceMapScale")]
         public Vector2Parser ResourceMapScaleSetter
         {
-            get { return ResourceMapScale; }
-            set { ResourceMapScale = value; }
+            get => GetTextureScale("_ResourceMap");
+            set => SetTextureScale("_ResourceMap", value);
         }
 
         [ParserTarget("resourceMapOffset")]
         public Vector2Parser ResourceMapOffsetSetter
         {
-            get { return ResourceMapOffset; }
-            set { ResourceMapOffset = value; }
+            get => GetTextureOffset("_ResourceMap");
+            set => SetTextureOffset("_ResourceMap", value);
         }
+
+        public override ShaderParser ShaderParser { get; set; } = Shader;
 
         // Constructors
-        public ScaledPlanetSimpleLoader()
-        {
-        }
+        public ScaledPlanetSimpleLoader() { }
 
-        [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public ScaledPlanetSimpleLoader(String contents) : base(contents)
-        {
-        }
-
-        public ScaledPlanetSimpleLoader(Material material) : base(material)
-        {
-        }
+        public ScaledPlanetSimpleLoader(Material material) => Value = new(material);
     }
 }

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -24,11 +24,10 @@
  */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using Kopernicus.Components.MaterialWrapper;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using Kopernicus.UI;
 using UnityEngine;
@@ -37,226 +36,228 @@ using Gradient = Kopernicus.Configuration.Parsing.Gradient;
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class PQSOceanSurfaceQuadLoader : PQSOceanSurfaceQuad
+    public class PQSOceanSurfaceQuadLoader : BaseMaterialLoader
     {
+        private const String SHADER_NAME = "Terrain/PQS/Ocean Surface Quad";
+        private static readonly Shader Shader = Shader.Find(SHADER_NAME);
+        public static bool UsesSameShader(Material m) => m != null && m.shader.name == SHADER_NAME;
+
         // Main Color, default = (1,1,1,1)
         [ParserTarget("color")]
         public ColorParser ColorSetter
         {
-            get { return Color; }
-            set { Color = value; }
+            get => GetColor("_Color");
+            set => SetColor("_Color", value);
         }
 
         // Color From Space, default = (1,1,1,1)
         [ParserTarget("colorFromSpace")]
         public ColorParser ColorFromSpaceSetter
         {
-            get { return ColorFromSpace; }
-            set { ColorFromSpace = value; }
+            get => GetColor("_ColorFromSpace");
+            set => SetColor("_ColorFromSpace", value);
         }
 
         // Specular Color, default = (1,1,1,1)
         [ParserTarget("specColor")]
         public ColorParser SpecColorSetter
         {
-            get { return SpecColor; }
-            set { SpecColor = value; }
+            get => GetColor("_SpecColor");
+            set => SetColor("_SpecColor", value);
         }
 
         // Shininess, default = 0.078125
         [ParserTarget("shininess")]
-        public NumericParser<Single> ShininessSetter
+        public NumericParser<float> ShininessSetter
         {
-            get { return Shininess; }
-            set { Shininess = value; }
+            get => GetFloat("_Shininess");
+            set => SetFloat("_Shininess", value);
         }
 
         // Gloss, default = 0.078125
         [ParserTarget("gloss")]
-        public NumericParser<Single> GlossSetter
+        public NumericParser<float> GlossSetter
         {
-            get { return Gloss; }
-            set { Gloss = value; }
+            get => GetFloat("_Gloss");
+            set => SetFloat("_Gloss", value);
         }
 
         // Tex Tiling, default = 1
         [ParserTarget("tiling")]
-        public NumericParser<Single> TilingSetter
+        public NumericParser<float> TilingSetter
         {
-            get { return Tiling; }
-            set { Tiling = value; }
+            get => GetFloat("_tiling");
+            set => SetFloat("_tiling", value);
         }
 
         // Tex0, default = "white" { }
         [ParserTarget("waterTex")]
-        public Texture2DParser WaterTexSetter
+        public MaterialTextureParser WaterTexSetter
         {
-            get { return WaterTex; }
-            set { WaterTex = value; }
+            get => null;
+            set => SetTexture("_WaterTex", value);
         }
 
         [ParserTarget("waterTexScale")]
         public Vector2Parser WaterTexScaleSetter
         {
-            get { return WaterTexScale; }
-            set { WaterTexScale = value; }
+            get => GetTextureScale("_WaterTex");
+            set => SetTextureScale("_WaterTex", value);
         }
 
         [ParserTarget("waterTexOffset")]
         public Vector2Parser WaterTexOffsetSetter
         {
-            get { return WaterTexOffset; }
-            set { WaterTexOffset = value; }
+            get => GetTextureOffset("_WaterTex");
+            set => SetTextureOffset("_WaterTex", value);
         }
 
         // Tex1, default = "white" { }
         [ParserTarget("waterTex1")]
-        public Texture2DParser WaterTex1Setter
+        public MaterialTextureParser WaterTex1Setter
         {
-            get { return WaterTex1; }
-            set { WaterTex1 = value; }
+            get => null;
+            set => SetTexture("_WaterTex1", value);
         }
 
         [ParserTarget("waterTex1Scale")]
         public Vector2Parser WaterTex1ScaleSetter
         {
-            get { return WaterTex1Scale; }
-            set { WaterTex1Scale = value; }
+            get => GetTextureScale("_WaterTex1");
+            set => SetTextureScale("_WaterTex1", value);
         }
 
         [ParserTarget("waterTex1Offset")]
         public Vector2Parser WaterTex1OffsetSetter
         {
-            get { return WaterTex1Offset; }
-            set { WaterTex1Offset = value; }
+            get => GetTextureOffset("_WaterTex1");
+            set => SetTextureOffset("_WaterTex1", value);
         }
 
         // Normal Tiling, default = 1
         [ParserTarget("bTiling")]
-        public NumericParser<Single> BTilingSetter
+        public NumericParser<float> BTilingSetter
         {
-            get { return BTiling; }
-            set { BTiling = value; }
+            get => GetFloat("_bTiling");
+            set => SetFloat("_bTiling", value);
         }
 
         // Normal map, default = "bump" { }
         [ParserTarget("bumpMap")]
-        public Texture2DParser BumpMapSetter
+        public MaterialTextureParser BumpMapSetter
         {
-            get { return BumpMap; }
-            set { BumpMap = value; }
+            get => null;
+            set => SetTexture("_BumpMap", value);
         }
 
         [ParserTarget("bumpMapScale")]
         public Vector2Parser BumpMapScaleSetter
         {
-            get { return BumpMapScale; }
-            set { BumpMapScale = value; }
+            get => GetTextureScale("_BumpMap");
+            set => SetTextureScale("_BumpMap", value);
         }
 
         [ParserTarget("bumpMapOffset")]
         public Vector2Parser BumpMapOffsetSetter
         {
-            get { return BumpMapOffset; }
-            set { BumpMapOffset = value; }
+            get => GetTextureOffset("_BumpMap");
+            set => SetTextureOffset("_BumpMap", value);
         }
 
         // Water Movement, default = 1
         [ParserTarget("displacement")]
-        public NumericParser<Single> DisplacementSetter
+        public NumericParser<float> DisplacementSetter
         {
-            get { return Displacement; }
-            set { Displacement = value; }
+            get => GetFloat("_displacement");
+            set => SetFloat("_displacement", value);
         }
 
         // Texture Displacement, default = 1
         [ParserTarget("texDisplacement")]
-        public NumericParser<Single> TexDisplacementSetter
+        public NumericParser<float> TexDisplacementSetter
         {
-            get { return TexDisplacement; }
-            set { TexDisplacement = value; }
+            get => GetFloat("_texDisplacement");
+            set => SetFloat("_texDisplacement", value);
         }
 
         // Water Freq, default = 1
         [ParserTarget("dispFreq")]
-        public NumericParser<Single> DispFreqSetter
+        public NumericParser<float> DispFreqSetter
         {
-            get { return DispFreq; }
-            set { DispFreq = value; }
+            get => GetFloat("_dispFreq");
+            set => SetFloat("_dispFreq", value);
         }
 
         // Mix, default = 1
         [ParserTarget("mix")]
-        public NumericParser<Single> MixSetter
+        public NumericParser<float> MixSetter
         {
-            get { return Mix; }
-            set { Mix = value; }
+            get => GetFloat("_Mix");
+            set => SetFloat("_Mix", value);
         }
 
         // Opacity, default = 1
         [ParserTarget("oceanOpacity")]
-        public NumericParser<Single> OceanOpacitySetter
+        public NumericParser<float> OceanOpacitySetter
         {
-            get { return OceanOpacity; }
-            set { OceanOpacity = value; }
+            get => GetFloat("_oceanOpacity");
+            set => SetFloat("_oceanOpacity", value);
         }
 
         // Falloff Power, default = 1
         [ParserTarget("falloffPower")]
-        public NumericParser<Single> FalloffPowerSetter
+        public NumericParser<float> FalloffPowerSetter
         {
-            get { return FalloffPower; }
-            set { FalloffPower = value; }
+            get => GetFloat("_falloffPower");
+            set => SetFloat("_falloffPower", value);
         }
 
         // Falloff Exp, default = 2
         [ParserTarget("falloffExp")]
-        public NumericParser<Single> FalloffExpSetter
+        public NumericParser<float> FalloffExpSetter
         {
-            get { return FalloffExp; }
-            set { FalloffExp = value; }
+            get => GetFloat("_falloffExp");
+            set => SetFloat("_falloffExp", value);
         }
 
         // AP Fog Color, default = (0,0,1,1)
         [ParserTarget("fogColor")]
         public ColorParser FogColorSetter
         {
-            get { return FogColor; }
-            set { FogColor = value; }
+            get => GetColor("_fogColor");
+            set => SetColor("_fogColor", value);
         }
 
         // AP Height Fall Off, default = 1
         [ParserTarget("heightFallOff")]
-        public NumericParser<Single> HeightFallOffSetter
+        public NumericParser<float> HeightFallOffSetter
         {
-            get { return HeightFallOff; }
-            set { HeightFallOff = value; }
+            get => GetFloat("_heightFallOff");
+            set => SetFloat("_heightFallOff", value);
         }
 
         // AP Global Density, default = 1
         [ParserTarget("globalDensity")]
-        public NumericParser<Single> GlobalDensitySetter
+        public NumericParser<float> GlobalDensitySetter
         {
-            get { return GlobalDensity; }
-            set { GlobalDensity = value; }
+            get => GetFloat("_globalDensity");
+            set => SetFloat("_globalDensity", value);
         }
 
         // AP Atmosphere Depth, default = 1
         [ParserTarget("atmosphereDepth")]
-        public NumericParser<Single> AtmosphereDepthSetter
+        public NumericParser<float> AtmosphereDepthSetter
         {
-            get { return AtmosphereDepth; }
-            set { AtmosphereDepth = value; }
+            get => GetFloat("_atmosphereDepth");
+            set => SetFloat("_atmosphereDepth", value);
         }
 
         // FogColorRamp, default = "white" { }
         [ParserTarget("fogColorRamp")]
-        public Texture2DParser FogColorRampSetter
+        public MaterialTextureParser FogColorRampSetter
         {
-            get { return FogColorRamp; }
-            set { FogColorRamp = value; }
+            get => null;
+            set => SetTexture("_fogColorRamp", value);
         }
 
         // FogColorRamp, default = "white" { }
@@ -264,92 +265,68 @@ namespace Kopernicus.Configuration.MaterialLoader
         [KittopiaHideOption]
         public Gradient FogColorRampGradientSetter
         {
-            set
-            {
-                // Generate the ramp from a gradient
-                Texture2D ramp = new Texture2D(512, 1);
-                Color32[] colors = ramp.GetPixels32(0);
-                for (Int32 i = 0; i < colors.Length; i++)
-                {
-                    // Compute the position in the gradient
-                    Single k = (Single)i / colors.Length;
-                    colors[i] = value.ColorAt(k);
-                }
-
-                ramp.SetPixels32(colors, 0);
-                ramp.Apply(true, false);
-
-                // Set the color ramp
-                FogColorRamp = ramp;
-            }
+            set => SetGradient("_fogColorRamp", value);
         }
 
         [ParserTarget("fogColorRampScale")]
         public Vector2Parser FogColorRampScaleSetter
         {
-            get { return FogColorRampScale; }
-            set { FogColorRampScale = value; }
+            get => GetTextureScale("_fogColorRamp");
+            set => SetTextureScale("_fogColorRamp", value);
         }
 
         [ParserTarget("fogColorRampOffset")]
         public Vector2Parser FogColorRampOffsetSetter
         {
-            get { return FogColorRampOffset; }
-            set { FogColorRampOffset = value; }
+            get => GetTextureOffset("_fogColorRamp");
+            set => SetTextureOffset("_fogColorRamp", value);
         }
 
         // FadeStart, default = 1
         [ParserTarget("fadeStart")]
-        public NumericParser<Single> FadeStartSetter
+        public NumericParser<float> FadeStartSetter
         {
-            get { return FadeStart; }
-            set { FadeStart = value; }
+            get => GetFloat("_fadeStart");
+            set => SetFloat("_fadeStart", value);
         }
 
         // FadeEnd, default = 1
         [ParserTarget("fadeEnd")]
-        public NumericParser<Single> FadeEndSetter
+        public NumericParser<float> FadeEndSetter
         {
-            get { return FadeEnd; }
-            set { FadeEnd = value; }
+            get => GetFloat("_fadeEnd");
+            set => SetFloat("_fadeEnd", value);
         }
 
         // PlanetOpacity, default = 1
         [ParserTarget("planetOpacity")]
-        public NumericParser<Single> PlanetOpacitySetter
+        public NumericParser<float> PlanetOpacitySetter
         {
-            get { return PlanetOpacity; }
-            set { PlanetOpacity = value; }
+            get => GetFloat("_PlanetOpacity");
+            set => SetFloat("_PlanetOpacity", value);
         }
 
         // NormalXYFudge, default = 0.1
         [ParserTarget("normalXYFudge")]
-        public NumericParser<Single> NormalXyFudgeSetter
+        public NumericParser<float> NormalXyFudgeSetter
         {
-            get { return NormalXyFudge; }
-            set { NormalXyFudge = value; }
+            get => GetFloat("_NormalXYFudge");
+            set => SetFloat("_NormalXYFudge", value);
         }
 
         // NormalZFudge, default = 1.1
         [ParserTarget("normalZFudge")]
-        public NumericParser<Single> NormalZFudgeSetter
+        public NumericParser<float> NormalZFudgeSetter
         {
-            get { return NormalZFudge; }
-            set { NormalZFudge = value; }
+            get => GetFloat("_NormalZFudge");
+            set => SetFloat("_NormalZFudge", value);
         }
+
+        public override ShaderParser ShaderParser { get; set; } = Shader;
 
         // Constructors
-        public PQSOceanSurfaceQuadLoader()
-        {
-        }
+        public PQSOceanSurfaceQuadLoader() { }
 
-        [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public PQSOceanSurfaceQuadLoader(String contents) : base(contents)
-        {
-        }
-
-        public PQSOceanSurfaceQuadLoader(Material material) : base(material)
-        {
-        }
+        public PQSOceanSurfaceQuadLoader(Material material) => Value = new(material);
     }
 }

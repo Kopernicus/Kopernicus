@@ -24,135 +24,130 @@
  */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using Kopernicus.Components.MaterialWrapper;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using UnityEngine;
 
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class PQSProjectionFallbackLoader : PQSProjectionFallback
+    public class PQSProjectionFallbackLoader : BaseMaterialLoader
     {
+        private const String SHADER_NAME = "Terrain/PQS/Sphere Projection SURFACE QUAD (Fallback) ";
+        private static readonly Shader Shader = Shader.Find(SHADER_NAME);
+        public static bool UsesSameShader(Material m) => m != null && m.shader.name == SHADER_NAME;
+
         // Saturation, default = 1
         [ParserTarget("saturation")]
-        public NumericParser<Single> SaturationSetter
+        public NumericParser<float> SaturationSetter
         {
-            get { return Saturation; }
-            set { Saturation = value; }
+            get => GetFloat("_saturation");
+            set => SetFloat("_saturation", value);
         }
 
         // Contrast, default = 1
         [ParserTarget("contrast")]
-        public NumericParser<Single> ContrastSetter
+        public NumericParser<float> ContrastSetter
         {
-            get { return Contrast; }
-            set { Contrast = value; }
+            get => GetFloat("_contrast");
+            set => SetFloat("_contrast", value);
         }
 
         // Colour Unsaturation (A = Factor), default = (1,1,1,0)
         [ParserTarget("tintColor")]
         public ColorParser TintColorSetter
         {
-            get { return TintColor; }
-            set { TintColor = value; }
+            get => GetColor("_tintColor");
+            set => SetColor("_tintColor", value);
         }
 
         // Near Tiling, default = 1000
         [ParserTarget("texTiling")]
-        public NumericParser<Single> TexTilingSetter
+        public NumericParser<float> TexTilingSetter
         {
-            get { return TexTiling; }
-            set { TexTiling = value; }
+            get => GetFloat("_texTiling");
+            set => SetFloat("_texTiling", value);
         }
 
         // Near Blend, default = 0.5
         [ParserTarget("texPower")]
-        public NumericParser<Single> TexPowerSetter
+        public NumericParser<float> TexPowerSetter
         {
-            get { return TexPower; }
-            set { TexPower = value; }
+            get => GetFloat("_texPower");
+            set => SetFloat("_texPower", value);
         }
 
         // Far Blend, default = 0.5
         [ParserTarget("multiPower")]
-        public NumericParser<Single> MultiPowerSetter
+        public NumericParser<float> MultiPowerSetter
         {
-            get { return MultiPower; }
-            set { MultiPower = value; }
+            get => GetFloat("_multiPower");
+            set => SetFloat("_multiPower", value);
         }
 
         // NearFar Start, default = 2000
         [ParserTarget("groundTexStart")]
-        public NumericParser<Single> GroundTexStartSetter
+        public NumericParser<float> GroundTexStartSetter
         {
-            get { return GroundTexStart; }
-            set { GroundTexStart = value; }
+            get => GetFloat("_groundTexStart");
+            set => SetFloat("_groundTexStart", value);
         }
 
         // NearFar Start, default = 10000
         [ParserTarget("groundTexEnd")]
-        public NumericParser<Single> GroundTexEndSetter
+        public NumericParser<float> GroundTexEndSetter
         {
-            get { return GroundTexEnd; }
-            set { GroundTexEnd = value; }
+            get => GetFloat("_groundTexEnd");
+            set => SetFloat("_groundTexEnd", value);
         }
 
         // Multifactor, default = 0.5
         [ParserTarget("multiFactor")]
-        public NumericParser<Single> MultiFactorSetter
+        public NumericParser<float> MultiFactorSetter
         {
-            get { return MultiFactor; }
-            set { MultiFactor = value; }
+            get => GetFloat("_multiFactor");
+            set => SetFloat("_multiFactor", value);
         }
 
         // Main Texture, default = "white" { }
         [ParserTarget("mainTex")]
-        public Texture2DParser MainTexSetter
+        public MaterialTextureParser MainTexSetter
         {
-            get { return MainTex; }
-            set { MainTex = value; }
+            get => null;
+            set => SetTexture("_mainTex", value);
         }
 
         [ParserTarget("mainTexScale")]
         public Vector2Parser MainTexScaleSetter
         {
-            get { return MainTexScale; }
-            set { MainTexScale = value; }
+            get => GetTextureScale("_mainTex");
+            set => SetTextureScale("_mainTex", value);
         }
 
         [ParserTarget("mainTexOffset")]
         public Vector2Parser MainTexOffsetSetter
         {
-            get { return MainTexOffset; }
-            set { MainTexOffset = value; }
+            get => GetTextureOffset("_mainTex");
+            set => SetTextureOffset("_mainTex", value);
         }
 
         // PlanetOpacity, default = 1
         [ParserTarget("planetOpacity")]
-        public NumericParser<Single> PlanetOpacitySetter
+        public NumericParser<float> PlanetOpacitySetter
         {
-            get { return PlanetOpacity; }
-            set { PlanetOpacity = value; }
+            get => GetFloat("_PlanetOpacity");
+            set => SetFloat("_PlanetOpacity", value);
         }
+
+        public override ShaderParser ShaderParser { get; set; } = Shader;
+        public override NumericParser<bool> OnDemand { get; set; } = false;
 
         // Constructors
-        public PQSProjectionFallbackLoader()
-        {
-        }
+        public PQSProjectionFallbackLoader() { }
 
-        [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public PQSProjectionFallbackLoader(String contents) : base(contents)
-        {
-        }
-
-        public PQSProjectionFallbackLoader(Material material) : base(material)
-        {
-        }
+        public PQSProjectionFallbackLoader(Material material) => Value = new(material);
     }
 }

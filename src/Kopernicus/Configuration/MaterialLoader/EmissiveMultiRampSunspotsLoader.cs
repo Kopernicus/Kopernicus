@@ -24,154 +24,149 @@
  */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using Kopernicus.Components.MaterialWrapper;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using UnityEngine;
 
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class EmissiveMultiRampSunspotsLoader : EmissiveMultiRampSunspots
+    public class EmissiveMultiRampSunspotsLoader : BaseMaterialLoader
     {
+        private const String SHADER_NAME = "Emissive Multi Ramp Sunspots";
+        private static readonly Shader Shader = Shader.Find(SHADER_NAME);
+        public static bool UsesSameShader(Material m) => m != null && m.shader.name == SHADER_NAME;
+
         // Ramp Map (RGBA), default = "white" { }
         [ParserTarget("rampMap")]
-        public Texture2DParser RampMapSetter
+        public MaterialTextureParser RampMapSetter
         {
-            get { return RampMap; }
-            set { RampMap = value; }
+            get => null;
+            set => SetTexture("_RampMap", value);
         }
 
         [ParserTarget("rampMapScale")]
         public Vector2Parser RampMapScaleSetter
         {
-            get { return RampMapScale; }
-            set { RampMapScale = value; }
+            get => GetTextureScale("_RampMap");
+            set => SetTextureScale("_RampMap", value);
         }
 
         [ParserTarget("rampMapOffset")]
         public Vector2Parser RampMapOffsetSetter
         {
-            get { return RampMapOffset; }
-            set { RampMapOffset = value; }
+            get => GetTextureOffset("_RampMap");
+            set => SetTextureOffset("_RampMap", value);
         }
 
         // Noise Map (RGBA), default = "white" { }
         [ParserTarget("noiseMap")]
-        public Texture2DParser NoiseMapSetter
+        public MaterialTextureParser NoiseMapSetter
         {
-            get { return NoiseMap; }
-            set { NoiseMap = value; }
+            get => null;
+            set => SetTexture("_NoiseMap", value);
         }
 
         [ParserTarget("noiseMapScale")]
         public Vector2Parser NoiseMapScaleSetter
         {
-            get { return NoiseMapScale; }
-            set { NoiseMapScale = value; }
+            get => GetTextureScale("_NoiseMap");
+            set => SetTextureScale("_NoiseMap", value);
         }
 
         [ParserTarget("noiseMapOffset")]
         public Vector2Parser NoiseMapOffsetSetter
         {
-            get { return NoiseMapOffset; }
-            set { NoiseMapOffset = value; }
+            get => GetTextureOffset("_NoiseMap");
+            set => SetTextureOffset("_NoiseMap", value);
         }
 
         // Emission Color 0, default = (1,1,1,1)
         [ParserTarget("emitColor0")]
         public ColorParser EmitColor0Setter
         {
-            get { return EmitColor0; }
-            set { EmitColor0 = value; }
+            get => GetColor("_EmitColor0");
+            set => SetColor("_EmitColor0", value);
         }
 
         // Emission Color 1, default = (1,1,1,1)
         [ParserTarget("emitColor1")]
         public ColorParser EmitColor1Setter
         {
-            get { return EmitColor1; }
-            set { EmitColor1 = value; }
+            get => GetColor("_EmitColor1");
+            set => SetColor("_EmitColor1", value);
         }
 
         // Sunspot Map (R), default = "white" { }
         [ParserTarget("sunspotTex")]
-        public Texture2DParser SunspotTexSetter
+        public MaterialTextureParser SunspotTexSetter
         {
-            get { return SunspotTex; }
-            set { SunspotTex = value; }
+            get => null;
+            set => SetTexture("_SunspotTex", value);
         }
 
         [ParserTarget("sunspotTexScale")]
         public Vector2Parser SunspotTexScaleSetter
         {
-            get { return SunspotTexScale; }
-            set { SunspotTexScale = value; }
+            get => GetTextureScale("_SunspotTex");
+            set => SetTextureScale("_SunspotTex", value);
         }
 
         [ParserTarget("sunspotTexOffset")]
         public Vector2Parser SunspotTexOffsetSetter
         {
-            get { return SunspotTexOffset; }
-            set { SunspotTexOffset = value; }
+            get => GetTextureOffset("_SunspotTex");
+            set => SetTextureOffset("_SunspotTex", value);
         }
 
         // Sunspot Power, default = 1
         [ParserTarget("sunspotPower")]
-        public NumericParser<Single> SunspotPowerSetter
+        public NumericParser<float> SunspotPowerSetter
         {
-            get { return SunspotPower; }
-            set { SunspotPower = value; }
+            get => GetFloat("_SunspotPower");
+            set => SetFloat("_SunspotPower", value);
         }
 
         // Sunspot Color, default = (0,0,0,0)
         [ParserTarget("sunspotColor")]
         public ColorParser SunspotColorSetter
         {
-            get { return SunspotColor; }
-            set { SunspotColor = value; }
+            get => GetColor("_SunspotColor");
+            set => SetColor("_SunspotColor", value);
         }
 
         // Rimlight Color, default = (1,1,1,1)
         [ParserTarget("rimColor")]
         public ColorParser RimColorSetter
         {
-            get { return RimColor; }
-            set { RimColor = value; }
+            get => GetColor("_RimColor");
+            set => SetColor("_RimColor", value);
         }
 
         // Rimlight Power, default = 0.2
         [ParserTarget("rimPower")]
-        public NumericParser<Single> RimPowerSetter
+        public NumericParser<float> RimPowerSetter
         {
-            get { return RimPower; }
-            set { RimPower = value; }
+            get => GetFloat("_RimPower");
+            set => SetFloat("_RimPower", value);
         }
 
         // Rimlight Blend, default = 0.2
         [ParserTarget("rimBlend")]
-        public NumericParser<Single> RimBlendSetter
+        public NumericParser<float> RimBlendSetter
         {
-            get { return RimBlend; }
-            set { RimBlend = value; }
+            get => GetFloat("_RimBlend");
+            set => SetFloat("_RimBlend", value);
         }
+
+        public override ShaderParser ShaderParser { get; set; } = Shader;
 
         // Constructors
-        public EmissiveMultiRampSunspotsLoader()
-        {
-        }
+        public EmissiveMultiRampSunspotsLoader() { }
 
-        [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public EmissiveMultiRampSunspotsLoader(String contents) : base(contents)
-        {
-        }
-
-        public EmissiveMultiRampSunspotsLoader(Material material) : base(material)
-        {
-        }
+        public EmissiveMultiRampSunspotsLoader(Material material) => Value = new(material);
     }
 }

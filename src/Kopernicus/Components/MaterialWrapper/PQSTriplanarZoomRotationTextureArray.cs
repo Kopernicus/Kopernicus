@@ -160,19 +160,7 @@ namespace Kopernicus.Components.MaterialWrapper
         }
 
         // Is some random material this material
-        public static Boolean UsesSameShader(Material m)
-        {
-            if (m == null)
-            {
-                return false;
-            }
-
-            // Avoid allocating a name string if we don't have to.
-            if (m.shader.GetInstanceID() == Properties.Shader.GetInstanceID())
-                return true;
-
-            return m.shader.name == Properties.SHADER_NAME;
-        }
+        public static Boolean UsesSameShader(Material m) => Configuration.MaterialLoader.PQSTriplanarZoomRotationTextureArrayLoader.UsesSameShader(m);
 
         // Color Lerp Modifier, default = 1
         public Single ColorLerpModifier
@@ -392,8 +380,10 @@ namespace Kopernicus.Components.MaterialWrapper
 
         public PQSTriplanarZoomRotationTextureArray(Material material) : base(material)
         {
-            // Throw exception if this material was not the proper material
-            if (material.shader.name != Properties.Shader.name)
+            // Throw exception if this material was not the proper material. The texture-atlas
+            // mod swaps in "- 1/2/3/4 Blend" permutations at runtime; those share the property
+            // layout and are accepted here too.
+            if (!Configuration.MaterialLoader.PQSTriplanarZoomRotationTextureArrayLoader.UsesSameShader(material))
                 throw new InvalidOperationException(
                     "Type Mismatch: Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array shader required");
         }

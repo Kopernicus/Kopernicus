@@ -24,149 +24,143 @@
  */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using Kopernicus.Components.MaterialWrapper;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using UnityEngine;
 
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class PQSOceanSurfaceQuadFallbackLoader : PQSOceanSurfaceQuadFallback
+    public class PQSOceanSurfaceQuadFallbackLoader : BaseMaterialLoader
     {
+        private const String SHADER_NAME = "Terrain/PQS/Ocean Surface Quad (Fallback)";
+        private static readonly Shader Shader = Shader.Find(SHADER_NAME);
+        public static bool UsesSameShader(Material m) => m != null && m.shader.name == SHADER_NAME;
+
         // Main Color, default = (1,1,1,1)
         [ParserTarget("color")]
         public ColorParser ColorSetter
         {
-            get { return Color; }
-            set { Color = value; }
+            get => GetColor("_Color");
+            set => SetColor("_Color", value);
         }
 
         // Color From Space, default = (1,1,1,1)
         [ParserTarget("colorFromSpace")]
         public ColorParser ColorFromSpaceSetter
         {
-            get { return ColorFromSpace; }
-            set { ColorFromSpace = value; }
+            get => GetColor("_ColorFromSpace");
+            set => SetColor("_ColorFromSpace", value);
         }
 
         // Specular Color, default = (1,1,1,1)
         [ParserTarget("specColor")]
         public ColorParser SpecColorSetter
         {
-            get { return SpecColor; }
-            set { SpecColor = value; }
+            get => GetColor("_SpecColor");
+            set => SetColor("_SpecColor", value);
         }
 
         // Shininess, default = 0.078125
         [ParserTarget("shininess")]
-        public NumericParser<Single> ShininessSetter
+        public NumericParser<float> ShininessSetter
         {
-            get { return Shininess; }
-            set { Shininess = value; }
+            get => GetFloat("_Shininess");
+            set => SetFloat("_Shininess", value);
         }
 
         // Gloss, default = 0.078125
         [ParserTarget("gloss")]
-        public NumericParser<Single> GlossSetter
+        public NumericParser<float> GlossSetter
         {
-            get { return Gloss; }
-            set { Gloss = value; }
+            get => GetFloat("_Gloss");
+            set => SetFloat("_Gloss", value);
         }
 
         // Tex Tiling, default = 1
         [ParserTarget("tiling")]
-        public NumericParser<Single> TilingSetter
+        public NumericParser<float> TilingSetter
         {
-            get { return Tiling; }
-            set { Tiling = value; }
+            get => GetFloat("_tiling");
+            set => SetFloat("_tiling", value);
         }
 
         // Tex0, default = "white" { }
         [ParserTarget("waterTex")]
-        public Texture2DParser WaterTexSetter
+        public MaterialTextureParser WaterTexSetter
         {
-            get { return WaterTex; }
-            set { WaterTex = value; }
+            get => null;
+            set => SetTexture("_WaterTex", value);
         }
 
         [ParserTarget("waterTexScale")]
         public Vector2Parser WaterTexScaleSetter
         {
-            get { return WaterTexScale; }
-            set { WaterTexScale = value; }
+            get => GetTextureScale("_WaterTex");
+            set => SetTextureScale("_WaterTex", value);
         }
 
         [ParserTarget("waterTexOffset")]
         public Vector2Parser WaterTexOffsetSetter
         {
-            get { return WaterTexOffset; }
-            set { WaterTexOffset = value; }
+            get => GetTextureOffset("_WaterTex");
+            set => SetTextureOffset("_WaterTex", value);
         }
 
         // Tex1, default = "white" { }
         [ParserTarget("waterTex1")]
-        public Texture2DParser WaterTex1Setter
+        public MaterialTextureParser WaterTex1Setter
         {
-            get { return WaterTex1; }
-            set { WaterTex1 = value; }
+            get => null;
+            set => SetTexture("_WaterTex1", value);
         }
 
         [ParserTarget("waterTex1Scale")]
         public Vector2Parser WaterTex1ScaleSetter
         {
-            get { return WaterTex1Scale; }
-            set { WaterTex1Scale = value; }
+            get => GetTextureScale("_WaterTex1");
+            set => SetTextureScale("_WaterTex1", value);
         }
 
         [ParserTarget("waterTex1Offset")]
         public Vector2Parser WaterTex1OffsetSetter
         {
-            get { return WaterTex1Offset; }
-            set { WaterTex1Offset = value; }
+            get => GetTextureOffset("_WaterTex1");
+            set => SetTextureOffset("_WaterTex1", value);
         }
 
         // FadeStart, default = 1
         [ParserTarget("fadeStart")]
-        public NumericParser<Single> FadeStartSetter
+        public NumericParser<float> FadeStartSetter
         {
-            get { return FadeStart; }
-            set { FadeStart = value; }
+            get => GetFloat("_fadeStart");
+            set => SetFloat("_fadeStart", value);
         }
 
         // FadeEnd, default = 1
         [ParserTarget("fadeEnd")]
-        public NumericParser<Single> FadeEndSetter
+        public NumericParser<float> FadeEndSetter
         {
-            get { return FadeEnd; }
-            set { FadeEnd = value; }
+            get => GetFloat("_fadeEnd");
+            set => SetFloat("_fadeEnd", value);
         }
 
         // PlanetOpacity, default = 1
         [ParserTarget("planetOpacity")]
-        public NumericParser<Single> PlanetOpacitySetter
+        public NumericParser<float> PlanetOpacitySetter
         {
-            get { return PlanetOpacity; }
-            set { PlanetOpacity = value; }
+            get => GetFloat("_PlanetOpacity");
+            set => SetFloat("_PlanetOpacity", value);
         }
+
+        public override ShaderParser ShaderParser { get; set; } = Shader;
 
         // Constructors
-        public PQSOceanSurfaceQuadFallbackLoader()
-        {
-        }
+        public PQSOceanSurfaceQuadFallbackLoader() { }
 
-        [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public PQSOceanSurfaceQuadFallbackLoader(String contents) : base(contents)
-        {
-        }
-
-        public PQSOceanSurfaceQuadFallbackLoader(Material material) : base(material)
-        {
-        }
+        public PQSOceanSurfaceQuadFallbackLoader(Material material) => Value = new(material);
     }
 }

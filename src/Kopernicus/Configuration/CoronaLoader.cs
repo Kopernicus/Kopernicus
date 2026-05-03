@@ -87,12 +87,14 @@ namespace Kopernicus.Configuration
             set { Value.Rotation = value; }
         }
 
+        private ParticleAddSmoothLoader _material;
+
         [ParserTarget("Material", AllowMerge = true, GetChild = false)]
         [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public ParticleAddSmoothLoader Material
         {
-            get { return (ParticleAddSmoothLoader)Value.GetComponent<Renderer>().sharedMaterial; }
-            set { Value.GetComponent<Renderer>().sharedMaterial = value; }
+            get { return _material ??= new ParticleAddSmoothLoader(Value.GetComponent<Renderer>().sharedMaterial); }
+            set { _material = value; }
         }
 
         [KittopiaDestructor]
@@ -110,6 +112,9 @@ namespace Kopernicus.Configuration
         // Parser post apply event
         void IParserEventSubscriber.PostApply(ConfigNode node)
         {
+            if (_material != null)
+                Value.GetComponent<Renderer>().sharedMaterial = _material.Value;
+
             Events.OnCoronaLoaderPostApply.Fire(this, node);
         }
 
@@ -149,10 +154,9 @@ namespace Kopernicus.Configuration
             Value = corona.GetComponent<SunCoronas>();
 
             // Setup the material loader
-            Material = new ParticleAddSmoothLoader(corona.GetComponent<Renderer>().sharedMaterial)
-            {
-                name = Guid.NewGuid().ToString()
-            };
+            Material = new ParticleAddSmoothLoader(corona.GetComponent<Renderer>().sharedMaterial);
+            Material.Value.name = Guid.NewGuid().ToString();
+            corona.GetComponent<Renderer>().sharedMaterial = Material.Value;
         }
 
         /// <summary>
@@ -192,10 +196,9 @@ namespace Kopernicus.Configuration
             Value = corona.GetComponent<SunCoronas>();
 
             // Setup the material loader
-            Material = new ParticleAddSmoothLoader(corona.GetComponent<Renderer>().sharedMaterial)
-            {
-                name = Guid.NewGuid().ToString()
-            };
+            Material = new ParticleAddSmoothLoader(corona.GetComponent<Renderer>().sharedMaterial);
+            Material.Value.name = Guid.NewGuid().ToString();
+            corona.GetComponent<Renderer>().sharedMaterial = Material.Value;
         }
 
         /// <summary>
@@ -204,10 +207,7 @@ namespace Kopernicus.Configuration
         public CoronaLoader(SunCoronas component)
         {
             Value = component;
-            if (!(Value.GetComponent<Renderer>().sharedMaterial is ParticleAddSmoothLoader))
-            {
-                Material = new ParticleAddSmoothLoader(Value.GetComponent<Renderer>().sharedMaterial);
-            }
+            Material = new ParticleAddSmoothLoader(Value.GetComponent<Renderer>().sharedMaterial);
         }
     }
 }

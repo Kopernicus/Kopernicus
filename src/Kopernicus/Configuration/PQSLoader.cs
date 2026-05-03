@@ -175,6 +175,13 @@ namespace Kopernicus.Configuration
                 Value.surfaceMaterial = value;
             }
         }
+
+        // Backing storage for the parsed material loaders. Committed to the
+        // underlying PQS in PostApply.
+        private BaseMaterialLoader _surfaceMaterial;
+        private PQSProjectionFallbackLoader _fallbackMaterial;
+
+        private Material CurrentSurfaceMaterial => _surfaceMaterial?.Value ?? BasicSurfaceMaterial;
         [PreApply]
         [ParserTarget("materialType")]
         [SuppressMessage("ReSharper", "ConvertIfStatementToReturnStatement")]
@@ -182,219 +189,109 @@ namespace Kopernicus.Configuration
         {
             get
             {
-                if (PQSProjectionSurfaceQuad.UsesSameShader(BasicSurfaceMaterial))
-                {
+                Material material = CurrentSurfaceMaterial;
+
+                if (PQSProjectionSurfaceQuad.UsesSameShader(material))
                     return NewShaderSurfaceMaterialType.Vacuum;
-                }
-                if (PQSProjectionAerialQuadRelative.UsesSameShader(BasicSurfaceMaterial))
-                {
+                if (PQSProjectionAerialQuadRelative.UsesSameShader(material))
                     return NewShaderSurfaceMaterialType.Basic;
-                }
-                if (PQSMainShader.UsesSameShader(BasicSurfaceMaterial))
-                {
+                if (PQSMainShader.UsesSameShader(material))
                     return NewShaderSurfaceMaterialType.Main;
-                }
-                if (PQSMainOptimised.UsesSameShader(BasicSurfaceMaterial))
-                {
+                if (PQSMainOptimised.UsesSameShader(material))
                     return NewShaderSurfaceMaterialType.Optimized;
-                }
-                if (PQSMainExtras.UsesSameShader(BasicSurfaceMaterial))
-                {
+                if (PQSMainExtras.UsesSameShader(material))
                     return NewShaderSurfaceMaterialType.Extra;
-                }
-                if (PQSMainOptimisedFastBlend.UsesSameShader(BasicSurfaceMaterial))
-                {
+                if (PQSMainOptimisedFastBlend.UsesSameShader(material))
                     return NewShaderSurfaceMaterialType.OptimizedFastBlend;
-                }
-                if (PQSTriplanarZoomRotation.UsesSameShader(BasicSurfaceMaterial))
-                {
+                if (PQSTriplanarZoomRotation.UsesSameShader(material))
                     return NewShaderSurfaceMaterialType.Triplanar;
-                }
-                if (PQSMainFastBlend.UsesSameShader(BasicSurfaceMaterial))
-                {
+                if (PQSMainFastBlend.UsesSameShader(material))
                     return NewShaderSurfaceMaterialType.MainFastBlend;
-                }
-                if (PQSTriplanarZoomRotationTextureArray.UsesSameShader(BasicSurfaceMaterial))
-                {
+                if (PQSTriplanarZoomRotationTextureArray.UsesSameShader(material))
                     return NewShaderSurfaceMaterialType.TriplanarAtlas;
-                }
-                throw new Exception("The shader '" + BasicSurfaceMaterial.shader.name + "' is not supported.");
+
+                throw new Exception("The shader '" + material.shader.name + "' is not supported.");
             }
             set
             {
-                Boolean isVaccum = PQSProjectionSurfaceQuad.UsesSameShader(BasicSurfaceMaterial);
-                Boolean isBasic = PQSProjectionAerialQuadRelative.UsesSameShader(BasicSurfaceMaterial);
-                Boolean isMain = PQSMainShader.UsesSameShader(BasicSurfaceMaterial);
-                Boolean isOptimised = PQSMainOptimised.UsesSameShader(BasicSurfaceMaterial);
-                Boolean isExtra = PQSMainExtras.UsesSameShader(BasicSurfaceMaterial);
-                isMainFastBlend = PQSMainFastBlend.UsesSameShader(BasicSurfaceMaterial);
-                Boolean isOptimisedFastBlend = PQSMainOptimisedFastBlend.UsesSameShader(BasicSurfaceMaterial);
-                Boolean isTriplanar = PQSTriplanarZoomRotation.UsesSameShader(BasicSurfaceMaterial);
-                isTriplanarAtlas = PQSTriplanarZoomRotationTextureArray.UsesSameShader(BasicSurfaceMaterial);
-                switch (value.Value)
+                if (UsesSurfaceShader(value.Value, CurrentSurfaceMaterial))
                 {
-                    case NewShaderSurfaceMaterialType.Vacuum when !isVaccum:
-                        BasicSurfaceMaterial = new PQSProjectionSurfaceQuadLoader();
-                        break;
-                    case NewShaderSurfaceMaterialType.Basic when !isBasic:
-                        BasicSurfaceMaterial = new PQSProjectionAerialQuadRelativeLoader();
-                        break;
-                    case NewShaderSurfaceMaterialType.Main when !isMain:
-                        BasicSurfaceMaterial = new PQSMainShaderLoader();
-                        break;
-                    case NewShaderSurfaceMaterialType.Optimized when !isOptimised:
-                        BasicSurfaceMaterial = new PQSMainOptimisedLoader();
-                        break;
-                    case NewShaderSurfaceMaterialType.Extra when !isExtra:
-                        BasicSurfaceMaterial = new PQSMainExtrasLoader();
-                        break;
-                    case NewShaderSurfaceMaterialType.MainFastBlend when !isMainFastBlend:
-                        BasicSurfaceMaterial = new PQSMainFastBlendLoader();
-                        break;
-                    case NewShaderSurfaceMaterialType.OptimizedFastBlend when !isOptimisedFastBlend:
-                        BasicSurfaceMaterial = new PQSMainOptimisedFastBlendLoader();
-                        break;
-                    case NewShaderSurfaceMaterialType.Triplanar when !isTriplanar:
-                        BasicSurfaceMaterial = new PQSTriplanarZoomRotationLoader();
-                        break;
-                    case NewShaderSurfaceMaterialType.TriplanarAtlas when !isTriplanarAtlas:
-                        BasicSurfaceMaterial = new PQSTriplanarZoomRotationTextureArrayLoader();
-                        break;
-                    default:
-                        return;
+                    if (value.Value == NewShaderSurfaceMaterialType.MainFastBlend)
+                        isMainFastBlend = true;
+                    if (value.Value == NewShaderSurfaceMaterialType.TriplanarAtlas)
+                        isTriplanarAtlas = true;
+                    return;
                 }
+
+                _surfaceMaterial = value.Value switch
+                {
+                    NewShaderSurfaceMaterialType.Vacuum => new PQSProjectionSurfaceQuadLoader(),
+                    NewShaderSurfaceMaterialType.Basic => new PQSProjectionAerialQuadRelativeLoader(),
+                    NewShaderSurfaceMaterialType.Main => new PQSMainShaderLoader(),
+                    NewShaderSurfaceMaterialType.Optimized => new PQSMainOptimisedLoader(),
+                    NewShaderSurfaceMaterialType.Extra => new PQSMainExtrasLoader(),
+                    NewShaderSurfaceMaterialType.MainFastBlend => new PQSMainFastBlendLoader(),
+                    NewShaderSurfaceMaterialType.OptimizedFastBlend => new PQSMainOptimisedFastBlendLoader(),
+                    NewShaderSurfaceMaterialType.Triplanar => new PQSTriplanarZoomRotationLoader(),
+                    NewShaderSurfaceMaterialType.TriplanarAtlas => new PQSTriplanarZoomRotationTextureArrayLoader(),
+                    _ => _surfaceMaterial,
+                };
+
+                isMainFastBlend = value.Value == NewShaderSurfaceMaterialType.MainFastBlend;
+                isTriplanarAtlas = value.Value == NewShaderSurfaceMaterialType.TriplanarAtlas;
             }
         }
+
+        private static Boolean UsesSurfaceShader(NewShaderSurfaceMaterialType type, Material material) => type switch
+        {
+            NewShaderSurfaceMaterialType.Vacuum => PQSProjectionSurfaceQuad.UsesSameShader(material),
+            NewShaderSurfaceMaterialType.Basic => PQSProjectionAerialQuadRelative.UsesSameShader(material),
+            NewShaderSurfaceMaterialType.Main => PQSMainShader.UsesSameShader(material),
+            NewShaderSurfaceMaterialType.Optimized => PQSMainOptimised.UsesSameShader(material),
+            NewShaderSurfaceMaterialType.Extra => PQSMainExtras.UsesSameShader(material),
+            NewShaderSurfaceMaterialType.MainFastBlend => PQSMainFastBlend.UsesSameShader(material),
+            NewShaderSurfaceMaterialType.OptimizedFastBlend => PQSMainOptimisedFastBlend.UsesSameShader(material),
+            NewShaderSurfaceMaterialType.Triplanar => PQSTriplanarZoomRotation.UsesSameShader(material),
+            NewShaderSurfaceMaterialType.TriplanarAtlas => PQSTriplanarZoomRotationTextureArray.UsesSameShader(material),
+            _ => false,
+        };
+
         // Surface Material of the PQS
         [ParserTarget("Material", AllowMerge = true, GetChild = false)]
         [KittopiaUntouchable]
-        public Material SurfaceMaterial
+        public BaseMaterialLoader SurfaceMaterial
         {
             get
             {
-                Boolean isVaccum = BasicSurfaceMaterial is PQSProjectionSurfaceQuadLoader;
-                Boolean isBasic = BasicSurfaceMaterial is PQSProjectionAerialQuadRelativeLoader;
-                Boolean isMain = BasicSurfaceMaterial is PQSMainShaderLoader;
-                Boolean isOptimised = BasicSurfaceMaterial is PQSMainOptimisedLoader;
-                Boolean isExtra = BasicSurfaceMaterial is PQSMainExtrasLoader;
-                isMainFastBlend = BasicSurfaceMaterial is PQSMainFastBlendLoader;
-                Boolean isOptimisedFastBlend = BasicSurfaceMaterial is PQSMainOptimisedFastBlendLoader;
-                Boolean isTriplanar = BasicSurfaceMaterial is PQSTriplanarZoomRotationLoader;
-                isTriplanarAtlas = BasicSurfaceMaterial is PQSTriplanarZoomRotationTextureArrayLoader;
-                switch (NewMaterialType.Value)
+                if (_surfaceMaterial != null)
+                    return _surfaceMaterial;
+
+                Material existing = BasicSurfaceMaterial;
+                _surfaceMaterial = NewMaterialType.Value switch
                 {
-                    case NewShaderSurfaceMaterialType.Vacuum when !isVaccum:
-                        BasicSurfaceMaterial = new PQSProjectionSurfaceQuadLoader(BasicSurfaceMaterial);
-                        goto default;
-                    case NewShaderSurfaceMaterialType.Basic when !isBasic:
-                        BasicSurfaceMaterial = new PQSProjectionAerialQuadRelativeLoader(BasicSurfaceMaterial);
-                        goto default;
-                    case NewShaderSurfaceMaterialType.Main when !isMain:
-                        BasicSurfaceMaterial = new PQSMainShaderLoader(BasicSurfaceMaterial);
-                        goto default;
-                    case NewShaderSurfaceMaterialType.Optimized when !isOptimised:
-                        BasicSurfaceMaterial = new PQSMainOptimisedLoader(BasicSurfaceMaterial);
-                        goto default;
-                    case NewShaderSurfaceMaterialType.Extra when !isExtra:
-                        BasicSurfaceMaterial = new PQSMainExtrasLoader(BasicSurfaceMaterial);
-                        goto default;
-                    case NewShaderSurfaceMaterialType.MainFastBlend when !isMainFastBlend:
-                        BasicSurfaceMaterial = new PQSMainFastBlendLoader(BasicSurfaceMaterial);
-                        goto default;
-                    case NewShaderSurfaceMaterialType.OptimizedFastBlend when !isOptimisedFastBlend:
-                        BasicSurfaceMaterial = new PQSMainOptimisedFastBlendLoader(BasicSurfaceMaterial);
-                        goto default;
-                    case NewShaderSurfaceMaterialType.Triplanar when !isTriplanar:
-                        BasicSurfaceMaterial = new PQSTriplanarZoomRotationLoader(BasicSurfaceMaterial);
-                        goto default;
-                    case NewShaderSurfaceMaterialType.TriplanarAtlas when !isTriplanarAtlas:
-                        BasicSurfaceMaterial = new PQSTriplanarZoomRotationTextureArrayLoader(BasicSurfaceMaterial);
-                        goto default;
-                    default:
-                        return BasicSurfaceMaterial;
-                }
+                    NewShaderSurfaceMaterialType.Vacuum => new PQSProjectionSurfaceQuadLoader(existing),
+                    NewShaderSurfaceMaterialType.Basic => new PQSProjectionAerialQuadRelativeLoader(existing),
+                    NewShaderSurfaceMaterialType.Main => new PQSMainShaderLoader(existing),
+                    NewShaderSurfaceMaterialType.Optimized => new PQSMainOptimisedLoader(existing),
+                    NewShaderSurfaceMaterialType.Extra => new PQSMainExtrasLoader(existing),
+                    NewShaderSurfaceMaterialType.MainFastBlend => new PQSMainFastBlendLoader(existing),
+                    NewShaderSurfaceMaterialType.OptimizedFastBlend => new PQSMainOptimisedFastBlendLoader(existing),
+                    NewShaderSurfaceMaterialType.Triplanar => new PQSTriplanarZoomRotationLoader(existing),
+                    NewShaderSurfaceMaterialType.TriplanarAtlas => new PQSTriplanarZoomRotationTextureArrayLoader(existing),
+                    _ => throw new Exception("Unsupported surface material type: " + NewMaterialType.Value),
+                };
+                return _surfaceMaterial;
             }
-            set
-            {
-                Boolean isVaccum = value is PQSProjectionSurfaceQuadLoader;
-                Boolean isBasic = value is PQSProjectionAerialQuadRelativeLoader;
-                Boolean isMain = value is PQSMainShaderLoader;
-                Boolean isOptimised = value is PQSMainOptimisedLoader;
-                Boolean isExtra = value is PQSMainExtrasLoader;
-                if (!(Versioning.version_minor < 9))
-                {
-                    isMainFastBlend = value is PQSMainFastBlendLoader;
-                }
-                Boolean isOptimisedFastBlend = value is PQSMainOptimisedFastBlendLoader;
-                Boolean isTriplanar = value is PQSTriplanarZoomRotationLoader;
-                if (!(Versioning.version_minor < 9))
-                {
-                    isTriplanarAtlas = value is PQSTriplanarZoomRotationTextureArrayLoader;
-                }
-                // We need to set the material before we check it, so we can reuse the code in MaterialType
-                BasicSurfaceMaterial = value;
-                switch (NewMaterialType.Value)
-                {
-                    case NewShaderSurfaceMaterialType.Vacuum when !isVaccum:
-                        BasicSurfaceMaterial = new PQSProjectionSurfaceQuadLoader(value);
-                        break;
-                    case NewShaderSurfaceMaterialType.Basic when !isBasic:
-                        BasicSurfaceMaterial = new PQSProjectionAerialQuadRelativeLoader(value);
-                        break;
-                    case NewShaderSurfaceMaterialType.Main when !isMain:
-                        BasicSurfaceMaterial = new PQSMainShaderLoader(value);
-                        break;
-                    case NewShaderSurfaceMaterialType.Optimized when !isOptimised:
-                        BasicSurfaceMaterial = new PQSMainOptimisedLoader(value);
-                        break;
-                    case NewShaderSurfaceMaterialType.Extra when !isExtra:
-                        BasicSurfaceMaterial = new PQSMainExtrasLoader(value);
-                        break;
-                    case NewShaderSurfaceMaterialType.MainFastBlend when !isMainFastBlend:
-                        BasicSurfaceMaterial = new PQSMainFastBlendLoader(value);
-                        break;
-                    case NewShaderSurfaceMaterialType.OptimizedFastBlend when !isOptimisedFastBlend:
-                        BasicSurfaceMaterial = new PQSMainOptimisedFastBlendLoader(value);
-                        break;
-                    case NewShaderSurfaceMaterialType.Triplanar when !isTriplanar:
-                        BasicSurfaceMaterial = new PQSTriplanarZoomRotationLoader(value);
-                        break;
-                    case NewShaderSurfaceMaterialType.TriplanarAtlas when !isTriplanarAtlas:
-                        BasicSurfaceMaterial = new PQSTriplanarZoomRotationTextureArrayLoader(value);
-                        break;
-                    default:
-                        BasicSurfaceMaterial = value;
-                        break;
-                }
-            }
+            set { _surfaceMaterial = value; }
         }
 
-        // Fallback Material of the PQS (its always the same material)
+        // Fallback Material of the PQS (its always the same shader)
         [ParserTarget("FallbackMaterial", AllowMerge = true, GetChild = false)]
-        [SuppressMessage("ReSharper", "ConvertIfStatementToReturnStatement")]
         [KittopiaUntouchable]
-        public Material FallbackMaterial
+        public PQSProjectionFallbackLoader FallbackMaterial
         {
-            get
-            {
-                if (!(Value.fallbackMaterial is PQSProjectionFallbackLoader))
-                {
-                    Value.fallbackMaterial = new PQSProjectionFallbackLoader(Value.fallbackMaterial);
-                }
-
-                return Value.fallbackMaterial;
-            }
-            set
-            {
-                if (value is PQSProjectionFallbackLoader)
-                {
-                    Value.fallbackMaterial = value;
-                }
-                else
-                {
-                    Value.fallbackMaterial = new PQSProjectionFallbackLoader(value);
-                }
-            }
+            get { return _fallbackMaterial ??= new PQSProjectionFallbackLoader(Value.fallbackMaterial); }
+            set { _fallbackMaterial = value; }
         }
 
         // PQSMod loader
@@ -443,7 +340,7 @@ namespace Kopernicus.Configuration
                 Utility.CopyObjectFields(laythe.pqsVersion, Value);
 
                 // Create the fallback material (always the same shader)
-                FallbackMaterial = new PQSProjectionFallbackLoader();
+                Value.fallbackMaterial = new PQSProjectionFallback();
 
                 // Create the celestial body transform
                 _transform = Utility.AddMod<PQSMod_CelestialBodyTransform>(Value, 10);
@@ -587,7 +484,7 @@ namespace Kopernicus.Configuration
                 Utility.CopyObjectFields(laythe.pqsVersion, Value);
 
                 // Create the fallback material (always the same shader)
-                FallbackMaterial = new PQSProjectionFallbackLoader();
+                Value.fallbackMaterial = new PQSProjectionFallback();
 
                 // Create the celestial body transform
                 _transform = Utility.AddMod<PQSMod_CelestialBodyTransform>(Value, 10);
@@ -695,6 +592,12 @@ namespace Kopernicus.Configuration
         // PostApply Event
         void IParserEventSubscriber.PostApply(ConfigNode node)
         {
+            // Commit the parsed materials onto the underlying PQS
+            if (_surfaceMaterial != null)
+                BasicSurfaceMaterial = _surfaceMaterial.Value;
+            if (_fallbackMaterial != null)
+                Value.fallbackMaterial = _fallbackMaterial.Value;
+
             // Reset the PQS state
             Parser.ClearState("Kopernicus:pqsVersion");
 
