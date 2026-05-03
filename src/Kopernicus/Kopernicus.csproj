@@ -13,7 +13,7 @@
 
     <!-- Other configuration -->
     <TargetFramework>net4.8</TargetFramework>
-    <LangVersion>13</LangVersion>
+    <LangVersion>14</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

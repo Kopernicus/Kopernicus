@@ -23,42 +23,29 @@
  * https://kerbalspaceprogram.com
  */
 
-using System.Collections.Generic;
-using KSPTextureLoader;
-using UnityEngine;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.ConfigParser.Interfaces;
 
-namespace Kopernicus.OnDemand;
+namespace Kopernicus.Configuration.MaterialLoader.Parsing;
 
 /// <summary>
-/// A component attached to the __deactivator GameObject that keeps texture handles
-/// alive without resorting to GCHandle leaks. Handles stored here are retained for
-/// the lifetime of the game so that KSPTextureLoader's internal cache stays valid.
+/// A value-holding parser for shader multi-keyword properties (one of N
+/// allowed string keywords). Validation against the allowed set lives on
+/// <see cref="BaseMaterialLoader.SetMultiKeyword"/> so the property setter
+/// only has to forward.
 /// </summary>
-internal class TextureHandleStorage : MonoBehaviour
+[RequireConfigType(ConfigType.Value)]
+public class MaterialMultiKeywordParser : IParsable
 {
-    private static TextureHandleStorage _instance;
+    public string Keyword { get; set; }
 
-    private readonly List<TextureHandle> textures = [];
-    private readonly List<CPUTextureHandle> cpuTextures = [];
+    public void SetFromString(string s) => Keyword = s;
+    public string ValueToString() => Keyword;
 
-    public static TextureHandleStorage Instance
-    {
-        get
-        {
-            if (!_instance.IsNullOrDestroyed())
-                return _instance;
+    public MaterialMultiKeywordParser() { }
+    public MaterialMultiKeywordParser(string keyword) => Keyword = keyword;
 
-            return _instance = Utility.Deactivator.gameObject.AddComponent<TextureHandleStorage>();
-        }
-    }
-
-    public void Store(TextureHandle handle)
-    {
-        textures.Add(handle);
-    }
-
-    public void Store(CPUTextureHandle handle)
-    {
-        cpuTextures.Add(handle);
-    }
+    public static implicit operator string(MaterialMultiKeywordParser parser) => parser?.Keyword;
+    public static implicit operator MaterialMultiKeywordParser(string keyword) => new(keyword);
 }

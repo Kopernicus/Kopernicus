@@ -23,42 +23,34 @@
  * https://kerbalspaceprogram.com
  */
 
-using System.Collections.Generic;
-using KSPTextureLoader;
+using System;
+using Kopernicus.Components;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.ConfigParser.Interfaces;
 using UnityEngine;
 
-namespace Kopernicus.OnDemand;
+namespace Kopernicus.Configuration.Parsing;
 
 /// <summary>
-/// A component attached to the __deactivator GameObject that keeps texture handles
-/// alive without resorting to GCHandle leaks. Handles stored here are retained for
-/// the lifetime of the game so that KSPTextureLoader's internal cache stays valid.
+/// Parser for a <see cref="Shader"/>.
 /// </summary>
-internal class TextureHandleStorage : MonoBehaviour
+[RequireConfigType(ConfigType.Value)]
+public class ShaderParser : IParsable, ITypeParser<Shader>
 {
-    private static TextureHandleStorage _instance;
+    public Shader Value { get; set; }
 
-    private readonly List<TextureHandle> textures = [];
-    private readonly List<CPUTextureHandle> cpuTextures = [];
-
-    public static TextureHandleStorage Instance
+    public void SetFromString(string s)
     {
-        get
-        {
-            if (!_instance.IsNullOrDestroyed())
-                return _instance;
+        var shader = Shader.Find(s);
+        if (shader == null)
+            throw new Exception($"Unable to find shader `{s}`");
 
-            return _instance = Utility.Deactivator.gameObject.AddComponent<TextureHandleStorage>();
-        }
+        Value = shader;
     }
 
-    public void Store(TextureHandle handle)
-    {
-        textures.Add(handle);
-    }
+    public string ValueToString() => Value?.name;
 
-    public void Store(CPUTextureHandle handle)
-    {
-        cpuTextures.Add(handle);
-    }
+    public static implicit operator Shader(ShaderParser parser) => parser.Value;
+    public static implicit operator ShaderParser(Shader shader) => new() { Value = shader };
 }
