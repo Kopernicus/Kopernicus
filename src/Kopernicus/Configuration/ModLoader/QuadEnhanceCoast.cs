@@ -38,15 +38,22 @@ namespace Kopernicus.Configuration.ModLoader
         [ParserTarget("coastLessThan")]
         public NumericParser<Double> CoastLessThan
         {
-            get { return Mod.coastLessThan; }
-            set { Mod.coastLessThan = value; }
+            get => Mod.coastLessThan;
+            set => Mod.coastLessThan = value;
         }
 
         [ParserTarget("oceanFactor")]
         public NumericParser<Double> OceanFactor
         {
-            get { return Mod.oceanFactor; }
-            set { Mod.oceanFactor = value; }
+            get => Mod.oceanFactor;
+            set => Mod.oceanFactor = value;
+        }
+
+        [ParserTarget("coastFactor")]
+        public NumericParser<double> CoastFactor
+        {
+            get => Mod.coastFactor;
+            set => Mod.coastFactor = value;
         }
     }
 }
