@@ -105,7 +105,6 @@ namespace Kopernicus.RuntimeUtility
 
             // Keep this behaviour alive
             DontDestroyOnLoad(this);
-            GameEvents.onCrash.Add(AggregateLogs);
         }
 
         private void OnApplicationQuit()
