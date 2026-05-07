@@ -23,42 +23,25 @@
  * https://kerbalspaceprogram.com
  */
 
-using System.Collections.Generic;
-using KSPTextureLoader;
 using UnityEngine;
 
 namespace Kopernicus.OnDemand;
 
-/// <summary>
-/// A component attached to the __deactivator GameObject that keeps texture handles
-/// alive without resorting to GCHandle leaks. Handles stored here are retained for
-/// the lifetime of the game so that KSPTextureLoader's internal cache stays valid.
-/// </summary>
-internal class TextureHandleStorage : MonoBehaviour
+public struct OnDemandTextureEntry(string key, string path)
 {
-    private static TextureHandleStorage _instance;
+    /// <summary>
+    /// The name of the texture key on the shader itself. Will be something like
+    /// <c>_MainTex</c>.
+    /// </summary>
+    public string Key { get; } = key;
 
-    private readonly List<TextureHandle> textures = [];
-    private readonly List<CPUTextureHandle> cpuTextures = [];
+    /// <summary>
+    /// The property ID for <see cref="Key" />.
+    /// </summary>
+    public int Id { get; } = Shader.PropertyToID(key);
 
-    public static TextureHandleStorage Instance
-    {
-        get
-        {
-            if (!_instance.IsNullOrDestroyed())
-                return _instance;
-
-            return _instance = Utility.Deactivator.gameObject.AddComponent<TextureHandleStorage>();
-        }
-    }
-
-    public void Store(TextureHandle handle)
-    {
-        textures.Add(handle);
-    }
-
-    public void Store(CPUTextureHandle handle)
-    {
-        cpuTextures.Add(handle);
-    }
+    /// <summary>
+    /// The path at which this texture can be found.
+    /// </summary>
+    public string Path { get; } = path;
 }
