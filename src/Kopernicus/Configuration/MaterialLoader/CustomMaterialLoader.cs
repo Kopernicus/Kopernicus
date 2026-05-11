@@ -23,42 +23,45 @@
  * https://kerbalspaceprogram.com
  */
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Kopernicus.ConfigParser;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.ConfigParser.Interfaces;
+using Kopernicus.Configuration.MaterialLoader.Parsing;
+using Kopernicus.Configuration.Parsing;
+using Kopernicus.OnDemand;
 using KSPTextureLoader;
 using UnityEngine;
+using UnityEngine.Rendering;
 
-namespace Kopernicus.OnDemand;
+namespace Kopernicus.Configuration.MaterialLoader;
 
-/// <summary>
-/// A component attached to the __deactivator GameObject that keeps texture handles
-/// alive without resorting to GCHandle leaks. Handles stored here are retained for
-/// the lifetime of the game so that KSPTextureLoader's internal cache stays valid.
-/// </summary>
-internal class TextureHandleStorage : MonoBehaviour
+[RequireConfigType(ConfigType.Node)]
+public class CustomMaterialLoader : BaseMaterialLoader
 {
-    private static TextureHandleStorage _instance;
+    /// <summary>
+    /// The shader that will actually be loaded.
+    /// </summary>
+    [PreApply]
+    [ParserTarget("shader")]
+    public override ShaderParser ShaderParser { get; set; }
 
-    private readonly List<TextureHandle> textures = [];
-    private readonly List<CPUTextureHandle> cpuTextures = [];
+    /// <summary>
+    /// Whether this specific material should use on-demand textures. Defaults
+    /// to the global config but can be overridden if needed.
+    /// </summary>
+    [ParserTarget("onDemand")]
+    public override NumericParser<bool> OnDemand { get; set; } = OnDemandStorage.UseOnDemand;
 
-    public static TextureHandleStorage Instance
+    public override void PostApply(ConfigNode node)
     {
-        get
-        {
-            if (!_instance.IsNullOrDestroyed())
-                return _instance;
+        base.PostApply(node);
 
-            return _instance = Utility.Deactivator.gameObject.AddComponent<TextureHandleStorage>();
-        }
-    }
-
-    public void Store(TextureHandle handle)
-    {
-        textures.Add(handle);
-    }
-
-    public void Store(CPUTextureHandle handle)
-    {
-        cpuTextures.Add(handle);
+        foreach (var keyword in node.GetValues("keyword"))
+            SetKeyword(keyword, true);
     }
 }
