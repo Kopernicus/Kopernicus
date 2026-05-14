@@ -37,6 +37,7 @@ using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.ConfigParser.Interfaces;
 using Kopernicus.Configuration.Enumerations;
 using Kopernicus.Configuration.MaterialLoader;
+using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using Kopernicus.OnDemand;
 using Kopernicus.RuntimeUtility;
@@ -59,17 +60,23 @@ namespace Kopernicus.Configuration
         public CelestialBody Value { get; set; }
 
         [RequireConfigType(ConfigType.Node)]
-        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-        [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-        public class OnDemandConfig
+        public class OnDemandConfig(BaseMaterialLoader loader)
         {
             [ParserTarget("texture")]
             [ParserTarget("mainTex")]
-            public String Texture { get; set; }
+            public MaterialTextureParser Texture
+            {
+                get => null;
+                set => loader.SetTexture("_MainTex", value);
+            }
 
             [ParserTarget("normals")]
             [ParserTarget("bumpMap")]
-            public String Normals { get; set; }
+            public MaterialTextureParser Normals
+            {
+                get => null;
+                set => loader.SetTexture("_BumpMap", value);
+            }
         }
 
         private Material CurrentMaterial => Value.scaledBody.GetComponent<Renderer>().sharedMaterial;
@@ -208,9 +215,9 @@ namespace Kopernicus.Configuration
             set => field = value;
         }
 
-        [ParserTarget("OnDemand")]
-        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-        public OnDemandConfig OnDemandTextures { get; set; }
+        [ParserTarget("OnDemand", AllowMerge = true)]
+        [KittopiaUntouchable]
+        public OnDemandConfig OnDemandTextures { get => new(Material); set { } }
 
         [ParserTarget("TextureOptions", AllowMerge = true)]
         [KittopiaHideOption(Export = false, Show = true)]
@@ -300,9 +307,6 @@ namespace Kopernicus.Configuration
         // Post apply event
         void IParserEventSubscriber.PostApply(ConfigNode node)
         {
-            if (Material.Value != null)
-                Value.scaledBody.GetComponent<Renderer>().sharedMaterial = Material.Value;
-
             Logger.Active.Log("============= Scaled Version Dump ===================");
             Utility.GameObjectWalk(Value.scaledBody);
             Logger.Active.Log("===========================================");
@@ -330,46 +334,19 @@ namespace Kopernicus.Configuration
                 }
             }
 
-            // If we use OnDemand, we need to delete the original textures and reload them
-            if (Type != ScaledMaterialType.Star && OnDemandTextures != null)
+            if (Material?.Value != null)
             {
-                if (OnDemandStorage.UseOnDemand)
+                Value.scaledBody.GetComponent<Renderer>().sharedMaterial = Material.Value;
+
+                // Only bother adding a ScaledSpaceOnDemand if there are actually
+                // textures to load
+                var entries = Material.Entries;
+                if (entries.Count != 0)
                 {
-                    ScaledSpaceOnDemand onDemand = Value.scaledBody.AddComponent<ScaledSpaceOnDemand>();
-                    onDemand.texture = OnDemandTextures.Texture;
-                    onDemand.normals = OnDemandTextures.Normals;
-
-                    // Delete the original scaled space textures
-                    if (OnDemandTextures.Texture != null)
-                    {
-                        Texture2D texture = new Texture2D(1, 1);
-                        texture.Apply();
-                        Material.Value.SetTexture(MainTex, texture);
-                    }
-
-                    if (OnDemandTextures.Normals != null)
-                    {
-                        Texture2D texture = new Texture2D(1, 1);
-                        texture.Apply();
-                        Material.Value.SetTexture(BumpMap, texture);
-                    }
-                }
-                else
-                {
-                    // If OD isn't enabled, load the textures, assign them and don't care anymore
-                    Texture2DParser parser = new Texture2DParser();
-
-                    if (OnDemandTextures.Texture != null)
-                    {
-                        parser.SetFromString(OnDemandTextures.Texture);
-                        Material.Value.SetTexture(MainTex, parser);
-                    }
-
-                    if (OnDemandTextures.Normals != null)
-                    {
-                        parser.SetFromString(OnDemandTextures.Normals);
-                        Material.Value.SetTexture(BumpMap, parser);
-                    }
+                    var onDemand = Value.scaledBody.AddComponent<ScaledSpaceOnDemand>();
+                    onDemand.Entries = entries
+                        .Select(kv => new OnDemandTextureEntry(kv.Key, kv.Value))
+                        .ToList();
                 }
             }
 
