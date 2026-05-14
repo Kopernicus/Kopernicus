@@ -232,6 +232,7 @@ namespace Kopernicus.Configuration
                 ScaledMaterialType.Atmospheric => new ScaledPlanetSimpleLoader(CurrentMaterial),
                 ScaledMaterialType.AtmosphericStandard => new ScaledPlanetRimAerialStandardLoader(CurrentMaterial),
                 ScaledMaterialType.Star => new EmissiveMultiRampSunspotsLoader(CurrentMaterial),
+                ScaledMaterialType.GasGiant => new GasGiantLoader(CurrentMaterial),
                 _ => new CustomMaterialLoader(),
             };
 
@@ -284,6 +285,11 @@ namespace Kopernicus.Configuration
                     collider.center = Vector3.zero;
                     collider.radius = 1000.0f;
                 }
+
+                // If we are using the gas giant shader then we need the GasGiantMaterialControls
+                // component.
+                if (Type == ScaledMaterialType.GasGiant)
+                    Value.scaledBody.AddOrGetComponent<GasGiantMaterialControls>();
             }
 
             // Event
@@ -385,6 +391,8 @@ namespace Kopernicus.Configuration
             }
             if (EmissiveMultiRampSunspotsLoader.UsesSameShader(material))
                 return ScaledMaterialType.Star;
+            if (GasGiantLoader.UsesSameShader(material))
+                return ScaledMaterialType.GasGiant;
             return ScaledMaterialType.Custom;
         }
 
