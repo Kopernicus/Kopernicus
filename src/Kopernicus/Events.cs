@@ -268,6 +268,15 @@ namespace Kopernicus
         [Description("RuntimeUtility.SwitchStar")]
         public static EventData<KopernicusStar> OnRuntimeUtilitySwitchStar { get; private set; }
 
+        /// <summary>
+        /// Called when a PQS sphere is just started, just before the call to
+        /// <see cref="PQS.UpdateQuadsInit" />. Other than a prefix patch, this
+        /// is the only reliable way to run code before PQS construction starts,
+        /// since stock doesn't provide an event for this by default.
+        /// </summary>
+        [Description("RuntimeUtility.PQSSphereStartedPreInit")]
+        public static EventData<PQS> OnPQSSphereStartedPreInit { get; private set; }
+
         [Description("RuntimeUtility.SpawnAsteroid.NR")]
         private static EventData<ProtoVessel> OnRuntimeUtilitySpawnAsteroidNR { get; set; }
         [Description("RuntimeUtility.SwitchStar.NR")]
