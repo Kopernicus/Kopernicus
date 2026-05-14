@@ -194,7 +194,19 @@ namespace Kopernicus.Configuration
 
         [ParserTarget("Material", AllowMerge = true)]
         [KittopiaUntouchable]
-        public BaseMaterialLoader Material { get; set; }
+        public BaseMaterialLoader Material
+        {
+            get => field ??= Type.Value switch
+            {
+                ScaledMaterialType.Vacuum => new ScaledPlanetSimpleLoader(CurrentMaterial),
+                ScaledMaterialType.Atmospheric => new ScaledPlanetSimpleLoader(CurrentMaterial),
+                ScaledMaterialType.AtmosphericStandard => new ScaledPlanetRimAerialStandardLoader(CurrentMaterial),
+                ScaledMaterialType.Star => new EmissiveMultiRampSunspotsLoader(CurrentMaterial),
+                ScaledMaterialType.GasGiant => new GasGiantLoader(CurrentMaterial),
+                _ => new CustomMaterialLoader(),
+            };
+            set => field = value;
+        }
 
         [ParserTarget("OnDemand")]
         [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
@@ -225,17 +237,6 @@ namespace Kopernicus.Configuration
         // Parser apply event
         void IParserEventSubscriber.Apply(ConfigNode node)
         {
-            // Set up the material based on the type.
-            Material = Type.Value switch
-            {
-                ScaledMaterialType.Vacuum => new ScaledPlanetSimpleLoader(CurrentMaterial),
-                ScaledMaterialType.Atmospheric => new ScaledPlanetSimpleLoader(CurrentMaterial),
-                ScaledMaterialType.AtmosphericStandard => new ScaledPlanetRimAerialStandardLoader(CurrentMaterial),
-                ScaledMaterialType.Star => new EmissiveMultiRampSunspotsLoader(CurrentMaterial),
-                ScaledMaterialType.GasGiant => new GasGiantLoader(CurrentMaterial),
-                _ => new CustomMaterialLoader(),
-            };
-
             // Are we a star?
             if (IsStar)
             {

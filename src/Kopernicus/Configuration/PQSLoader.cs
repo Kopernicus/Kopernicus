@@ -59,8 +59,6 @@ namespace Kopernicus.Configuration
         // Required PQSMods
         private readonly PQSMod_CelestialBodyTransform _transform;
         private readonly PQSMod_QuadMeshColliders _collider;
-        private bool isMainFastBlend;
-        private bool isTriplanarAtlas;
 
         // Surface physics material
         [ParserTarget("PhysicsMaterial", AllowMerge = true)]
@@ -176,127 +174,31 @@ namespace Kopernicus.Configuration
             }
         }
 
-        // Backing storage for the parsed material loaders. Committed to the
-        // underlying PQS in PostApply.
-        private BaseMaterialLoader _surfaceMaterial;
-        private PQSProjectionFallbackLoader _fallbackMaterial;
-
-        private Material CurrentSurfaceMaterial => _surfaceMaterial?.Value ?? BasicSurfaceMaterial;
+        // Type of surface material used by the PQS.
         [PreApply]
         [ParserTarget("materialType")]
-        [SuppressMessage("ReSharper", "ConvertIfStatementToReturnStatement")]
         public EnumParser<NewShaderSurfaceMaterialType> NewMaterialType
         {
-            get
-            {
-                Material material = CurrentSurfaceMaterial;
-
-                if (PQSProjectionSurfaceQuad.UsesSameShader(material))
-                    return NewShaderSurfaceMaterialType.Vacuum;
-                if (PQSProjectionAerialQuadRelative.UsesSameShader(material))
-                    return NewShaderSurfaceMaterialType.Basic;
-                if (PQSMainShader.UsesSameShader(material))
-                    return NewShaderSurfaceMaterialType.Main;
-                if (PQSMainOptimised.UsesSameShader(material))
-                    return NewShaderSurfaceMaterialType.Optimized;
-                if (PQSMainExtras.UsesSameShader(material))
-                    return NewShaderSurfaceMaterialType.Extra;
-                if (PQSMainOptimisedFastBlend.UsesSameShader(material))
-                    return NewShaderSurfaceMaterialType.OptimizedFastBlend;
-                if (PQSTriplanarZoomRotation.UsesSameShader(material))
-                    return NewShaderSurfaceMaterialType.Triplanar;
-                if (PQSMainFastBlend.UsesSameShader(material))
-                    return NewShaderSurfaceMaterialType.MainFastBlend;
-                if (PQSTriplanarZoomRotationTextureArray.UsesSameShader(material))
-                    return NewShaderSurfaceMaterialType.TriplanarAtlas;
-                if (PQSMainTriplanarZoomRotation.UsesSameShader(material))
-                    return NewShaderSurfaceMaterialType.MainTriplanarZoomRotation;
-
-                throw new Exception("The shader '" + material.shader.name + "' is not supported.");
-            }
-            set
-            {
-                if (UsesSurfaceShader(value.Value, CurrentSurfaceMaterial))
-                {
-                    if (value.Value == NewShaderSurfaceMaterialType.MainFastBlend)
-                        isMainFastBlend = true;
-                    if (value.Value == NewShaderSurfaceMaterialType.TriplanarAtlas)
-                        isTriplanarAtlas = true;
-                    return;
-                }
-
-                _surfaceMaterial = value.Value switch
-                {
-                    NewShaderSurfaceMaterialType.Vacuum => new PQSProjectionSurfaceQuadLoader(),
-                    NewShaderSurfaceMaterialType.Basic => new PQSProjectionAerialQuadRelativeLoader(),
-                    NewShaderSurfaceMaterialType.Main => new PQSMainShaderLoader(),
-                    NewShaderSurfaceMaterialType.Optimized => new PQSMainOptimisedLoader(),
-                    NewShaderSurfaceMaterialType.Extra => new PQSMainExtrasLoader(),
-                    NewShaderSurfaceMaterialType.MainFastBlend => new PQSMainFastBlendLoader(),
-                    NewShaderSurfaceMaterialType.OptimizedFastBlend => new PQSMainOptimisedFastBlendLoader(),
-                    NewShaderSurfaceMaterialType.Triplanar => new PQSTriplanarZoomRotationLoader(),
-                    NewShaderSurfaceMaterialType.TriplanarAtlas => new PQSTriplanarZoomRotationTextureArrayLoader(),
-                    NewShaderSurfaceMaterialType.MainTriplanarZoomRotation => new PQSMainTriplanarZoomRotationLoader(),
-                    _ => _surfaceMaterial,
-                };
-
-                isMainFastBlend = value.Value == NewShaderSurfaceMaterialType.MainFastBlend;
-                isTriplanarAtlas = value.Value == NewShaderSurfaceMaterialType.TriplanarAtlas;
-            }
+            get => field ??= GetInitialMaterialType();
+            set => field = value;
         }
 
-        private static Boolean UsesSurfaceShader(NewShaderSurfaceMaterialType type, Material material) => type switch
-        {
-            NewShaderSurfaceMaterialType.Vacuum => PQSProjectionSurfaceQuad.UsesSameShader(material),
-            NewShaderSurfaceMaterialType.Basic => PQSProjectionAerialQuadRelative.UsesSameShader(material),
-            NewShaderSurfaceMaterialType.Main => PQSMainShader.UsesSameShader(material),
-            NewShaderSurfaceMaterialType.Optimized => PQSMainOptimised.UsesSameShader(material),
-            NewShaderSurfaceMaterialType.Extra => PQSMainExtras.UsesSameShader(material),
-            NewShaderSurfaceMaterialType.MainFastBlend => PQSMainFastBlend.UsesSameShader(material),
-            NewShaderSurfaceMaterialType.OptimizedFastBlend => PQSMainOptimisedFastBlend.UsesSameShader(material),
-            NewShaderSurfaceMaterialType.Triplanar => PQSTriplanarZoomRotation.UsesSameShader(material),
-            NewShaderSurfaceMaterialType.TriplanarAtlas => PQSTriplanarZoomRotationTextureArray.UsesSameShader(material),
-            NewShaderSurfaceMaterialType.MainTriplanarZoomRotation => PQSMainTriplanarZoomRotation.UsesSameShader(material),
-            _ => false,
-        };
-
-        // Surface Material of the PQS
+        // Surface Material of the PQS.
         [ParserTarget("Material", AllowMerge = true, GetChild = false)]
         [KittopiaUntouchable]
         public BaseMaterialLoader SurfaceMaterial
         {
-            get
-            {
-                if (_surfaceMaterial != null)
-                    return _surfaceMaterial;
-
-                Material existing = BasicSurfaceMaterial;
-                _surfaceMaterial = NewMaterialType.Value switch
-                {
-                    NewShaderSurfaceMaterialType.Vacuum => new PQSProjectionSurfaceQuadLoader(existing),
-                    NewShaderSurfaceMaterialType.Basic => new PQSProjectionAerialQuadRelativeLoader(existing),
-                    NewShaderSurfaceMaterialType.Main => new PQSMainShaderLoader(existing),
-                    NewShaderSurfaceMaterialType.Optimized => new PQSMainOptimisedLoader(existing),
-                    NewShaderSurfaceMaterialType.Extra => new PQSMainExtrasLoader(existing),
-                    NewShaderSurfaceMaterialType.MainFastBlend => new PQSMainFastBlendLoader(existing),
-                    NewShaderSurfaceMaterialType.OptimizedFastBlend => new PQSMainOptimisedFastBlendLoader(existing),
-                    NewShaderSurfaceMaterialType.Triplanar => new PQSTriplanarZoomRotationLoader(existing),
-                    NewShaderSurfaceMaterialType.TriplanarAtlas => new PQSTriplanarZoomRotationTextureArrayLoader(existing),
-                    NewShaderSurfaceMaterialType.MainTriplanarZoomRotation => new PQSMainTriplanarZoomRotationLoader(existing),
-                    _ => throw new Exception("Unsupported surface material type: " + NewMaterialType.Value),
-                };
-                return _surfaceMaterial;
-            }
-            set { _surfaceMaterial = value; }
+            get => field ??= GetInitialSurfaceMaterialLoader();
+            set => field = value;
         }
 
-        // Fallback Material of the PQS (its always the same shader)
+        // Fallback Material of the PQS (its always the same shader).
         [ParserTarget("FallbackMaterial", AllowMerge = true, GetChild = false)]
         [KittopiaUntouchable]
         public PQSProjectionFallbackLoader FallbackMaterial
         {
-            get { return _fallbackMaterial ??= new PQSProjectionFallbackLoader(Value.fallbackMaterial); }
-            set { _fallbackMaterial = value; }
+            get => field ??= new PQSProjectionFallbackLoader(Value.fallbackMaterial);
+            set => field = value;
         }
 
         // PQSMod loader
@@ -598,10 +500,10 @@ namespace Kopernicus.Configuration
         void IParserEventSubscriber.PostApply(ConfigNode node)
         {
             // Commit the parsed materials onto the underlying PQS
-            if (_surfaceMaterial != null)
-                BasicSurfaceMaterial = _surfaceMaterial.Value;
-            if (_fallbackMaterial != null)
-                Value.fallbackMaterial = _fallbackMaterial.Value;
+            if (SurfaceMaterial?.Value != null)
+                BasicSurfaceMaterial = SurfaceMaterial.Value;
+            if (FallbackMaterial?.Value != null)
+                Value.fallbackMaterial = FallbackMaterial.Value;
 
             // Reset the PQS state
             Parser.ClearState("Kopernicus:pqsVersion");
@@ -614,5 +516,48 @@ namespace Kopernicus.Configuration
             //Utility.GameObjectWalk(Value.gameObject, "  ");
             // -------------------------------
         }
+
+        NewShaderSurfaceMaterialType GetInitialMaterialType()
+        {
+            Material material = BasicSurfaceMaterial;
+
+            if (PQSProjectionSurfaceQuad.UsesSameShader(material))
+                return NewShaderSurfaceMaterialType.Vacuum;
+            if (PQSProjectionAerialQuadRelative.UsesSameShader(material))
+                return NewShaderSurfaceMaterialType.Basic;
+            if (PQSMainShader.UsesSameShader(material))
+                return NewShaderSurfaceMaterialType.Main;
+            if (PQSMainOptimised.UsesSameShader(material))
+                return NewShaderSurfaceMaterialType.Optimized;
+            if (PQSMainExtras.UsesSameShader(material))
+                return NewShaderSurfaceMaterialType.Extra;
+            if (PQSMainOptimisedFastBlend.UsesSameShader(material))
+                return NewShaderSurfaceMaterialType.OptimizedFastBlend;
+            if (PQSTriplanarZoomRotation.UsesSameShader(material))
+                return NewShaderSurfaceMaterialType.Triplanar;
+            if (PQSMainFastBlend.UsesSameShader(material))
+                return NewShaderSurfaceMaterialType.MainFastBlend;
+            if (PQSTriplanarZoomRotationTextureArray.UsesSameShader(material))
+                return NewShaderSurfaceMaterialType.TriplanarAtlas;
+            if (PQSMainTriplanarZoomRotation.UsesSameShader(material))
+                return NewShaderSurfaceMaterialType.MainTriplanarZoomRotation;
+
+            throw new Exception("The shader '" + material.shader.name + "' is not supported.");
+        }
+
+        BaseMaterialLoader GetInitialSurfaceMaterialLoader() => NewMaterialType.Value switch
+        {
+            NewShaderSurfaceMaterialType.Vacuum => new PQSProjectionSurfaceQuadLoader(BasicSurfaceMaterial),
+            NewShaderSurfaceMaterialType.Basic => new PQSProjectionAerialQuadRelativeLoader(BasicSurfaceMaterial),
+            NewShaderSurfaceMaterialType.Main => new PQSMainShaderLoader(BasicSurfaceMaterial),
+            NewShaderSurfaceMaterialType.Optimized => new PQSMainOptimisedLoader(BasicSurfaceMaterial),
+            NewShaderSurfaceMaterialType.Extra => new PQSMainExtrasLoader(BasicSurfaceMaterial),
+            NewShaderSurfaceMaterialType.MainFastBlend => new PQSMainFastBlendLoader(BasicSurfaceMaterial),
+            NewShaderSurfaceMaterialType.OptimizedFastBlend => new PQSMainOptimisedFastBlendLoader(BasicSurfaceMaterial),
+            NewShaderSurfaceMaterialType.Triplanar => new PQSTriplanarZoomRotationLoader(BasicSurfaceMaterial),
+            NewShaderSurfaceMaterialType.TriplanarAtlas => new PQSTriplanarZoomRotationTextureArrayLoader(BasicSurfaceMaterial),
+            NewShaderSurfaceMaterialType.MainTriplanarZoomRotation => new PQSMainTriplanarZoomRotationLoader(BasicSurfaceMaterial),
+            _ => throw new Exception("Unsupported surface material type: " + NewMaterialType.Value),
+        };
     }
 }
