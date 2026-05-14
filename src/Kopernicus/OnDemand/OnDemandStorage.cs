@@ -30,7 +30,9 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using DDSHeaders;
+using KSPTextureLoader;
 using UnityEngine;
+using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
 
 namespace Kopernicus.OnDemand
@@ -61,6 +63,19 @@ namespace Kopernicus.OnDemand
         public static Int32 OnDemandUnloadDelay = 10;
 
         public static Boolean UseManualMemoryManagement = true;
+
+        /// <summary>
+        /// Check whether a <paramref name="body"/> has any on-demand maps associated
+        /// with it.
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
+        public static bool HasMaps(string body)
+        {
+            if (Maps.TryGetValue(body, out var bodyMaps))
+                return bodyMaps?.Count != 0;
+            return false;
+        }
 
         // Add a map to the map-list
         public static void AddMap(String body, ILoadOnDemand map)
@@ -236,6 +251,41 @@ namespace Kopernicus.OnDemand
             return true;
         }
 
+        /// <summary>
+        /// Begin loading <paramref name="entry" /> as the texture type expected by
+        /// the shader property it targets. The shader is inspected to pick the
+        /// matching texture dimension (Tex2D, Tex3D, Tex2DArray, Cube, CubeArray)
+        /// so the returned handle holds the correct concrete texture type for the
+        /// shader slot. Falls back to <see cref="Texture" /> when the shader does
+        /// not expose the property.
+        /// </summary>
+        internal static TextureHandle LoadPropertyTexture(Shader shader, string name, string path)
+        {
+            var options = new TextureLoadOptions
+            {
+                Unreadable = true,
+                Hint = TextureLoadHint.BatchAsynchronous
+            };
+
+            if (shader == null)
+                return TextureLoader.LoadTexture<Texture>(path, options);
+
+            var index = shader.FindPropertyIndex(name);
+            var dim = index == -1
+                ? TextureDimension.Unknown
+                : shader.GetPropertyTextureDimension(index);
+
+            return dim switch
+            {
+                TextureDimension.Tex2D => TextureLoader.LoadTexture<Texture2D>(path, options),
+                TextureDimension.Tex3D => TextureLoader.LoadTexture<Texture3D>(path, options),
+                TextureDimension.Tex2DArray => TextureLoader.LoadTexture<Texture2DArray>(path, options),
+                TextureDimension.Cube => TextureLoader.LoadTexture<Cubemap>(path, options),
+                TextureDimension.CubeArray => TextureLoader.LoadTexture<CubemapArray>(path, options),
+                _ => TextureLoader.LoadTexture<Texture>(path, options),
+            };
+        }
+
         internal static void ActivateMap(ILoadOnDemand map)
         {
             if (!MapBodyNames.TryGetValue(map, out var bodyName))
@@ -251,6 +301,9 @@ namespace Kopernicus.OnDemand
 
             ondemand.Activate();
         }
+
+        internal static List<ILoadOnDemand> GetMaps(string body) =>
+            Maps.TryGetValue(body, out var maps) ? maps : [];
 
         public static Byte[] LoadWholeFile(String path)
         {
