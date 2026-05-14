@@ -193,15 +193,7 @@ namespace Kopernicus.Components.MaterialWrapper
         }
 
         // Is some random material this material
-        public static Boolean UsesSameShader(Material m)
-        {
-            if (m == null)
-            {
-                return false;
-            }
-
-            return m.shader.name == Properties.Shader.name;
-        }
+        public static Boolean UsesSameShader(Material m) => Configuration.MaterialLoader.StandardSpecularLoader.UsesSameShader(m);
 
         // Color, default = (1.000000,1.000000,1.000000,1.000000)
         public Color Color

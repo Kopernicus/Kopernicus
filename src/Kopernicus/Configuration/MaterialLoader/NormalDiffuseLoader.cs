@@ -24,62 +24,57 @@
  */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using Kopernicus.Components.MaterialWrapper;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using UnityEngine;
 
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class NormalDiffuseLoader : NormalDiffuse
+    public class NormalDiffuseLoader : BaseMaterialLoader
     {
+        private const String SHADER_NAME = "Legacy Shaders/Diffuse";
+        private static readonly Shader Shader = Shader.Find(SHADER_NAME);
+        public static bool UsesSameShader(Material m) => m != null && m.shader.name == SHADER_NAME;
+
         // Main Color, default = (1,1,1,1)
         [ParserTarget("color")]
         public ColorParser ColorSetter
         {
-            get { return Color; }
-            set { Color = value; }
+            get => GetColor("_Color");
+            set => SetColor("_Color", value);
         }
 
         // Base (RGB), default = "white" { }
         [ParserTarget("mainTex")]
-        public Texture2DParser MainTexSetter
+        public MaterialTextureParser MainTexSetter
         {
-            get { return MainTex; }
-            set { MainTex = value; }
+            get => null;
+            set => SetTexture("_MainTex", value);
         }
 
         [ParserTarget("mainTexScale")]
         public Vector2Parser MainTexScaleSetter
         {
-            get { return MainTexScale; }
-            set { MainTexScale = value; }
+            get => GetTextureScale("_MainTex");
+            set => SetTextureScale("_MainTex", value);
         }
 
         [ParserTarget("mainTexOffset")]
         public Vector2Parser MainTexOffsetSetter
         {
-            get { return MainTexOffset; }
-            set { MainTexOffset = value; }
+            get => GetTextureOffset("_MainTex");
+            set => SetTextureOffset("_MainTex", value);
         }
+
+        public override ShaderParser ShaderParser { get; set; } = Shader;
 
         // Constructors
-        public NormalDiffuseLoader()
-        {
-        }
+        public NormalDiffuseLoader() { }
 
-        [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public NormalDiffuseLoader(String contents) : base(contents)
-        {
-        }
-
-        public NormalDiffuseLoader(Material material) : base(material)
-        {
-        }
+        public NormalDiffuseLoader(Material material) => Value = new(material);
     }
 }

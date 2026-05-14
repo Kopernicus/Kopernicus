@@ -95,17 +95,9 @@ namespace Kopernicus.Components.MaterialWrapper
             }
         }
 
-        // Is some random material this material 
+        // Is some random material this material
         [SuppressMessage("ReSharper", "UnusedMember.Global")]
-        public static Boolean UsesSameShader(Material m)
-        {
-            if (m == null)
-            {
-                return false;
-            }
-
-            return m.shader.name == Properties.Shader.name;
-        }
+        public static Boolean UsesSameShader(Material m) => Configuration.MaterialLoader.PQSProjectionFallbackLoader.UsesSameShader(m);
 
         // Saturation, default = 1
         public Single Saturation

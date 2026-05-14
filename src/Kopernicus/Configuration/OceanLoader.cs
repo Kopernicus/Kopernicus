@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Kopernicus.Components;
+using Kopernicus.Components.MaterialWrapper;
 using Kopernicus.ConfigParser;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
@@ -168,60 +169,25 @@ namespace Kopernicus.Configuration
             }
         }
 
+        private PQSOceanSurfaceQuadLoader _surfaceMaterial;
+        private PQSOceanSurfaceQuadFallbackLoader _fallbackMaterial;
+
         // Surface Material of the PQS
         [ParserTarget("Material", AllowMerge = true, GetChild = false)]
-        [SuppressMessage("ReSharper", "ConvertIfStatementToReturnStatement")]
         [KittopiaUntouchable]
-        public Material SurfaceMaterial
+        public PQSOceanSurfaceQuadLoader SurfaceMaterial
         {
-            get
-            {
-                if (!(BasicSurfaceMaterial is PQSProjectionFallbackLoader))
-                {
-                    BasicSurfaceMaterial = new PQSOceanSurfaceQuadLoader(BasicSurfaceMaterial);
-                }
-
-                return BasicSurfaceMaterial;
-            }
-            set
-            {
-                if (value is PQSOceanSurfaceQuadLoader)
-                {
-                    BasicSurfaceMaterial = value;
-                }
-                else
-                {
-                    BasicSurfaceMaterial = new PQSOceanSurfaceQuadLoader(value);
-                }
-            }
+            get { return _surfaceMaterial ??= new PQSOceanSurfaceQuadLoader(BasicSurfaceMaterial); }
+            set { _surfaceMaterial = value; }
         }
 
         // Fallback Material of the PQS (its always the same material)
         [ParserTarget("FallbackMaterial", AllowMerge = true, GetChild = false)]
-        [SuppressMessage("ReSharper", "ConvertIfStatementToReturnStatement")]
         [KittopiaUntouchable]
-        public Material FallbackMaterial
+        public PQSOceanSurfaceQuadFallbackLoader FallbackMaterial
         {
-            get
-            {
-                if (!(Value.fallbackMaterial is PQSOceanSurfaceQuadFallbackLoader))
-                {
-                    Value.fallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(Value.fallbackMaterial);
-                }
-
-                return Value.fallbackMaterial;
-            }
-            set
-            {
-                if (value is PQSOceanSurfaceQuadFallbackLoader)
-                {
-                    Value.fallbackMaterial = value;
-                }
-                else
-                {
-                    Value.fallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(value);
-                }
-            }
+            get { return _fallbackMaterial ??= new PQSOceanSurfaceQuadFallbackLoader(Value.fallbackMaterial); }
+            set { _fallbackMaterial = value; }
         }
 
         // PQSMod loader
@@ -270,8 +236,8 @@ namespace Kopernicus.Configuration
                     Utility.CopyObjectFields(oceans[i], Value);
 
                     // Create the material (always the same shader)
-                    SurfaceMaterial = new PQSOceanSurfaceQuadLoader(oceans[i].surfaceMaterial);
-                    FallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(oceans[i].fallbackMaterial);
+                    BasicSurfaceMaterial = new PQSOceanSurfaceQuad(oceans[i].surfaceMaterial);
+                    Value.fallbackMaterial = new PQSOceanSurfaceQuadFallback(oceans[i].fallbackMaterial);
 
                     break;
                 }
@@ -355,8 +321,8 @@ namespace Kopernicus.Configuration
                     Utility.CopyObjectFields(oceans[i], Value);
 
                     // Create the material (always the same shader)
-                    SurfaceMaterial = new PQSOceanSurfaceQuadLoader(oceans[i].surfaceMaterial);
-                    FallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(oceans[i].fallbackMaterial);
+                    BasicSurfaceMaterial = new PQSOceanSurfaceQuad(oceans[i].surfaceMaterial);
+                    Value.fallbackMaterial = new PQSOceanSurfaceQuadFallback(oceans[i].fallbackMaterial);
 
                     break;
                 }
@@ -426,6 +392,12 @@ namespace Kopernicus.Configuration
         // Post Apply
         void IParserEventSubscriber.PostApply(ConfigNode node)
         {
+            // Commit parsed materials to the underlying PQS
+            if (_surfaceMaterial != null)
+                BasicSurfaceMaterial = _surfaceMaterial.Value;
+            if (_fallbackMaterial != null)
+                Value.fallbackMaterial = _fallbackMaterial.Value;
+
             // Reset the PQS state
             Parser.ClearState("Kopernicus:pqsVersion");
 

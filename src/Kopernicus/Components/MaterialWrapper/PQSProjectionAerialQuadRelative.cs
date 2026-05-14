@@ -255,16 +255,8 @@ namespace Kopernicus.Components.MaterialWrapper
             }
         }
 
-        // Is some random material this material 
-        public static Boolean UsesSameShader(Material m)
-        {
-            if (m == null)
-            {
-                return false;
-            }
-
-            return m.shader.name == Properties.Shader.name;
-        }
+        // Is some random material this material
+        public static Boolean UsesSameShader(Material m) => Configuration.MaterialLoader.PQSProjectionAerialQuadRelativeLoader.UsesSameShader(m);
 
         // Saturation, default = 1
         public Single Saturation

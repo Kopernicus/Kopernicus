@@ -24,62 +24,57 @@
  */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using Kopernicus.Components.MaterialWrapper;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using UnityEngine;
 
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class ParticleAddSmoothLoader : ParticleAddSmooth
+    public class ParticleAddSmoothLoader : BaseMaterialLoader
     {
+        private const String SHADER_NAME = "Legacy Shaders/Particles/Additive (Soft)";
+        private static readonly Shader Shader = Shader.Find(SHADER_NAME);
+        public static bool UsesSameShader(Material m) => m != null && m.shader.name == SHADER_NAME;
+
         // Particle Texture, default = "white" { }
         [ParserTarget("texture")]
-        public Texture2DParser MainTexSetter
+        public MaterialTextureParser MainTexSetter
         {
-            get { return MainTex; }
-            set { MainTex = value; }
+            get => null;
+            set => SetTexture("_MainTex", value);
         }
 
         [ParserTarget("mainTexScale")]
         public Vector2Parser MainTexScaleSetter
         {
-            get { return MainTexScale; }
-            set { MainTexScale = value; }
+            get => GetTextureScale("_MainTex");
+            set => SetTextureScale("_MainTex", value);
         }
 
         [ParserTarget("mainTexOffset")]
         public Vector2Parser MainTexOffsetSetter
         {
-            get { return MainTexOffset; }
-            set { MainTexOffset = value; }
+            get => GetTextureOffset("_MainTex");
+            set => SetTextureOffset("_MainTex", value);
         }
 
         // Soft Particles Factor, default = 1
         [ParserTarget("invFade")]
-        public NumericParser<Single> InvFadeSetter
+        public NumericParser<float> InvFadeSetter
         {
-            get { return InvFade; }
-            set { InvFade = value; }
+            get => GetFloat("_InvFade");
+            set => SetFloat("_InvFade", value);
         }
+
+        public override ShaderParser ShaderParser { get; set; } = Shader;
 
         // Constructors
-        public ParticleAddSmoothLoader()
-        {
-        }
+        public ParticleAddSmoothLoader() { }
 
-        [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public ParticleAddSmoothLoader(String contents) : base(contents)
-        {
-        }
-
-        public ParticleAddSmoothLoader(Material material) : base(material)
-        {
-        }
+        public ParticleAddSmoothLoader(Material material) => Value = new(material);
     }
 }

@@ -84,15 +84,7 @@ namespace Kopernicus.Components.MaterialWrapper
         }
 
         // Is some random material this material
-        public static Boolean UsesSameShader(Material m)
-        {
-            if (m == null)
-            {
-                return false;
-            }
-
-            return m.shader.name == Properties.Shader.name;
-        }
+        public static Boolean UsesSameShader(Material m) => Configuration.MaterialLoader.ScaledPlanetRimLightLoader.UsesSameShader(m);
 
         // Main Color, default = (1,1,1,1)
         public Color Color

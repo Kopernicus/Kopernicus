@@ -195,15 +195,7 @@ namespace Kopernicus.Components.MaterialWrapper
         }
 
         // Is some random material this material
-        public static Boolean UsesSameShader(Material m)
-        {
-            if (m == null)
-            {
-                return false;
-            }
-
-            return m.shader.name == Properties.Shader.name;
-        }
+        public static Boolean UsesSameShader(Material m) => Configuration.MaterialLoader.PQSTriplanarZoomRotationLoader.UsesSameShader(m);
 
         // Factor, default = 10
         public Single Factor

@@ -24,102 +24,97 @@
  */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using Kopernicus.Components.MaterialWrapper;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using UnityEngine;
 
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class AerialTransCutoutLoader : AerialTransCutout
+    public class AerialTransCutoutLoader : BaseMaterialLoader
     {
+        private const String SHADER_NAME = "Terrain/PQS/Aerial Cutout";
+        private static readonly Shader Shader = Shader.Find(SHADER_NAME);
+        public static bool UsesSameShader(Material m) => m != null && m.shader.name == SHADER_NAME;
+
         // Main Color, default = (1,1,1,1)
         [ParserTarget("color")]
         public ColorParser ColorSetter
         {
-            get { return Color; }
-            set { Color = value; }
+            get => GetColor("_Color");
+            set => SetColor("_Color", value);
         }
 
         // Base (RGB) Trans (A), default = "white" { }
         [ParserTarget("mainTex")]
-        public Texture2DParser MainTexSetter
+        public MaterialTextureParser MainTexSetter
         {
-            get { return MainTex; }
-            set { MainTex = value; }
+            get => null;
+            set => SetTexture("_MainTex", value);
         }
 
         [ParserTarget("mainTexScale")]
         public Vector2Parser MainTexScaleSetter
         {
-            get { return MainTexScale; }
-            set { MainTexScale = value; }
+            get => GetTextureScale("_MainTex");
+            set => SetTextureScale("_MainTex", value);
         }
 
         [ParserTarget("mainTexOffset")]
         public Vector2Parser MainTexOffsetSetter
         {
-            get { return MainTexOffset; }
-            set { MainTexOffset = value; }
+            get => GetTextureOffset("_MainTex");
+            set => SetTextureOffset("_MainTex", value);
         }
 
         // Alpha cutoff, default = 0.5
         [ParserTarget("texCutoff")]
-        public NumericParser<Single> TexCutoffSetter
+        public NumericParser<float> TexCutoffSetter
         {
-            get { return TexCutoff; }
-            set { TexCutoff = value; }
+            get => GetFloat("_texCutoff");
+            set => SetFloat("_texCutoff", value);
         }
 
         // AP Fog Color, default = (0,0,1,1)
         [ParserTarget("fogColor")]
         public ColorParser FogColorSetter
         {
-            get { return FogColor; }
-            set { FogColor = value; }
+            get => GetColor("_fogColor");
+            set => SetColor("_fogColor", value);
         }
 
         // AP Height Fall Off, default = 1
         [ParserTarget("heightFallOff")]
-        public NumericParser<Single> HeightFallOffSetter
+        public NumericParser<float> HeightFallOffSetter
         {
-            get { return HeightFallOff; }
-            set { HeightFallOff = value; }
+            get => GetFloat("_heightFallOff");
+            set => SetFloat("_heightFallOff", value);
         }
 
         // AP Global Density, default = 1
         [ParserTarget("globalDensity")]
-        public NumericParser<Single> GlobalDensitySetter
+        public NumericParser<float> GlobalDensitySetter
         {
-            get { return GlobalDensity; }
-            set { GlobalDensity = value; }
+            get => GetFloat("_globalDensity");
+            set => SetFloat("_globalDensity", value);
         }
 
         // AP Atmosphere Depth, default = 1
         [ParserTarget("atmosphereDepth")]
-        public NumericParser<Single> AtmosphereDepthSetter
+        public NumericParser<float> AtmosphereDepthSetter
         {
-            get { return AtmosphereDepth; }
-            set { AtmosphereDepth = value; }
+            get => GetFloat("_atmosphereDepth");
+            set => SetFloat("_atmosphereDepth", value);
         }
+
+        public override ShaderParser ShaderParser { get; set; } = Shader;
 
         // Constructors
-        public AerialTransCutoutLoader()
-        {
-        }
+        public AerialTransCutoutLoader() { }
 
-        [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public AerialTransCutoutLoader(String contents) : base(contents)
-        {
-        }
-
-        public AerialTransCutoutLoader(Material material) : base(material)
-        {
-        }
+        public AerialTransCutoutLoader(Material material) => Value = new(material);
     }
 }
