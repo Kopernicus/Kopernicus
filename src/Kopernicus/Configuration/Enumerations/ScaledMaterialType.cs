@@ -32,5 +32,6 @@ namespace Kopernicus.Configuration.Enumerations
         Atmospheric,
         AtmosphericStandard,
         Star,
+        Custom,
     }
 }
