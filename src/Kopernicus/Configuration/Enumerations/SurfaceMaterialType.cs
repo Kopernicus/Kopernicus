@@ -43,6 +43,9 @@ namespace Kopernicus.Configuration.Enumerations
         // 1.9 Atlas Shader (Kerbin, Terrain Quality Ultra)
         TriplanarAtlas = 128,
 
+        // 1.8 "Main Shader - Triplanar Zoom Rotation" variant (Kerbin, Terrain Quality High)
+        MainTriplanarZoomRotation = 256,
+
         // Old names, kept around for compatibility
         AtmosphericBasic = 1,
         AtmosphericMain = 2,

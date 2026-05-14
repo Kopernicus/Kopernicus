@@ -209,6 +209,8 @@ namespace Kopernicus.Configuration
                     return NewShaderSurfaceMaterialType.MainFastBlend;
                 if (PQSTriplanarZoomRotationTextureArray.UsesSameShader(material))
                     return NewShaderSurfaceMaterialType.TriplanarAtlas;
+                if (PQSMainTriplanarZoomRotation.UsesSameShader(material))
+                    return NewShaderSurfaceMaterialType.MainTriplanarZoomRotation;
 
                 throw new Exception("The shader '" + material.shader.name + "' is not supported.");
             }
@@ -234,6 +236,7 @@ namespace Kopernicus.Configuration
                     NewShaderSurfaceMaterialType.OptimizedFastBlend => new PQSMainOptimisedFastBlendLoader(),
                     NewShaderSurfaceMaterialType.Triplanar => new PQSTriplanarZoomRotationLoader(),
                     NewShaderSurfaceMaterialType.TriplanarAtlas => new PQSTriplanarZoomRotationTextureArrayLoader(),
+                    NewShaderSurfaceMaterialType.MainTriplanarZoomRotation => new PQSMainTriplanarZoomRotationLoader(),
                     _ => _surfaceMaterial,
                 };
 
@@ -253,6 +256,7 @@ namespace Kopernicus.Configuration
             NewShaderSurfaceMaterialType.OptimizedFastBlend => PQSMainOptimisedFastBlend.UsesSameShader(material),
             NewShaderSurfaceMaterialType.Triplanar => PQSTriplanarZoomRotation.UsesSameShader(material),
             NewShaderSurfaceMaterialType.TriplanarAtlas => PQSTriplanarZoomRotationTextureArray.UsesSameShader(material),
+            NewShaderSurfaceMaterialType.MainTriplanarZoomRotation => PQSMainTriplanarZoomRotation.UsesSameShader(material),
             _ => false,
         };
 
@@ -278,6 +282,7 @@ namespace Kopernicus.Configuration
                     NewShaderSurfaceMaterialType.OptimizedFastBlend => new PQSMainOptimisedFastBlendLoader(existing),
                     NewShaderSurfaceMaterialType.Triplanar => new PQSTriplanarZoomRotationLoader(existing),
                     NewShaderSurfaceMaterialType.TriplanarAtlas => new PQSTriplanarZoomRotationTextureArrayLoader(existing),
+                    NewShaderSurfaceMaterialType.MainTriplanarZoomRotation => new PQSMainTriplanarZoomRotationLoader(existing),
                     _ => throw new Exception("Unsupported surface material type: " + NewMaterialType.Value),
                 };
                 return _surfaceMaterial;
