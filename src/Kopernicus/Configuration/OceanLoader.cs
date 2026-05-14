@@ -37,6 +37,7 @@ using Kopernicus.ConfigParser.Interfaces;
 using Kopernicus.Configuration.MaterialLoader;
 using Kopernicus.Configuration.ModLoader;
 using Kopernicus.Configuration.Parsing;
+using Kopernicus.OnDemand;
 using Kopernicus.UI;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -379,8 +380,12 @@ namespace Kopernicus.Configuration
         // Apply Event
         void IParserEventSubscriber.Apply(ConfigNode node)
         {
+            // Add an on-demand handler for stuff to register with.
+            var handler = Utility.AddMod<PQSMod_OnDemandHandler>(Value, 0);
+
             // Share the current PQS
             Parser.SetState("Kopernicus:pqsVersion", () => Value);
+            Parser.SetState("Kopernicus:pqsOnDemandHandler", () => handler);
 
             // Event
             Events.OnOceanLoaderApply.Fire(this, node);
@@ -389,14 +394,38 @@ namespace Kopernicus.Configuration
         // Post Apply
         void IParserEventSubscriber.PostApply(ConfigNode node)
         {
+            var handler = Utility.GetMod<PQSMod_OnDemandHandler>(Value);
+
             // Commit parsed materials to the underlying PQS
             if (SurfaceMaterial?.Value != null)
+            {
                 BasicSurfaceMaterial = SurfaceMaterial.Value;
+
+                if (SurfaceMaterial.Entries.Count != 0)
+                {
+                    var listener = Value.gameObject.AddComponent<PQSSurfaceMaterialTextureListener>();
+
+                    foreach (var (property, path) in SurfaceMaterial.Entries)
+                        handler.AddTextureListener(property, path, listener);
+                }
+            }
+
             if (FallbackMaterial?.Value != null)
+            {
                 Value.fallbackMaterial = FallbackMaterial.Value;
+
+                if (FallbackMaterial.Entries.Count != 0)
+                {
+                    var listener = Value.gameObject.AddComponent<PQSFallbackMaterialTextureListener>();
+
+                    foreach (var (property, path) in FallbackMaterial.Entries)
+                        handler.AddTextureListener(property, path, listener);
+                }
+            }
 
             // Reset the PQS state
             Parser.ClearState("Kopernicus:pqsVersion");
+            Parser.ClearState("Kopernicus:pqsOnDemandHandler");
 
             // Event
             Events.OnOceanLoaderPostApply.Fire(this, node);
