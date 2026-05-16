@@ -25,26 +25,35 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Kopernicus.Configuration;
 using KSPTextureLoader;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Kopernicus.OnDemand
 {
     /// <summary>
-    /// Class to load ScaledSpace Textures on Demand
+    /// A class to load textures for an object when it becomes visible.
     /// </summary>
-    public class ScaledSpaceOnDemand : MonoBehaviour
+    public class ScaledSpaceOnDemand : MonoBehaviour, ISerializationCallbackReceiver
     {
-        private static readonly Int32 BumpMap = Shader.PropertyToID("_BumpMap");
-        private static readonly Int32 MainTex = Shader.PropertyToID("_MainTex");
-
         // Path to the Texture
+        [Obsolete("texture is no longer used and is included only for backwards compatibility")]
         public String texture;
 
         // Path to the normal map
+        [Obsolete("normals is no longer used and is included only for backwards compatibility")]
         public String normals;
+
+        private static readonly Int32 BumpMap = Shader.PropertyToID("_BumpMap");
+        private static readonly Int32 MainTex = Shader.PropertyToID("_MainTex");
+
+        public List<OnDemandTextureEntry> Entries { get; set; } = [];
+
+        private readonly List<TextureHandle> Handles = [];
 
         // ScaledSpace MeshRenderer
         public MeshRenderer scaledRenderer;
@@ -58,10 +67,6 @@ namespace Kopernicus.OnDemand
         // The number of timestamp ticks in a second
         private Int64 _unloadDelay;
 
-        // Texture handles
-        private TextureHandle<Texture2D> bumpMapHandle;
-        private TextureHandle<Texture2D> mainTexHandle;
-
         // Active loading coroutine
         private IEnumerator loaderCoroutine;
 
@@ -71,7 +76,20 @@ namespace Kopernicus.OnDemand
             _unloadDelay = System.Diagnostics.Stopwatch.Frequency * OnDemandStorage.OnDemandUnloadDelay;
             scaledRenderer = GetComponent<MeshRenderer>();
             GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequested);
-            UnloadTextures();
+
+            if (Entries is null)
+                return;
+
+#pragma warning disable CS0618 // Type or member is obsolete
+            // Initialize texture and normals for back-compat.
+            foreach (var entry in Entries)
+            {
+                if (entry.Key == "_MainTex")
+                    texture = entry.Path;
+                else if (entry.Key == "_BumpMap")
+                    normals = entry.Path;
+            }
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         private void LateUpdate()
@@ -139,43 +157,53 @@ namespace Kopernicus.OnDemand
 
         IEnumerator DoLoadTexturesAsync()
         {
-            Debug.Log("[OD] --> ScaledSpaceDemand.LoadTextures loading " + texture + " and " + normals);
+            Debug.Log($"[OD] --> ScaledSpaceDemand.LoadTextures loading {name}");
 
             using var guard = new ClearEnumeratorGuard(this);
 
-            var options = new TextureLoadOptions
+            // Clear out any existing handles. KSPTL doesn't unload things immediately
+            // so if we're reloading the same textures then this will be a no-op.
+            using (new ClearListGuard<TextureHandle>(Handles))
             {
-                Unreadable = true,
-                Hint = TextureLoadHint.BatchAsynchronous,
-            };
-            mainTexHandle = TextureLoader.LoadTexture<Texture2D>(texture, options);
-            bumpMapHandle = TextureLoader.LoadTexture<Texture2D>(normals, options);
-
-            // Load Diffuse
-            yield return mainTexHandle;
-
-            try
-            {
-                scaledRenderer.sharedMaterial.SetTexture(MainTex, mainTexHandle.GetTexture());
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[OD] Failed to load texture {texture}");
-                Debug.LogException(ex);
+                foreach (var handle in Handles)
+                    handle.Dispose();
             }
 
-            // Load Normals
-            yield return bumpMapHandle;
+            var shader = scaledRenderer.sharedMaterial.shader;
+            foreach (var entry in Entries)
+            {
+                var handle = OnDemandStorage.LoadPropertyTexture(shader, entry.Key, entry.Path);
+                if (!handle.IsComplete)
+                    handle.OnCompleted += OnTextureLoadComplete;
+                Handles.Add(handle);
+            }
 
-            try
+            MaterialPropertyBlock block = new();
+            scaledRenderer.GetPropertyBlock(block);
+
+            for (int i = 0; i < Handles.Count; ++i)
             {
-                scaledRenderer.sharedMaterial.SetTexture(BumpMap, bumpMapHandle.GetTexture());
+                var handle = Handles[i];
+                var entry = Entries[i];
+
+                if (!handle.IsComplete)
+                {
+                    scaledRenderer.SetPropertyBlock(block);
+                    yield return handle;
+                }
+
+                try
+                {
+                    block.SetTexture(entry.Id, handle.GetTexture());
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"[OD] Failed to load texture {handle.Path}");
+                    Debug.LogException(ex);
+                }
             }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[OD] Failed to load texture {normals}");
-                Debug.LogException(ex);
-            }
+
+            scaledRenderer.SetPropertyBlock(block);
 
             // Events
             Events.OnScaledSpaceLoad.Fire(this);
@@ -186,15 +214,17 @@ namespace Kopernicus.OnDemand
 
         public void UnloadTextures()
         {
-            Debug.Log("[OD] <--- ScaledSpaceDemand.UnloadTextures destroying " + texture + " and " + normals);
+            if (isLoaded)
+                Debug.Log($"[OD] <--- ScaledSpaceDemand.UnloadTextures unloading {name}");
 
-            // Kill Diffuse
-            mainTexHandle?.Dispose();
-            mainTexHandle = null;
-
-            // Kill Normals
-            bumpMapHandle?.Dispose();
-            bumpMapHandle = null;
+            using (new ClearListGuard<TextureHandle>(Handles))
+            {
+                foreach (var handle in Handles)
+                {
+                    Debug.Log($"[OD] Unloading {handle.Path}");
+                    handle.Dispose();
+                }
+            }
 
             // Events
             Events.OnScaledSpaceUnload.Fire(this);
@@ -216,16 +246,58 @@ namespace Kopernicus.OnDemand
 
         private void OnDestroy()
         {
-            // Ensure textures get cleaned up if not done already
-            mainTexHandle?.Dispose();
-            bumpMapHandle?.Dispose();
+            using var guard = new ClearListGuard<TextureHandle>(Handles);
 
             GameEvents.onGameSceneLoadRequested.Remove(OnGameSceneLoadRequested);
+
+            // Ensure textures get cleaned up if not done already
+            foreach (var handle in Handles)
+                handle.Dispose();
         }
+
+        private static void OnTextureLoadComplete(TextureHandle handle)
+        {
+            Debug.Log($"[OD] Loaded texture {handle.Path}");
+        }
+
+        #region Serialization Callbacks
+        // Unity's serializer won't serialize OnDemandTextureEntry so we need
+        // to unpack it into something that it will serialize.
+        [SerializeField]
+        private readonly List<string> entryKeys = [];
+        [SerializeField]
+        private readonly List<string> entryPaths = [];
+
+        void ISerializationCallbackReceiver.OnBeforeSerialize()
+        {
+            entryKeys.Clear();
+            entryPaths.Clear();
+            if (Entries is null)
+                return;
+            foreach (var entry in Entries)
+            {
+                entryKeys.Add(entry.Key);
+                entryPaths.Add(entry.Path);
+            }
+        }
+
+        void ISerializationCallbackReceiver.OnAfterDeserialize()
+        {
+            var count = entryKeys?.Count ?? 0;
+            Entries = new List<OnDemandTextureEntry>(count);
+            for (int i = 0; i < count; ++i)
+                Entries.Add(new OnDemandTextureEntry(entryKeys[i], entryPaths[i]));
+        }
+        #endregion
 
         struct ClearEnumeratorGuard(ScaledSpaceOnDemand parent) : IDisposable
         {
             public void Dispose() => parent.loaderCoroutine = null;
+        }
+
+        struct ClearListGuard<T>(List<T> list) : IDisposable
+        {
+            public void Dispose() => list.Clear();
         }
     }
 }
