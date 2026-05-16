@@ -169,16 +169,13 @@ namespace Kopernicus.Configuration
             }
         }
 
-        private PQSOceanSurfaceQuadLoader _surfaceMaterial;
-        private PQSOceanSurfaceQuadFallbackLoader _fallbackMaterial;
-
         // Surface Material of the PQS
         [ParserTarget("Material", AllowMerge = true, GetChild = false)]
         [KittopiaUntouchable]
         public PQSOceanSurfaceQuadLoader SurfaceMaterial
         {
-            get { return _surfaceMaterial ??= new PQSOceanSurfaceQuadLoader(BasicSurfaceMaterial); }
-            set { _surfaceMaterial = value; }
+            get => field ??= new PQSOceanSurfaceQuadLoader(BasicSurfaceMaterial);
+            set => field = value;
         }
 
         // Fallback Material of the PQS (its always the same material)
@@ -186,8 +183,8 @@ namespace Kopernicus.Configuration
         [KittopiaUntouchable]
         public PQSOceanSurfaceQuadFallbackLoader FallbackMaterial
         {
-            get { return _fallbackMaterial ??= new PQSOceanSurfaceQuadFallbackLoader(Value.fallbackMaterial); }
-            set { _fallbackMaterial = value; }
+            get => field ??= new PQSOceanSurfaceQuadFallbackLoader(Value.fallbackMaterial);
+            set => field = value;
         }
 
         // PQSMod loader
@@ -393,10 +390,10 @@ namespace Kopernicus.Configuration
         void IParserEventSubscriber.PostApply(ConfigNode node)
         {
             // Commit parsed materials to the underlying PQS
-            if (_surfaceMaterial != null)
-                BasicSurfaceMaterial = _surfaceMaterial.Value;
-            if (_fallbackMaterial != null)
-                Value.fallbackMaterial = _fallbackMaterial.Value;
+            if (SurfaceMaterial?.Value != null)
+                BasicSurfaceMaterial = SurfaceMaterial.Value;
+            if (FallbackMaterial?.Value != null)
+                Value.fallbackMaterial = FallbackMaterial.Value;
 
             // Reset the PQS state
             Parser.ClearState("Kopernicus:pqsVersion");
