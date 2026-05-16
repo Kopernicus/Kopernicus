@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Kopernicus.Components;
 using Kopernicus.ConfigParser;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
@@ -174,6 +175,97 @@ public abstract class BaseMaterialLoader : BaseLoader, IParserEventSubscriber
                 break;
         }
     }
+
+    #region Parent Application
+    /// <summary>
+    /// Called if this material is being used for PQS terrain. By default this sets the
+    /// terrain material and registers any on-demand textures to be loaded by
+    /// <paramref name="handler"/>.
+    /// </summary>
+    public virtual void OnParentApply(PQS pqs, PQSMod_OnDemandHandler handler)
+    {
+        if (Value == null || pqs == null)
+            return;
+
+        SetSurfaceMaterial(pqs, Value);
+        AttachTextureListener<PQSSurfaceMaterialTextureListener>(pqs.gameObject, handler);
+    }
+
+    /// <summary>
+    /// Set up the material for the provided <paramref name="mod"/>. By default this
+    /// will just register the textures with <paramref name="handler" />, override if
+    /// you also need to attach custom components.
+    /// </summary>
+    public virtual void OnParentApply(IPQSModWithMaterial mod, PQSMod_OnDemandHandler handler)
+    {
+        if (Value == null || mod == null)
+            return;
+
+        mod.Material = Value;
+
+        if (Entries.Count == 0 || handler == null)
+            return;
+
+        var listener = mod.gameObject.AddComponent<MaterialTextureListener>();
+        listener.Setup(Value);
+        foreach (var (property, path) in Entries)
+            handler.AddTextureListener(property, path, listener);
+    }
+
+    /// <summary>
+    /// Configure the material of the renderer attached to <paramref name="scaledBody"/>.
+    /// By default this will create a <see cref="ScaledSpaceOnDemand" /> component
+    /// on <paramref name="scaledBody" /> if there are any on-demand textures.
+    /// Override this method if you need to attach custom components to
+    /// <paramref name="scaledBody"/>.
+    /// </summary>
+    public virtual void OnParentApply(GameObject scaledBody)
+    {
+        if (Value == null || scaledBody == null)
+            return;
+
+        scaledBody.GetComponent<Renderer>().sharedMaterial = Value;
+
+        if (Entries.Count == 0)
+            return;
+
+        var onDemand = scaledBody.AddComponent<ScaledSpaceOnDemand>();
+        onDemand.Entries = Entries
+            .Select(kv => new OnDemandTextureEntry(kv.Key, kv.Value))
+            .ToList();
+    }
+
+    /// <summary>
+    /// Attach an on-demand texture listener of type <typeparamref name="T"/> to
+    /// <paramref name="host"/> and register every entry in <see cref="Entries"/>
+    /// against <paramref name="handler"/>. No-op when there are no entries to
+    /// load or no handler available. Used by the fallback loader overrides.
+    /// </summary>
+    protected void AttachTextureListener<T>(GameObject host, PQSMod_OnDemandHandler handler)
+        where T : MonoBehaviour, IOnDemandTextureListener
+    {
+        if (Entries.Count == 0 || handler == null)
+            return;
+
+        var listener = host.AddComponent<T>();
+        foreach (var (property, path) in Entries)
+            handler.AddTextureListener(property, path, listener);
+    }
+
+    /// <summary>
+    /// Write <paramref name="material"/> into every surface material quality bucket
+    /// on <paramref name="pqs"/>. Mirrors the legacy <c>BasicSurfaceMaterial</c>
+    /// setter from PQSLoader/OceanLoader.
+    /// </summary>
+    static void SetSurfaceMaterial(PQS pqs, Material material)
+    {
+        pqs.ultraQualitySurfaceMaterial = material;
+        pqs.highQualitySurfaceMaterial = material;
+        pqs.mediumQualitySurfaceMaterial = material;
+        pqs.lowQualitySurfaceMaterial = material;
+        pqs.surfaceMaterial = material;
+    }
+    #endregion
 
     bool TryFindProperty(string key, ShaderPropertyType expected, string typeName, out int index)
     {

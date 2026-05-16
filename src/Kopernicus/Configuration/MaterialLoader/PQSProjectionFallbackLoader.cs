@@ -29,6 +29,7 @@ using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
+using Kopernicus.OnDemand;
 using UnityEngine;
 
 namespace Kopernicus.Configuration.MaterialLoader
@@ -144,6 +145,15 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         public override ShaderParser ShaderParser { get; set; } = Shader;
         public override NumericParser<bool> OnDemand { get; set; } = false;
+
+        public override void OnParentApply(PQS pqs, PQSMod_OnDemandHandler handler)
+        {
+            if (Value == null || pqs == null)
+                return;
+
+            pqs.fallbackMaterial = Value;
+            AttachTextureListener<PQSFallbackMaterialTextureListener>(pqs.gameObject, handler);
+        }
 
         // Constructors
         public PQSProjectionFallbackLoader() { }

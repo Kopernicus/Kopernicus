@@ -328,6 +328,16 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         public override ShaderParser ShaderParser { get; set; } = Shader;
 
+        public override void OnParentApply(GameObject scaledBody)
+        {
+            base.OnParentApply(scaledBody);
+
+            if (Value == null || scaledBody == null)
+                return;
+
+            scaledBody.AddOrGetComponent<GasGiantMaterialControls>();
+        }
+
         public GasGiantLoader(Material material = null) => Value = material;
     }
 }

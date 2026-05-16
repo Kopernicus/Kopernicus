@@ -396,32 +396,8 @@ namespace Kopernicus.Configuration
         {
             var handler = Utility.GetMod<PQSMod_OnDemandHandler>(Value);
 
-            // Commit parsed materials to the underlying PQS
-            if (SurfaceMaterial?.Value != null)
-            {
-                BasicSurfaceMaterial = SurfaceMaterial.Value;
-
-                if (SurfaceMaterial.Entries.Count != 0)
-                {
-                    var listener = Value.gameObject.AddComponent<PQSSurfaceMaterialTextureListener>();
-
-                    foreach (var (property, path) in SurfaceMaterial.Entries)
-                        handler.AddTextureListener(property, path, listener);
-                }
-            }
-
-            if (FallbackMaterial?.Value != null)
-            {
-                Value.fallbackMaterial = FallbackMaterial.Value;
-
-                if (FallbackMaterial.Entries.Count != 0)
-                {
-                    var listener = Value.gameObject.AddComponent<PQSFallbackMaterialTextureListener>();
-
-                    foreach (var (property, path) in FallbackMaterial.Entries)
-                        handler.AddTextureListener(property, path, listener);
-                }
-            }
+            SurfaceMaterial?.OnParentApply(Value, handler);
+            FallbackMaterial?.OnParentApply(Value, handler);
 
             // Reset the PQS state
             Parser.ClearState("Kopernicus:pqsVersion");
