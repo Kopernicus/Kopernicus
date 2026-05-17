@@ -451,11 +451,11 @@ namespace Kopernicus.OnDemand
         // Round trip the subset of listeners whose backing object derives from
         // UnityEngine.Object through these parallel SerializeField lists.
         [SerializeField]
-        private readonly List<string> listenerProperties = [];
+        private List<string> listenerProperties = [];
         [SerializeField]
-        private readonly List<string> listenerPaths = [];
+        private List<string> listenerPaths = [];
         [SerializeField]
-        private readonly List<UnityEngine.Object> listenerObjects = [];
+        private List<UnityEngine.Object> listenerObjects = [];
 
         void ISerializationCallbackReceiver.OnBeforeSerialize()
         {

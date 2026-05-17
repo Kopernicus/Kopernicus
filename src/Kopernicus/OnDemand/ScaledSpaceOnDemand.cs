@@ -58,8 +58,8 @@ namespace Kopernicus.OnDemand
         // ScaledSpace MeshRenderer
         public MeshRenderer scaledRenderer;
 
-        // State of the texture
-        public Boolean isLoaded = true;
+        // State of the texture.
+        public Boolean isLoaded = false;
 
         // If non-zero the textures will be unloaded once the timer exceeds the value
         private Int64 _unloadTime;
@@ -169,7 +169,8 @@ namespace Kopernicus.OnDemand
                     handle.Dispose();
             }
 
-            var shader = scaledRenderer.sharedMaterial.shader;
+            var material = scaledRenderer.sharedMaterial;
+            var shader = material.shader;
             foreach (var entry in Entries)
             {
                 var handle = OnDemandStorage.LoadPropertyTexture(shader, entry.Key, entry.Path);
@@ -178,23 +179,17 @@ namespace Kopernicus.OnDemand
                 Handles.Add(handle);
             }
 
-            MaterialPropertyBlock block = new();
-            scaledRenderer.GetPropertyBlock(block);
-
             for (int i = 0; i < Handles.Count; ++i)
             {
                 var handle = Handles[i];
                 var entry = Entries[i];
 
                 if (!handle.IsComplete)
-                {
-                    scaledRenderer.SetPropertyBlock(block);
                     yield return handle;
-                }
 
                 try
                 {
-                    block.SetTexture(entry.Id, handle.GetTexture());
+                    material.SetTexture(entry.Id, handle.GetTexture());
                 }
                 catch (Exception ex)
                 {
@@ -202,8 +197,6 @@ namespace Kopernicus.OnDemand
                     Debug.LogException(ex);
                 }
             }
-
-            scaledRenderer.SetPropertyBlock(block);
 
             // Events
             Events.OnScaledSpaceLoad.Fire(this);
@@ -261,12 +254,15 @@ namespace Kopernicus.OnDemand
         }
 
         #region Serialization Callbacks
+#pragma warning disable IDE0044 // Add readonly modifier
         // Unity's serializer won't serialize OnDemandTextureEntry so we need
         // to unpack it into something that it will serialize.
         [SerializeField]
-        private readonly List<string> entryKeys = [];
+        private List<string> entryKeys = [];
+
         [SerializeField]
-        private readonly List<string> entryPaths = [];
+        private List<string> entryPaths = [];
+#pragma warning restore IDE0044 // Add readonly modifier
 
         void ISerializationCallbackReceiver.OnBeforeSerialize()
         {
