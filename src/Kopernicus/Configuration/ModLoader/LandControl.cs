@@ -504,11 +504,6 @@ namespace Kopernicus.Configuration.ModLoader
                 if (_material == null)
                     return;
 
-                Value.material = _material.Value;
-
-                if (_material.Entries.Count == 0)
-                    return;
-
                 PQSMod_OnDemandHandler handler;
                 try
                 {
@@ -516,17 +511,10 @@ namespace Kopernicus.Configuration.ModLoader
                 }
                 catch
                 {
-                    return;
+                    handler = null;
                 }
 
-                if (handler == null)
-                    return;
-
-                var listener = Scatter.gameObject.AddComponent<MaterialTextureListener>();
-                listener.Setup(Value.material);
-
-                foreach (var (property, path) in _material.Entries)
-                    handler.AddTextureListener(property, path, listener);
+                _material.OnParentApply(Scatter, handler);
             }
         }
 

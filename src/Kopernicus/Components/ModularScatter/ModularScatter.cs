@@ -40,7 +40,7 @@ namespace Kopernicus.Components.ModularScatter
     /// by the per-quad PQSMod_KopernicusLandClassScatterQuad component that actually implements
     /// our custom behaviours.
     /// </summary>
-    public class ModularScatter : SerializableMonoBehaviour, IComponentSystem<ModularScatter>
+    public class ModularScatter : SerializableMonoBehaviour, IComponentSystem<ModularScatter>, IPQSModWithMaterial
     {
         /// <summary>
         /// Components that can be added to the scatter
@@ -49,6 +49,22 @@ namespace Kopernicus.Components.ModularScatter
         {
             get { return components; }
             set { components = value; }
+        }
+
+        /// <summary>
+        /// The configurable material for this scatter, exposed through
+        /// <see cref="IPQSModWithMaterial"/> so the Kopernicus material loader
+        /// pipeline can commit a parsed material and wire on-demand textures.
+        /// Backed by <c>scatter.material</c>.
+        /// </summary>
+        public Material Material
+        {
+            get => scatter?.material;
+            set
+            {
+                if (scatter != null)
+                    scatter.material = value;
+            }
         }
 
         [SerializeField]

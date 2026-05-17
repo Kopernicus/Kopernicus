@@ -164,14 +164,6 @@ namespace Kopernicus.Configuration
                         return Value.surfaceMaterial;
                 }
             }
-            set
-            {
-                Value.ultraQualitySurfaceMaterial = value;
-                Value.highQualitySurfaceMaterial = value;
-                Value.mediumQualitySurfaceMaterial = value;
-                Value.lowQualitySurfaceMaterial = value;
-                Value.surfaceMaterial = value;
-            }
         }
 
         // Type of surface material used by the PQS.
@@ -504,32 +496,8 @@ namespace Kopernicus.Configuration
         {
             var handler = Utility.GetMod<PQSMod_OnDemandHandler>(Value);
 
-            // Commit the parsed materials onto the underlying PQS
-            if (SurfaceMaterial?.Value != null)
-            {
-                BasicSurfaceMaterial = SurfaceMaterial.Value;
-
-                if (SurfaceMaterial.Entries.Count != 0)
-                {
-                    var listener = Value.gameObject.AddComponent<PQSSurfaceMaterialTextureListener>();
-
-                    foreach (var (property, path) in SurfaceMaterial.Entries)
-                        handler.AddTextureListener(property, path, listener);
-                }
-            }
-
-            if (FallbackMaterial?.Value != null)
-            {
-                Value.fallbackMaterial = FallbackMaterial.Value;
-
-                if (FallbackMaterial.Entries.Count != 0)
-                {
-                    var listener = Value.gameObject.AddComponent<PQSFallbackMaterialTextureListener>();
-
-                    foreach (var (property, path) in FallbackMaterial.Entries)
-                        handler.AddTextureListener(property, path, listener);
-                }
-            }
+            SurfaceMaterial?.OnParentApply(Value, handler);
+            FallbackMaterial?.OnParentApply(Value, handler);
 
             // Reset the PQS state
             Parser.ClearState("Kopernicus:pqsVersion");

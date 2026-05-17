@@ -293,11 +293,6 @@ namespace Kopernicus.Configuration
                     collider.center = Vector3.zero;
                     collider.radius = 1000.0f;
                 }
-
-                // If we are using the gas giant shader then we need the GasGiantMaterialControls
-                // component.
-                if (Type == ScaledMaterialType.GasGiant)
-                    Value.scaledBody.AddOrGetComponent<GasGiantMaterialControls>();
             }
 
             // Event
@@ -334,21 +329,7 @@ namespace Kopernicus.Configuration
                 }
             }
 
-            if (Material?.Value != null)
-            {
-                Value.scaledBody.GetComponent<Renderer>().sharedMaterial = Material.Value;
-
-                // Only bother adding a ScaledSpaceOnDemand if there are actually
-                // textures to load
-                var entries = Material.Entries;
-                if (entries.Count != 0)
-                {
-                    var onDemand = Value.scaledBody.AddComponent<ScaledSpaceOnDemand>();
-                    onDemand.Entries = entries
-                        .Select(kv => new OnDemandTextureEntry(kv.Key, kv.Value))
-                        .ToList();
-                }
-            }
+            Material?.OnParentApply(Value.scaledBody);
 
             // Event
             Events.OnScaledVersionLoaderPostApply.Fire(this, node);
