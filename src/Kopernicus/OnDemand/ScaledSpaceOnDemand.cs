@@ -58,8 +58,8 @@ namespace Kopernicus.OnDemand
         // ScaledSpace MeshRenderer
         public MeshRenderer scaledRenderer;
 
-        // State of the texture
-        public Boolean isLoaded = true;
+        // State of the texture.
+        public Boolean isLoaded = false;
 
         // If non-zero the textures will be unloaded once the timer exceeds the value
         private Int64 _unloadTime;
@@ -261,12 +261,15 @@ namespace Kopernicus.OnDemand
         }
 
         #region Serialization Callbacks
+#pragma warning disable IDE0044 // Add readonly modifier
         // Unity's serializer won't serialize OnDemandTextureEntry so we need
         // to unpack it into something that it will serialize.
         [SerializeField]
         private List<string> entryKeys = [];
+
         [SerializeField]
         private List<string> entryPaths = [];
+#pragma warning restore IDE0044 // Add readonly modifier
 
         void ISerializationCallbackReceiver.OnBeforeSerialize()
         {
