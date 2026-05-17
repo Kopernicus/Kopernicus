@@ -290,7 +290,7 @@ namespace Kopernicus.Configuration
                 Utility.AddMod<PQSMod_OnDemandHandler>(Value, 0);
             }
             // Add fixes for TextureAtlas
-            if (!(Versioning.version_minor < 9))
+            if (Versioning.version_minor >= 9)
             {
                 if (!Utility.HasMod<PQSMod_TextureAtlasFixer>(Value))
                 {
@@ -427,11 +427,7 @@ namespace Kopernicus.Configuration
             body.pqsController.transform.name = transform.name;
             body.pqsController.gameObject.name = transform.name;
             body.pqsController.radius = body.Radius;
-            // Add an OnDemand Handler
-            if (!Utility.HasMod<PQSMod_OnDemandHandler>(Value))
-            {
-                Utility.AddMod<PQSMod_OnDemandHandler>(Value, 0);
-            }
+
             if (!(Versioning.version_minor < 9))
             {
                 if (!Utility.HasMod<PQSMod_TextureAtlasFixer>(Value))
@@ -439,6 +435,7 @@ namespace Kopernicus.Configuration
                     Utility.AddMod<PQSMod_TextureAtlasFixer>(Value, 0);
                 }
             }
+
             // Add the PQSROCControl mod for surface anomalies
             if (!Utility.HasMod<PQSROCControl>(Value))
             {
@@ -490,8 +487,12 @@ namespace Kopernicus.Configuration
         // Apply Event
         void IParserEventSubscriber.Apply(ConfigNode node)
         {
+            // Add an on-demand handler for stuff to register with.
+            var handler = Utility.AddMod<PQSMod_OnDemandHandler>(Value, 0);
+
             // Share the current PQS
             Parser.SetState("Kopernicus:pqsVersion", () => Value);
+            Parser.SetState("Kopernicus:pqsOnDemandHandler", () => handler);
 
             Events.OnPQSLoaderApply.Fire(this, node);
         }
@@ -499,22 +500,41 @@ namespace Kopernicus.Configuration
         // PostApply Event
         void IParserEventSubscriber.PostApply(ConfigNode node)
         {
+            var handler = Utility.GetMod<PQSMod_OnDemandHandler>(Value);
+
             // Commit the parsed materials onto the underlying PQS
             if (SurfaceMaterial?.Value != null)
+            {
                 BasicSurfaceMaterial = SurfaceMaterial.Value;
+
+                if (SurfaceMaterial.Entries.Count != 0)
+                {
+                    var listener = Value.gameObject.AddComponent<PQSSurfaceMaterialTextureListener>();
+
+                    foreach (var (property, path) in SurfaceMaterial.Entries)
+                        handler.AddTextureListener(property, path, listener);
+                }
+            }
+
             if (FallbackMaterial?.Value != null)
+            {
                 Value.fallbackMaterial = FallbackMaterial.Value;
+
+                if (FallbackMaterial.Entries.Count != 0)
+                {
+                    var listener = Value.gameObject.AddComponent<PQSFallbackMaterialTextureListener>();
+
+                    foreach (var (property, path) in FallbackMaterial.Entries)
+                        handler.AddTextureListener(property, path, listener);
+                }
+            }
 
             // Reset the PQS state
             Parser.ClearState("Kopernicus:pqsVersion");
+            Parser.ClearState("Kopernicus:pqsOnDemandHandler");
 
             // Event
             Events.OnPQSLoaderPostApply.Fire(this, node);
-
-            // ----------- DEBUG -------------
-            // Utility.DumpObjectProperties(pqsVersion.surfaceMaterial, " ---- Surface Material (Post PQS Loader) ---- ");
-            //Utility.GameObjectWalk(Value.gameObject, "  ");
-            // -------------------------------
         }
 
         NewShaderSurfaceMaterialType GetInitialMaterialType()

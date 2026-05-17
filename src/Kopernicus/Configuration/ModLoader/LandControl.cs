@@ -39,6 +39,7 @@ using Kopernicus.ConfigParser.Interfaces;
 using Kopernicus.Configuration.Enumerations;
 using Kopernicus.Configuration.MaterialLoader;
 using Kopernicus.Configuration.Parsing;
+using Kopernicus.OnDemand;
 using Kopernicus.UI;
 using UnityEngine;
 
@@ -500,8 +501,32 @@ namespace Kopernicus.Configuration.ModLoader
 
             void IParserPostApplyEventSubscriber.PostApply(ConfigNode node)
             {
-                if (_material != null)
-                    Value.material = _material.Value;
+                if (_material == null)
+                    return;
+
+                Value.material = _material.Value;
+
+                if (_material.Entries.Count == 0)
+                    return;
+
+                PQSMod_OnDemandHandler handler;
+                try
+                {
+                    handler = Parser.GetState<PQSMod_OnDemandHandler>("Kopernicus:pqsOnDemandHandler");
+                }
+                catch
+                {
+                    return;
+                }
+
+                if (handler == null)
+                    return;
+
+                var listener = Scatter.gameObject.AddComponent<MaterialTextureListener>();
+                listener.Setup(Value.material);
+
+                foreach (var (property, path) in _material.Entries)
+                    handler.AddTextureListener(property, path, listener);
             }
         }
 
