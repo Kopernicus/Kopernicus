@@ -169,7 +169,8 @@ namespace Kopernicus.OnDemand
                     handle.Dispose();
             }
 
-            var shader = scaledRenderer.sharedMaterial.shader;
+            var material = scaledRenderer.sharedMaterial;
+            var shader = material.shader;
             foreach (var entry in Entries)
             {
                 var handle = OnDemandStorage.LoadPropertyTexture(shader, entry.Key, entry.Path);
@@ -178,23 +179,17 @@ namespace Kopernicus.OnDemand
                 Handles.Add(handle);
             }
 
-            MaterialPropertyBlock block = new();
-            scaledRenderer.GetPropertyBlock(block);
-
             for (int i = 0; i < Handles.Count; ++i)
             {
                 var handle = Handles[i];
                 var entry = Entries[i];
 
                 if (!handle.IsComplete)
-                {
-                    scaledRenderer.SetPropertyBlock(block);
                     yield return handle;
-                }
 
                 try
                 {
-                    block.SetTexture(entry.Id, handle.GetTexture());
+                    material.SetTexture(entry.Id, handle.GetTexture());
                 }
                 catch (Exception ex)
                 {
@@ -202,8 +197,6 @@ namespace Kopernicus.OnDemand
                     Debug.LogException(ex);
                 }
             }
-
-            scaledRenderer.SetPropertyBlock(block);
 
             // Events
             Events.OnScaledSpaceLoad.Fire(this);
