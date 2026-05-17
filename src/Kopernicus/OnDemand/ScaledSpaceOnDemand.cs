@@ -264,9 +264,9 @@ namespace Kopernicus.OnDemand
         // Unity's serializer won't serialize OnDemandTextureEntry so we need
         // to unpack it into something that it will serialize.
         [SerializeField]
-        private readonly List<string> entryKeys = [];
+        private List<string> entryKeys = [];
         [SerializeField]
-        private readonly List<string> entryPaths = [];
+        private List<string> entryPaths = [];
 
         void ISerializationCallbackReceiver.OnBeforeSerialize()
         {

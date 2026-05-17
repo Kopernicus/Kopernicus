@@ -380,8 +380,10 @@ namespace Kopernicus.Configuration
         // Apply Event
         void IParserEventSubscriber.Apply(ConfigNode node)
         {
-            // Add an on-demand handler for stuff to register with.
-            var handler = Utility.AddMod<PQSMod_OnDemandHandler>(Value, 0);
+            // Reuse an existing on-demand handler from the cloned template when
+            // present so we don't end up with a duplicate PQSMod on the sphere.
+            var handler = Utility.GetMod<PQSMod_OnDemandHandler>(Value)
+                          ?? Utility.AddMod<PQSMod_OnDemandHandler>(Value, 0);
 
             // Share the current PQS
             Parser.SetState("Kopernicus:pqsVersion", () => Value);
