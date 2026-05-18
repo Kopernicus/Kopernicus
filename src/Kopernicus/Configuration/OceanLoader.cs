@@ -173,16 +173,16 @@ namespace Kopernicus.Configuration
         // Surface Material of the PQS
         [ParserTarget("Material", AllowMerge = true, GetChild = false)]
         [KittopiaUntouchable]
-        public PQSOceanSurfaceQuadLoader SurfaceMaterial
+        public BaseMaterialLoader SurfaceMaterial
         {
             get => field ??= new PQSOceanSurfaceQuadLoader(BasicSurfaceMaterial);
             set => field = value;
         }
 
-        // Fallback Material of the PQS (its always the same material)
+        // Fallback Material of the PQS
         [ParserTarget("FallbackMaterial", AllowMerge = true, GetChild = false)]
         [KittopiaUntouchable]
-        public PQSOceanSurfaceQuadFallbackLoader FallbackMaterial
+        public BaseMaterialLoader FallbackMaterial
         {
             get => field ??= new PQSOceanSurfaceQuadFallbackLoader(Value.fallbackMaterial);
             set => field = value;
@@ -388,6 +388,13 @@ namespace Kopernicus.Configuration
             // Share the current PQS
             Parser.SetState("Kopernicus:pqsVersion", () => Value);
             Parser.SetState("Kopernicus:pqsOnDemandHandler", () => handler);
+
+            SurfaceMaterial = BaseMaterialLoader.Create(
+                node.GetNode("Material")?.GetValue("shader") ?? PQSOceanSurfaceQuadLoader.SHADER_NAME,
+                BasicSurfaceMaterial);
+            FallbackMaterial = BaseMaterialLoader.Create(
+                node.GetNode("FallbackMaterial")?.GetValue("shader") ?? PQSOceanSurfaceQuadFallbackLoader.SHADER_NAME,
+                Value.fallbackMaterial);
 
             // Event
             Events.OnOceanLoaderApply.Fire(this, node);

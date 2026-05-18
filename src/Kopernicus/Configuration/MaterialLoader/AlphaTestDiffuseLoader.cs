@@ -27,6 +27,7 @@ using System;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.Attributes;
 using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using UnityEngine;
@@ -34,9 +35,10 @@ using UnityEngine;
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
+    [MaterialLoader(AlphaTestDiffuseLoader.SHADER_NAME)]
     public class AlphaTestDiffuseLoader : BaseMaterialLoader
     {
-        private const String SHADER_NAME = "Legacy Shaders/Transparent/Cutout/Diffuse";
+        public const String SHADER_NAME = "Legacy Shaders/Transparent/Cutout/Diffuse";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);
         public static bool UsesSameShader(Material m) => m != null && m.shader.name == SHADER_NAME;
 

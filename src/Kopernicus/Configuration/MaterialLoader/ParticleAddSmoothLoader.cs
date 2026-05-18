@@ -27,6 +27,7 @@ using System;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.Attributes;
 using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using UnityEngine;
@@ -34,9 +35,10 @@ using UnityEngine;
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
+    [MaterialLoader(ParticleAddSmoothLoader.SHADER_NAME)]
     public class ParticleAddSmoothLoader : BaseMaterialLoader
     {
-        private const String SHADER_NAME = "Legacy Shaders/Particles/Additive (Soft)";
+        public const String SHADER_NAME = "Legacy Shaders/Particles/Additive (Soft)";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);
         public static bool UsesSameShader(Material m) => m != null && m.shader.name == SHADER_NAME;
 

@@ -169,25 +169,17 @@ namespace Kopernicus.Configuration
         // Type of surface material used by the PQS.
         [PreApply]
         [ParserTarget("materialType")]
-        public EnumParser<NewShaderSurfaceMaterialType> NewMaterialType
-        {
-            get => field ??= GetInitialMaterialType();
-            set => field = value;
-        }
+        public EnumParser<NewShaderSurfaceMaterialType> NewMaterialType { get; set; }
 
         // Surface Material of the PQS.
         [ParserTarget("Material", AllowMerge = true, GetChild = false)]
         [KittopiaUntouchable]
-        public BaseMaterialLoader SurfaceMaterial
-        {
-            get => field ??= GetInitialSurfaceMaterialLoader();
-            set => field = value;
-        }
+        public BaseMaterialLoader SurfaceMaterial { get; set; }
 
-        // Fallback Material of the PQS (its always the same shader).
+        // Fallback Material of the PQS.
         [ParserTarget("FallbackMaterial", AllowMerge = true, GetChild = false)]
         [KittopiaUntouchable]
-        public PQSProjectionFallbackLoader FallbackMaterial
+        public BaseMaterialLoader FallbackMaterial
         {
             get => field ??= new PQSProjectionFallbackLoader(Value.fallbackMaterial);
             set => field = value;
@@ -488,6 +480,11 @@ namespace Kopernicus.Configuration
             Parser.SetState("Kopernicus:pqsVersion", () => Value);
             Parser.SetState("Kopernicus:pqsOnDemandHandler", () => handler);
 
+            SurfaceMaterial = GetInitialSurfaceMaterialLoader(node.GetNode("Material"));
+            FallbackMaterial = BaseMaterialLoader.Create(
+                node.GetNode("FallbackMaterial")?.GetValue("shader") ?? PQSProjectionFallbackLoader.SHADER_NAME,
+                Value.fallbackMaterial);
+
             Events.OnPQSLoaderApply.Fire(this, node);
         }
 
@@ -535,19 +532,28 @@ namespace Kopernicus.Configuration
             throw new Exception("The shader '" + material.shader.name + "' is not supported.");
         }
 
-        BaseMaterialLoader GetInitialSurfaceMaterialLoader() => NewMaterialType.Value switch
+        static string MaterialTypeToShaderName(NewShaderSurfaceMaterialType? type) => type switch
         {
-            NewShaderSurfaceMaterialType.Vacuum => new PQSProjectionSurfaceQuadLoader(BasicSurfaceMaterial),
-            NewShaderSurfaceMaterialType.Basic => new PQSProjectionAerialQuadRelativeLoader(BasicSurfaceMaterial),
-            NewShaderSurfaceMaterialType.Main => new PQSMainShaderLoader(BasicSurfaceMaterial),
-            NewShaderSurfaceMaterialType.Optimized => new PQSMainOptimisedLoader(BasicSurfaceMaterial),
-            NewShaderSurfaceMaterialType.Extra => new PQSMainExtrasLoader(BasicSurfaceMaterial),
-            NewShaderSurfaceMaterialType.MainFastBlend => new PQSMainFastBlendLoader(BasicSurfaceMaterial),
-            NewShaderSurfaceMaterialType.OptimizedFastBlend => new PQSMainOptimisedFastBlendLoader(BasicSurfaceMaterial),
-            NewShaderSurfaceMaterialType.Triplanar => new PQSTriplanarZoomRotationLoader(BasicSurfaceMaterial),
-            NewShaderSurfaceMaterialType.TriplanarAtlas => new PQSTriplanarZoomRotationTextureArrayLoader(BasicSurfaceMaterial),
-            NewShaderSurfaceMaterialType.MainTriplanarZoomRotation => new PQSMainTriplanarZoomRotationLoader(BasicSurfaceMaterial),
-            _ => throw new Exception("Unsupported surface material type: " + NewMaterialType.Value),
+            NewShaderSurfaceMaterialType.Vacuum => PQSProjectionSurfaceQuadLoader.SHADER_NAME,
+            NewShaderSurfaceMaterialType.Basic => PQSProjectionAerialQuadRelativeLoader.SHADER_NAME,
+            NewShaderSurfaceMaterialType.Main => PQSMainShaderLoader.SHADER_NAME,
+            NewShaderSurfaceMaterialType.Optimized => PQSMainOptimisedLoader.SHADER_NAME,
+            NewShaderSurfaceMaterialType.Extra => PQSMainExtrasLoader.SHADER_NAME,
+            NewShaderSurfaceMaterialType.MainFastBlend => PQSMainFastBlendLoader.SHADER_NAME,
+            NewShaderSurfaceMaterialType.OptimizedFastBlend => PQSMainOptimisedFastBlendLoader.SHADER_NAME,
+            NewShaderSurfaceMaterialType.Triplanar => PQSTriplanarZoomRotationLoader.SHADER_NAME,
+            NewShaderSurfaceMaterialType.TriplanarAtlas => PQSTriplanarZoomRotationTextureArrayLoader.SHADER_NAME,
+            NewShaderSurfaceMaterialType.MainTriplanarZoomRotation => PQSMainTriplanarZoomRotationLoader.SHADER_NAME,
+            _ => null,
         };
+
+        BaseMaterialLoader GetInitialSurfaceMaterialLoader(ConfigNode node)
+        {
+            var material = BasicSurfaceMaterial;
+            var materialType = NewMaterialType?.Value ?? GetInitialMaterialType();
+            var shaderName = node?.GetValue("shader") ?? MaterialTypeToShaderName(materialType);
+            return BaseMaterialLoader.Create(shaderName, material);
+        }
+
     }
 }
