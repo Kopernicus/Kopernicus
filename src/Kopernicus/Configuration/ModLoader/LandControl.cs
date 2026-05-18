@@ -54,7 +54,7 @@ namespace Kopernicus.Configuration.ModLoader
         // Loader for a Ground Scatter
         [RequireConfigType(ConfigType.Node)]
         [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
-        public class LandClassScatterLoader : IPatchable, ITypeParser<PQSLandControl.LandClassScatter>, IParserPostApplyEventSubscriber
+        public class LandClassScatterLoader : IPatchable, ITypeParser<PQSLandControl.LandClassScatter>, IParserApplyEventSubscriber, IParserPostApplyEventSubscriber
         {
             // The value we are editing
             public PQSLandControl.LandClassScatter Value { get; set; }
@@ -103,97 +103,48 @@ namespace Kopernicus.Configuration.ModLoader
             [ParserTarget("materialType")]
             public EnumParser<ScatterMaterialType> Type
             {
-                get
-                {
-                    Material material = CurrentMaterial;
-
-                    if (NormalDiffuse.UsesSameShader(material))
-                        return ScatterMaterialType.Diffuse;
-                    if (NormalBumped.UsesSameShader(material))
-                        return ScatterMaterialType.BumpedDiffuse;
-                    if (NormalDiffuseDetail.UsesSameShader(material))
-                        return ScatterMaterialType.DiffuseDetail;
-                    if (DiffuseWrap.UsesSameShader(material))
-                        return ScatterMaterialType.DiffuseWrapped;
-                    if (AlphaTestDiffuse.UsesSameShader(material))
-                        return ScatterMaterialType.CutoutDiffuse;
-                    if (AerialTransCutout.UsesSameShader(material))
-                        return ScatterMaterialType.AerialCutout;
-                    if (Standard.UsesSameShader(material))
-                        return ScatterMaterialType.Standard;
-                    if (StandardSpecular.UsesSameShader(material))
-                        return ScatterMaterialType.StandardSpecular;
-                    if (KSPBumped.UsesSameShader(material))
-                        return ScatterMaterialType.KSPBumped;
-                    if (KSPBumpedSpecular.UsesSameShader(material))
-                        return ScatterMaterialType.KSPBumpedSpecular;
-
-                    throw new Exception("The shader '" + material.shader.name + "' is not supported.");
-                }
-                set
-                {
-                    if (UsesScatterShader(value.Value, CurrentMaterial))
-                        return;
-
-                    _material = value.Value switch
-                    {
-                        ScatterMaterialType.Diffuse => new NormalDiffuseLoader(),
-                        ScatterMaterialType.BumpedDiffuse => new NormalBumpedLoader(),
-                        ScatterMaterialType.DiffuseDetail => new NormalDiffuseDetailLoader(),
-                        ScatterMaterialType.DiffuseWrapped => new DiffuseWrapLoader(),
-                        ScatterMaterialType.CutoutDiffuse => new AlphaTestDiffuseLoader(),
-                        ScatterMaterialType.AerialCutout => new AerialTransCutoutLoader(),
-                        ScatterMaterialType.Standard => new StandardLoader(),
-                        ScatterMaterialType.StandardSpecular => new StandardSpecularLoader(),
-                        ScatterMaterialType.KSPBumped => new KSPBumpedLoader(),
-                        ScatterMaterialType.KSPBumpedSpecular => new KSPBumpedSpecularLoader(),
-                        _ => _material,
-                    };
-                }
+                get => field ??= GetInitialMaterialType();
+                set => field = value;
             }
 
-            private static Boolean UsesScatterShader(ScatterMaterialType type, Material material) => type switch
+            private ScatterMaterialType GetInitialMaterialType()
             {
-                ScatterMaterialType.Diffuse => NormalDiffuse.UsesSameShader(material),
-                ScatterMaterialType.BumpedDiffuse => NormalBumped.UsesSameShader(material),
-                ScatterMaterialType.DiffuseDetail => NormalDiffuseDetail.UsesSameShader(material),
-                ScatterMaterialType.DiffuseWrapped => DiffuseWrap.UsesSameShader(material),
-                ScatterMaterialType.CutoutDiffuse => AlphaTestDiffuse.UsesSameShader(material),
-                ScatterMaterialType.AerialCutout => AerialTransCutout.UsesSameShader(material),
-                ScatterMaterialType.Standard => Standard.UsesSameShader(material),
-                ScatterMaterialType.StandardSpecular => StandardSpecular.UsesSameShader(material),
-                ScatterMaterialType.KSPBumped => KSPBumped.UsesSameShader(material),
-                ScatterMaterialType.KSPBumpedSpecular => KSPBumpedSpecular.UsesSameShader(material),
-                _ => false,
-            };
+                Material material = CurrentMaterial;
 
-            // Custom scatter material
+                if (NormalDiffuse.UsesSameShader(material))
+                    return ScatterMaterialType.Diffuse;
+                if (NormalBumped.UsesSameShader(material))
+                    return ScatterMaterialType.BumpedDiffuse;
+                if (NormalDiffuseDetail.UsesSameShader(material))
+                    return ScatterMaterialType.DiffuseDetail;
+                if (DiffuseWrap.UsesSameShader(material))
+                    return ScatterMaterialType.DiffuseWrapped;
+                if (AlphaTestDiffuse.UsesSameShader(material))
+                    return ScatterMaterialType.CutoutDiffuse;
+                if (AerialTransCutout.UsesSameShader(material))
+                    return ScatterMaterialType.AerialCutout;
+                if (Standard.UsesSameShader(material))
+                    return ScatterMaterialType.Standard;
+                if (StandardSpecular.UsesSameShader(material))
+                    return ScatterMaterialType.StandardSpecular;
+                if (KSPBumped.UsesSameShader(material))
+                    return ScatterMaterialType.KSPBumped;
+                if (KSPBumpedSpecular.UsesSameShader(material))
+                    return ScatterMaterialType.KSPBumpedSpecular;
+
+                var shaderName = material?.shader?.name ?? "<null>";
+                throw new Exception("The shader '" + shaderName + "' is not supported.");
+            }
+
+            // Custom scatter material. Initialized up front by the constructor
+            // (wrapping any existing scatter material) and possibly replaced by
+            // the [PreApply] Type setter or by the IParserApplyEventSubscriber
+            // Apply hook below.
             [ParserTarget("Material", AllowMerge = true)]
             public BaseMaterialLoader Material
             {
-                get
-                {
-                    if (_material != null)
-                        return _material;
-
-                    Material existing = Value.material;
-                    _material = Type.Value switch
-                    {
-                        ScatterMaterialType.Diffuse => new NormalDiffuseLoader(existing),
-                        ScatterMaterialType.BumpedDiffuse => new NormalBumpedLoader(existing),
-                        ScatterMaterialType.DiffuseDetail => new NormalDiffuseDetailLoader(existing),
-                        ScatterMaterialType.DiffuseWrapped => new DiffuseWrapLoader(existing),
-                        ScatterMaterialType.CutoutDiffuse => new AlphaTestDiffuseLoader(existing),
-                        ScatterMaterialType.AerialCutout => new AerialTransCutoutLoader(existing),
-                        ScatterMaterialType.Standard => new StandardLoader(existing),
-                        ScatterMaterialType.StandardSpecular => new StandardSpecularLoader(existing),
-                        ScatterMaterialType.KSPBumped => new KSPBumpedLoader(existing),
-                        ScatterMaterialType.KSPBumpedSpecular => new KSPBumpedSpecularLoader(existing),
-                        _ => throw new Exception("Unsupported scatter material type: " + Type.Value),
-                    };
-                    return _material;
-                }
-                set { _material = value; }
+                get => _material;
+                set => _material = value;
             }
 
             // Stock material
@@ -207,8 +158,41 @@ namespace Kopernicus.Configuration.ModLoader
                     if (stock == null)
                         return;
                     Value.material = stock;
-                    _material = null;
+                    _material = WrapExistingMaterial(stock);
                 }
+            }
+
+            // Wrap an existing scatter material with the matching loader type
+            // so subsequent edits preserve the material's existing textures and
+            // properties. Returns null for unknown shaders — caller must supply
+            // a loader some other way (materialType= or Material{shader=}).
+            private static BaseMaterialLoader WrapExistingMaterial(Material existing)
+            {
+                if (existing == null)
+                    return null;
+
+                if (NormalDiffuse.UsesSameShader(existing))
+                    return new NormalDiffuseLoader(existing);
+                if (NormalBumped.UsesSameShader(existing))
+                    return new NormalBumpedLoader(existing);
+                if (NormalDiffuseDetail.UsesSameShader(existing))
+                    return new NormalDiffuseDetailLoader(existing);
+                if (DiffuseWrap.UsesSameShader(existing))
+                    return new DiffuseWrapLoader(existing);
+                if (AlphaTestDiffuse.UsesSameShader(existing))
+                    return new AlphaTestDiffuseLoader(existing);
+                if (AerialTransCutout.UsesSameShader(existing))
+                    return new AerialTransCutoutLoader(existing);
+                if (Standard.UsesSameShader(existing))
+                    return new StandardLoader(existing);
+                if (StandardSpecular.UsesSameShader(existing))
+                    return new StandardSpecularLoader(existing);
+                if (KSPBumped.UsesSameShader(existing))
+                    return new KSPBumpedLoader(existing);
+                if (KSPBumpedSpecular.UsesSameShader(existing))
+                    return new KSPBumpedSpecularLoader(existing);
+
+                return null;
             }
 
             // The biome list of the landclass
@@ -433,6 +417,7 @@ namespace Kopernicus.Configuration.ModLoader
             public LandClassScatterLoader(PQSLandControl.LandClassScatter value)
             {
                 Value = value;
+                _material = WrapExistingMaterial(value.material);
 
                 // Get the Scatter-Parent
                 GameObject scatterParent = typeof(PQSLandControl.LandClassScatter)
@@ -498,6 +483,34 @@ namespace Kopernicus.Configuration.ModLoader
             {
                 return new LandClassScatterLoader(value);
             }
+
+            // Build the material loader from whatever signal is available —
+            // `Material { shader = X }` wins, otherwise the [PreApply] Type
+            // (either explicitly parsed or lazily deduced from the existing
+            // material via GetInitialMaterialType). The Material and
+            // StockMaterial parser targets run after this and may overwrite
+            // _material / Value.material to suit the user's intent.
+            void IParserApplyEventSubscriber.Apply(ConfigNode node)
+            {
+                var shaderName = node.GetNode("Material")?.GetValue("shader")
+                                 ?? MaterialTypeToShaderName(Type.Value);
+                _material = BaseMaterialLoader.Create(shaderName, Value.material);
+            }
+
+            private static string MaterialTypeToShaderName(ScatterMaterialType type) => type switch
+            {
+                ScatterMaterialType.Diffuse => NormalDiffuseLoader.SHADER_NAME,
+                ScatterMaterialType.BumpedDiffuse => NormalBumpedLoader.SHADER_NAME,
+                ScatterMaterialType.DiffuseDetail => NormalDiffuseDetailLoader.SHADER_NAME,
+                ScatterMaterialType.DiffuseWrapped => DiffuseWrapLoader.SHADER_NAME,
+                ScatterMaterialType.CutoutDiffuse => AlphaTestDiffuseLoader.SHADER_NAME,
+                ScatterMaterialType.AerialCutout => AerialTransCutoutLoader.SHADER_NAME,
+                ScatterMaterialType.Standard => StandardLoader.SHADER_NAME,
+                ScatterMaterialType.StandardSpecular => StandardSpecularLoader.SHADER_NAME,
+                ScatterMaterialType.KSPBumped => KSPBumpedLoader.SHADER_NAME,
+                ScatterMaterialType.KSPBumpedSpecular => KSPBumpedSpecularLoader.SHADER_NAME,
+                _ => null,
+            };
 
             void IParserPostApplyEventSubscriber.PostApply(ConfigNode node)
             {

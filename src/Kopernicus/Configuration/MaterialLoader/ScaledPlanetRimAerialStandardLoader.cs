@@ -27,6 +27,7 @@ using System;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.Attributes;
 using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using Kopernicus.UI;
@@ -36,9 +37,10 @@ using Gradient = Kopernicus.Configuration.Parsing.Gradient;
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
+    [MaterialLoader(ScaledPlanetRimAerialStandardLoader.SHADER_NAME)]
     public class ScaledPlanetRimAerialStandardLoader : BaseMaterialLoader
     {
-        private const String SHADER_NAME = "Terrain/Scaled Planet (RimAerial) Standard";
+        public const String SHADER_NAME = "Terrain/Scaled Planet (RimAerial) Standard";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);
         public static bool UsesSameShader(Material m) => m != null && m.shader.name == SHADER_NAME;
 

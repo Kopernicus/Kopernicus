@@ -27,6 +27,7 @@ using System;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.Attributes;
 using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using UnityEngine;
@@ -34,9 +35,10 @@ using UnityEngine;
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
+    [MaterialLoader(KSPBumpedSpecularLoader.SHADER_NAME)]
     public class KSPBumpedSpecularLoader : BaseMaterialLoader
     {
-        private const String SHADER_NAME = "KSP/Bumped Specular";
+        public const String SHADER_NAME = "KSP/Bumped Specular";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);
         public static bool UsesSameShader(Material m) => m != null && m.shader.name == SHADER_NAME;
 

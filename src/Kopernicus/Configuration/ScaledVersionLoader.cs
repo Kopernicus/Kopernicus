@@ -201,19 +201,19 @@ namespace Kopernicus.Configuration
 
         [ParserTarget("Material", AllowMerge = true)]
         [KittopiaUntouchable]
-        public BaseMaterialLoader Material
+        public BaseMaterialLoader Material { get; set; }
+
+        static string MaterialTypeToShaderName(ScaledMaterialType? type) => type switch
         {
-            get => field ??= Type.Value switch
-            {
-                ScaledMaterialType.Vacuum => new ScaledPlanetSimpleLoader(CurrentMaterial),
-                ScaledMaterialType.Atmospheric => new ScaledPlanetSimpleLoader(CurrentMaterial),
-                ScaledMaterialType.AtmosphericStandard => new ScaledPlanetRimAerialStandardLoader(CurrentMaterial),
-                ScaledMaterialType.Star => new EmissiveMultiRampSunspotsLoader(CurrentMaterial),
-                ScaledMaterialType.GasGiant => new GasGiantLoader(CurrentMaterial),
-                _ => new CustomMaterialLoader(),
-            };
-            set => field = value;
-        }
+            // Atmospheric historically routed through ScaledPlanetSimpleLoader rather than
+            // ScaledPlanetRimAerialLoader; preserve that mapping until/unless we decide to fix it.
+            ScaledMaterialType.Vacuum => ScaledPlanetSimpleLoader.SHADER_NAME,
+            ScaledMaterialType.Atmospheric => ScaledPlanetSimpleLoader.SHADER_NAME,
+            ScaledMaterialType.AtmosphericStandard => ScaledPlanetRimAerialStandardLoader.SHADER_NAME,
+            ScaledMaterialType.Star => EmissiveMultiRampSunspotsLoader.SHADER_NAME,
+            ScaledMaterialType.GasGiant => GasGiantLoader.SHADER_NAME,
+            _ => null,
+        };
 
         [ParserTarget("OnDemand", AllowMerge = true)]
         [KittopiaUntouchable]
@@ -295,6 +295,8 @@ namespace Kopernicus.Configuration
                 }
             }
 
+            Material = GetScaledMaterialLoader(node.GetNode("Material"));
+
             // Event
             Events.OnScaledVersionLoaderApply.Fire(this, node);
         }
@@ -353,6 +355,12 @@ namespace Kopernicus.Configuration
             if (GasGiantLoader.UsesSameShader(material))
                 return ScaledMaterialType.GasGiant;
             return ScaledMaterialType.Custom;
+        }
+
+        BaseMaterialLoader GetScaledMaterialLoader(ConfigNode node)
+        {
+            string shaderName = node?.GetValue("shader") ?? MaterialTypeToShaderName(Type.Value);
+            return BaseMaterialLoader.Create(shaderName, CurrentMaterial);
         }
 
         /// <summary>

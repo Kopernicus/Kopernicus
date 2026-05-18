@@ -27,6 +27,7 @@ using System;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.Attributes;
 using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using Kopernicus.OnDemand;
@@ -35,9 +36,10 @@ using UnityEngine;
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
+    [MaterialLoader(PQSOceanSurfaceQuadFallbackLoader.SHADER_NAME)]
     public class PQSOceanSurfaceQuadFallbackLoader : BaseMaterialLoader
     {
-        private const String SHADER_NAME = "Terrain/PQS/Ocean Surface Quad (Fallback)";
+        public const String SHADER_NAME = "Terrain/PQS/Ocean Surface Quad (Fallback)";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);
         public static bool UsesSameShader(Material m) => m != null && m.shader.name == SHADER_NAME;
 

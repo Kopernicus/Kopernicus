@@ -29,6 +29,7 @@ using System.Linq;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.Attributes;
 using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using Kopernicus.UI;
@@ -37,9 +38,10 @@ using UnityEngine;
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
+    [MaterialLoader(PQSTriplanarZoomRotationTextureArrayLoader.SHADER_NAME)]
     public class PQSTriplanarZoomRotationTextureArrayLoader : BaseMaterialLoader
     {
-        private const String SHADER_NAME = "Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array";
+        public const String SHADER_NAME = "Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);
 
         // The texture-atlas mod (see ModLoader/TextureAtlas.cs) hot-swaps the shader to one of

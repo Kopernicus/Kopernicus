@@ -26,6 +26,7 @@
 using HarmonyLib;
 using Kopernicus.ConfigParser;
 using Kopernicus.Configuration;
+using Kopernicus.Configuration.MaterialLoader;
 using Kopernicus.Constants;
 using Kopernicus.OnDemand;
 using KSPTextureLoader;
@@ -147,6 +148,9 @@ namespace Kopernicus
                     }
                 }
 #endif
+
+                // Find all material loaders
+                BaseMaterialLoader.BuildRegistry();
 
                 // Backup the old prefab
                 StockSystemPrefab = PSystemManager.Instance.systemPrefab;

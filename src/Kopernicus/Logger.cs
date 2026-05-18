@@ -111,6 +111,16 @@ namespace Kopernicus
             }
         }
 
+        public void LogError(Object o)
+        {
+            if (_loggerStream == null)
+                return;
+
+            _loggerStream.WriteLine($"[ERR {DateTime.Now.ToString("HH:mm:ss")}]: {o}");
+            if (_autoFlush)
+                _loggerStream.Flush();
+        }
+
         // Write text to the log
         public void LogException(Exception e)
         {

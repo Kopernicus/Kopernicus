@@ -26,11 +26,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Kopernicus.Components;
 using Kopernicus.ConfigParser;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Interfaces;
+using Kopernicus.Configuration.Attributes;
 using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using Kopernicus.OnDemand;
@@ -78,8 +80,7 @@ public abstract class BaseMaterialLoader : BaseLoader, IParserEventSubscriber
 
     public virtual void Apply(ConfigNode node)
     {
-        var shader = ShaderParser.Value;
-
+        var shader = ShaderParser?.Value;
         if (shader is null)
         {
             Logger.Active.LogWarning("No shader specified for material. An error shader will be used instead.");
@@ -620,4 +621,104 @@ public abstract class BaseMaterialLoader : BaseLoader, IParserEventSubscriber
                 return LoadTexture<Texture>(key, path);
         }
     }
+
+    #region Registry
+    struct RegistryEntry
+    {
+        public Type type;
+        public Func<Material, string, BaseMaterialLoader> ctor;
+    }
+
+    static readonly Dictionary<string, RegistryEntry> Registry = new(StringComparer.Ordinal);
+
+    public static BaseMaterialLoader Create(string shaderName, Material material)
+    {
+        if (string.IsNullOrEmpty(shaderName))
+            throw new Exception("Could not determine which shader to load as `shader` was not specified in the material loader");
+        if (Registry.TryGetValue(shaderName, out var entry))
+            return entry.ctor(material, shaderName);
+
+        // Explicitly exclude the material. The existing properties likely don't
+        // make sense and we want the user to configure anything that isn't the
+        // shader defaults.
+        return new CustomMaterialLoader();
+    }
+
+    internal static void BuildRegistry()
+    {
+        Registry.Clear();
+
+        var types = AssemblyLoader.loadedAssemblies
+            .SelectMany(la => la.assembly.GetTypes())
+            .Where(type => typeof(BaseMaterialLoader).IsAssignableFrom(type));
+        foreach (var type in types)
+        {
+            var attrs = type.GetCustomAttributes<MaterialLoaderAttribute>(inherit: false).ToArray();
+            if (attrs.Length == 0)
+                continue;
+
+            var ctor2 = type.GetConstructor([typeof(Material), typeof(string)]);
+            var ctor1 = type.GetConstructor([typeof(Material)]);
+            var ctor0 = type.GetConstructor([]);
+
+            Func<Material, string, BaseMaterialLoader> func;
+            if (ctor2 is not null)
+            {
+                func = (Material material, string shaderName) =>
+                {
+                    if (material == null)
+                    {
+                        var shader = Shader.Find(shaderName);
+                        if (shader == null)
+                            throw new Exception($"Shader `{shaderName}` does not exist.");
+
+                        material = new Material(shader);
+                    }
+
+                    return (BaseMaterialLoader)Activator.CreateInstance(type, [material, shaderName]);
+                };
+            }
+            else if (ctor1 is not null)
+            {
+                func = (Material material, string shaderName) =>
+                {
+                    if (material == null)
+                    {
+                        var shader = Shader.Find(shaderName);
+                        if (shader == null)
+                            throw new Exception($"Shader `{shaderName}` does not exist.");
+
+                        material = new Material(shader);
+                    }
+
+                    return (BaseMaterialLoader)Activator.CreateInstance(type, [material]);
+                };
+            }
+            else if (ctor0 is not null)
+            {
+                func = (Material material, string shaderName) => (BaseMaterialLoader)Activator.CreateInstance(type);
+            }
+            else
+            {
+                var message = $"Material loader {type.Name} has no suitable constructor and will not be used. See the wiki docs for more info.";
+                Logger.Active.LogError(message);
+                Debug.LogError($"[Kopernicus] {message}");
+                continue;
+            }
+
+            foreach (var attr in attrs)
+            {
+                if (Registry.TryGetValue(attr.Shader, out var other))
+                {
+                    var message = $"Multiple loaders for shader `{attr.Shader}` exist ({other.type.Name} and {type.Name}). Only {other.type.Name} will be used.";
+                    Logger.Active.LogError(message);
+                    Debug.LogError($"[Kopernicus] {message}");
+                    continue;
+                }
+
+                Registry.Add(attr.Shader, new RegistryEntry { type = type, ctor = func });
+            }
+        }
+    }
+    #endregion
 }

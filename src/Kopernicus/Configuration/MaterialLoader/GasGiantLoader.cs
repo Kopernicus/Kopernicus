@@ -26,6 +26,7 @@
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.Attributes;
 using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using UnityEngine;
@@ -40,9 +41,10 @@ namespace Kopernicus.Configuration.MaterialLoader
     /// frame and clamps the speed properties.
     /// </summary>
     [RequireConfigType(ConfigType.Node)]
+    [MaterialLoader(GasGiantLoader.SHADER_NAME)]
     public class GasGiantLoader : BaseMaterialLoader
     {
-        private const string SHADER_NAME = "Terrain/Gas Giant";
+        public const string SHADER_NAME = "Terrain/Gas Giant";
         private static readonly Shader Shader = UnityEngine.Shader.Find(SHADER_NAME);
         public static bool UsesSameShader(Material m) => m != null && m.shader.name == SHADER_NAME;
 
