@@ -42,7 +42,7 @@ namespace Kopernicus.OnDemand
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class OnDemandStorage
     {
-        // Lists
+        // Maps registered against a PQS sphere, keyed by the sphere's name.
         private static readonly Dictionary<String, List<ILoadOnDemand>> Maps = [];
 
         // We store body names as strings here because we only have references to
@@ -99,11 +99,11 @@ namespace Kopernicus.OnDemand
                 MapBodyNames[map] = body;
 
                 // Log
-                Debug.Log("[OD] Adding for body " + body + " map named " + map.Name + " of path = " + map.Path);
+                Debug.Log($"[OD] Adding for sphere {body} map named {map.Path}");
             }
             else
             {
-                Debug.Log("[OD] WARNING: trying to add a map but is already tracked! Current body is " + body +
+                Debug.Log("[OD] WARNING: trying to add a map but is already tracked! Current sphere is " + body +
                           " and map name is " + map.Name + " and path is " + map.Path);
             }
         }

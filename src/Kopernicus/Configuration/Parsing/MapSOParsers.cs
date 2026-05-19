@@ -27,6 +27,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Kopernicus.Components;
+using Kopernicus.ConfigParser;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.ConfigParser.Interfaces;
@@ -50,6 +51,24 @@ public abstract class MapSOParserBase<T> : BaseLoader, IParsable, ITypeParser<T>
     public T Value { get; set; }
 
     private protected abstract MapSO.MapDepth Depth { get; }
+
+    // The name of the PQS sphere we are parsing in. This may be more specific
+    // than just the body, because ocean PQS instances can have textures too.
+    private string CurrentSphereName
+    {
+        get
+        {
+            try
+            {
+                var pqs = Parser.GetState<PQS>("Kopernicus:pqsVersion");
+                if (pqs != null)
+                    return pqs.name;
+            }
+            catch { }
+
+            return generatedBody.name;
+        }
+    }
 
     private protected MapSOParserBase() { }
 
@@ -105,7 +124,7 @@ public abstract class MapSOParserBase<T> : BaseLoader, IParsable, ITypeParser<T>
             map.Path = s;
             map.Depth = Depth;
             map.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
-            OnDemandStorage.AddMap(generatedBody.name, map);
+            OnDemandStorage.AddMap(CurrentSphereName, map);
             Value = (T)(MapSO)map;
             return;
         }

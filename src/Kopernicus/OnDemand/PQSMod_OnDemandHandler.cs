@@ -140,7 +140,7 @@ namespace Kopernicus.OnDemand
             if (mapSOState == State.Unloaded)
                 return;
 
-            Debug.Log($"[OD] Unloading {sphere.GetCelestialBody().bodyName}");
+            Debug.Log($"[OD] Unloading {sphere.name}");
 
             mapSOState = State.Unloaded;
             foreach (var entry in mapSOs)
@@ -458,19 +458,17 @@ namespace Kopernicus.OnDemand
         }
 
         #region Serialization Callbacks
-        // Unity's serializer (used by the prefab→live Instantiate clone in
-        // PSystemSpawn) only handles primitives, strings, UnityEngine.Object
-        // references, and List<T> of those. Mod-DLL [Serializable] structs are
-        // silently dropped, and IOnDemandTextureListener is a plain managed
-        // interface so its references would be lost on the cloned component.
-        // Round trip the subset of listeners whose backing object derives from
-        // UnityEngine.Object through these parallel SerializeField lists.
+#pragma warning disable IDE0044 // Add readonly modifier
+        // Unity's serializer doesn't handle the TextureListener type because
+        // it is not defined at startup time. We unpack these ourselves so
+        // that we can survive across serialization callbacks.
         [SerializeField]
         private List<string> listenerProperties = [];
         [SerializeField]
         private List<string> listenerPaths = [];
         [SerializeField]
         private List<UnityEngine.Object> listenerObjects = [];
+#pragma warning restore IDE0044 // Add readonly modifier
 
         void ISerializationCallbackReceiver.OnBeforeSerialize()
         {
