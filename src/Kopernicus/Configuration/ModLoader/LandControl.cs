@@ -62,7 +62,7 @@ namespace Kopernicus.Configuration.ModLoader
 
             // Backing storage for the parsed material loader. Committed to
             // Value.material in PostApply.
-            private BaseMaterialLoader _material;
+            private MaterialLoader.MaterialLoader _material;
 
             private Material CurrentMaterial => _material?.Value ?? Value.material;
 
@@ -141,7 +141,7 @@ namespace Kopernicus.Configuration.ModLoader
             // the [PreApply] Type setter or by the IParserApplyEventSubscriber
             // Apply hook below.
             [ParserTarget("Material", AllowMerge = true)]
-            public BaseMaterialLoader Material
+            public MaterialLoader.MaterialLoader Material
             {
                 get => _material;
                 set => _material = value;
@@ -166,7 +166,7 @@ namespace Kopernicus.Configuration.ModLoader
             // so subsequent edits preserve the material's existing textures and
             // properties. Returns null for unknown shaders — caller must supply
             // a loader some other way (materialType= or Material{shader=}).
-            private static BaseMaterialLoader WrapExistingMaterial(Material existing)
+            private static MaterialLoader.MaterialLoader WrapExistingMaterial(Material existing)
             {
                 if (existing == null)
                     return null;
@@ -494,7 +494,7 @@ namespace Kopernicus.Configuration.ModLoader
             {
                 var shaderName = node.GetNode("Material")?.GetValue("shader")
                                  ?? MaterialTypeToShaderName(Type.Value);
-                _material = BaseMaterialLoader.Create(shaderName, Value.material);
+                _material = MaterialLoader.MaterialLoader.Create(shaderName, Value.material);
             }
 
             private static string MaterialTypeToShaderName(ScatterMaterialType type) => type switch

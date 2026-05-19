@@ -60,7 +60,7 @@ namespace Kopernicus.Configuration
         public CelestialBody Value { get; set; }
 
         [RequireConfigType(ConfigType.Node)]
-        public class OnDemandConfig(BaseMaterialLoader loader)
+        public class OnDemandConfig(MaterialLoader.MaterialLoader loader)
         {
             [ParserTarget("texture")]
             [ParserTarget("mainTex")]
@@ -201,7 +201,7 @@ namespace Kopernicus.Configuration
 
         [ParserTarget("Material", AllowMerge = true)]
         [KittopiaUntouchable]
-        public BaseMaterialLoader Material { get; set; }
+        public MaterialLoader.MaterialLoader Material { get; set; }
 
         static string MaterialTypeToShaderName(ScaledMaterialType? type) => type switch
         {
@@ -355,10 +355,10 @@ namespace Kopernicus.Configuration
             return ScaledMaterialType.Custom;
         }
 
-        BaseMaterialLoader GetScaledMaterialLoader(ConfigNode node)
+        MaterialLoader.MaterialLoader GetScaledMaterialLoader(ConfigNode node)
         {
             string shaderName = node?.GetValue("shader") ?? MaterialTypeToShaderName(Type.Value);
-            return BaseMaterialLoader.Create(shaderName, CurrentMaterial);
+            return MaterialLoader.MaterialLoader.Create(shaderName, CurrentMaterial);
         }
 
         /// <summary>

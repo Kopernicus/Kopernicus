@@ -32,7 +32,7 @@ namespace Kopernicus.Configuration.MaterialLoader.Parsing;
 /// <summary>
 /// A value-holding parser for shader multi-keyword properties (one of N
 /// allowed string keywords). Validation against the allowed set lives on
-/// <see cref="BaseMaterialLoader.SetMultiKeyword"/> so the property setter
+/// <see cref="MaterialLoader.SetMultiKeyword"/> so the property setter
 /// only has to forward.
 /// </summary>
 [RequireConfigType(ConfigType.Value)]

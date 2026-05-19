@@ -36,7 +36,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
     [MaterialLoader(EmissiveMultiRampSunspotsLoader.SHADER_NAME)]
-    public class EmissiveMultiRampSunspotsLoader : BaseMaterialLoader
+    public class EmissiveMultiRampSunspotsLoader : MaterialLoader
     {
         public const String SHADER_NAME = "Emissive Multi Ramp Sunspots";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);

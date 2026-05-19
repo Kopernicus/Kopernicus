@@ -36,7 +36,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
     [MaterialLoader(AlphaTestDiffuseLoader.SHADER_NAME)]
-    public class AlphaTestDiffuseLoader : BaseMaterialLoader
+    public class AlphaTestDiffuseLoader : MaterialLoader
     {
         public const String SHADER_NAME = "Legacy Shaders/Transparent/Cutout/Diffuse";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);

@@ -48,7 +48,7 @@ namespace Kopernicus.Configuration.MaterialLoader;
 /// both the raw <c>_X</c> key path (handled by <see cref="PostApply"/>) and the
 /// per-shader friendly aliases route through.
 /// </summary>
-public abstract class BaseMaterialLoader : BaseLoader, IParserEventSubscriber
+public abstract class MaterialLoader : BaseLoader, IParserEventSubscriber
 {
     /// <summary>
     /// The material actually loaded by this loader.
@@ -626,12 +626,12 @@ public abstract class BaseMaterialLoader : BaseLoader, IParserEventSubscriber
     struct RegistryEntry
     {
         public Type type;
-        public Func<Material, string, BaseMaterialLoader> ctor;
+        public Func<Material, string, MaterialLoader> ctor;
     }
 
     static readonly Dictionary<string, RegistryEntry> Registry = new(StringComparer.Ordinal);
 
-    public static BaseMaterialLoader Create(string shaderName, Material material)
+    public static MaterialLoader Create(string shaderName, Material material)
     {
         if (string.IsNullOrEmpty(shaderName))
             throw new Exception("Could not determine which shader to load as `shader` was not specified in the material loader");
@@ -650,7 +650,7 @@ public abstract class BaseMaterialLoader : BaseLoader, IParserEventSubscriber
 
         var types = AssemblyLoader.loadedAssemblies
             .SelectMany(la => la.assembly.GetTypes())
-            .Where(type => typeof(BaseMaterialLoader).IsAssignableFrom(type));
+            .Where(type => typeof(MaterialLoader).IsAssignableFrom(type));
         foreach (var type in types)
         {
             var attrs = type.GetCustomAttributes<MaterialLoaderAttribute>(inherit: false).ToArray();
@@ -661,7 +661,7 @@ public abstract class BaseMaterialLoader : BaseLoader, IParserEventSubscriber
             var ctor1 = type.GetConstructor([typeof(Material)]);
             var ctor0 = type.GetConstructor([]);
 
-            Func<Material, string, BaseMaterialLoader> func;
+            Func<Material, string, MaterialLoader> func;
             if (ctor2 is not null)
             {
                 func = (Material material, string shaderName) =>
@@ -675,7 +675,7 @@ public abstract class BaseMaterialLoader : BaseLoader, IParserEventSubscriber
                         material = new Material(shader);
                     }
 
-                    return (BaseMaterialLoader)Activator.CreateInstance(type, [material, shaderName]);
+                    return (MaterialLoader)Activator.CreateInstance(type, [material, shaderName]);
                 };
             }
             else if (ctor1 is not null)
@@ -691,12 +691,12 @@ public abstract class BaseMaterialLoader : BaseLoader, IParserEventSubscriber
                         material = new Material(shader);
                     }
 
-                    return (BaseMaterialLoader)Activator.CreateInstance(type, [material]);
+                    return (MaterialLoader)Activator.CreateInstance(type, [material]);
                 };
             }
             else if (ctor0 is not null)
             {
-                func = (Material material, string shaderName) => (BaseMaterialLoader)Activator.CreateInstance(type);
+                func = (Material material, string shaderName) => (MaterialLoader)Activator.CreateInstance(type);
             }
             else
             {

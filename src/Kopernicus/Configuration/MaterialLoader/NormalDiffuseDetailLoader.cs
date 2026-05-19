@@ -36,7 +36,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
     [MaterialLoader(NormalDiffuseDetailLoader.SHADER_NAME)]
-    public class NormalDiffuseDetailLoader : BaseMaterialLoader
+    public class NormalDiffuseDetailLoader : MaterialLoader
     {
         public const String SHADER_NAME = "Legacy Shaders/Diffuse Detail";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);

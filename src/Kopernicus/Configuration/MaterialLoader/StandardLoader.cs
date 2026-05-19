@@ -36,7 +36,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
     [MaterialLoader(StandardLoader.SHADER_NAME)]
-    public class StandardLoader : BaseMaterialLoader
+    public class StandardLoader : MaterialLoader
     {
         public const String SHADER_NAME = "Standard";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);

@@ -36,7 +36,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
     [MaterialLoader(KSPBumpedLoader.SHADER_NAME)]
-    public class KSPBumpedLoader : BaseMaterialLoader
+    public class KSPBumpedLoader : MaterialLoader
     {
         public const String SHADER_NAME = "KSP/Bumped";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);
