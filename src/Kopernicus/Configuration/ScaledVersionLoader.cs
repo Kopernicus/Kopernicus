@@ -205,10 +205,8 @@ namespace Kopernicus.Configuration
 
         static string MaterialTypeToShaderName(ScaledMaterialType? type) => type switch
         {
-            // Atmospheric historically routed through ScaledPlanetSimpleLoader rather than
-            // ScaledPlanetRimAerialLoader; preserve that mapping until/unless we decide to fix it.
             ScaledMaterialType.Vacuum => ScaledPlanetSimpleLoader.SHADER_NAME,
-            ScaledMaterialType.Atmospheric => ScaledPlanetSimpleLoader.SHADER_NAME,
+            ScaledMaterialType.Atmospheric => ScaledPlanetRimAerialLoader.SHADER_NAME,
             ScaledMaterialType.AtmosphericStandard => ScaledPlanetRimAerialStandardLoader.SHADER_NAME,
             ScaledMaterialType.Star => EmissiveMultiRampSunspotsLoader.SHADER_NAME,
             ScaledMaterialType.GasGiant => GasGiantLoader.SHADER_NAME,
