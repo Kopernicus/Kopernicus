@@ -136,7 +136,6 @@ namespace Kopernicus.RuntimeUtility
             ScaledSpaceOnDemand od = planetCb.scaledBody.GetComponentInChildren<ScaledSpaceOnDemand>();
             if (od != null)
             {
-                od.Start();
                 od.LoadTextures();
             }
 
