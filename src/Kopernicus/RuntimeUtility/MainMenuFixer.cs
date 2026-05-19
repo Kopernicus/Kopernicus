@@ -149,6 +149,10 @@ namespace Kopernicus.RuntimeUtility
             DestroyImmediate(menuPlanet.GetComponent<SphereCollider>());
             DestroyImmediate(menuPlanet.GetComponentInChildren<AtmosphereFromGround>());
             DestroyImmediate(menuPlanet.GetComponent<MaterialSetDirection>());
+            foreach (Components.Ring ring in menuPlanet.GetComponentsInChildren<Components.Ring>(true))
+            {
+                DestroyImmediate(ring.gameObject);
+            }
 
             // That sounds funny
             Rotato planetRotato = menuPlanet.AddComponent<Rotato>();
