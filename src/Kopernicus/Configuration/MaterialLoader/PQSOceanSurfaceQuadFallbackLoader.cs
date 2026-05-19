@@ -37,7 +37,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
     [MaterialLoader(PQSOceanSurfaceQuadFallbackLoader.SHADER_NAME)]
-    public class PQSOceanSurfaceQuadFallbackLoader : MaterialLoader
+    public class PQSOceanSurfaceQuadFallbackLoader : PQSMaterialLoader
     {
         public const String SHADER_NAME = "Terrain/PQS/Ocean Surface Quad (Fallback)";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);

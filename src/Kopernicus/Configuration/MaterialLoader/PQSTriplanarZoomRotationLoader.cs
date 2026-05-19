@@ -36,7 +36,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
     [MaterialLoader(PQSTriplanarZoomRotationLoader.SHADER_NAME)]
-    public class PQSTriplanarZoomRotationLoader : MaterialLoader
+    public class PQSTriplanarZoomRotationLoader : PQSMaterialLoader
     {
         public const String SHADER_NAME = "Terrain/PQS/PQS Triplanar Zoom Rotation";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);

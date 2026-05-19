@@ -1,0 +1,46 @@
+/**
+ * Kopernicus Planetary System Modifier
+ * -------------------------------------------------------------
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
+ *
+ * This library is intended to be used as a plugin for Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
+ * itself is governed by the terms of its EULA, not the license above.
+ *
+ * https://kerbalspaceprogram.com
+ */
+
+using System;
+using Kopernicus.Components;
+using Kopernicus.OnDemand;
+
+namespace Kopernicus.Configuration.MaterialLoader;
+
+/// <summary>
+/// Intermediate base for material loaders that target a <c>ScaledVersion</c>
+/// renderer. Refuses to be applied to a <see cref="PQS"/> surface/fallback
+/// material or to a PQS mod scatter.
+/// </summary>
+public abstract class ScaledMaterialLoader : MaterialLoader
+{
+    public override void OnParentApply(PQS pqs, PQSMod_OnDemandHandler handler)
+        => throw new InvalidOperationException(
+            $"Material loader `{GetType().Name}` is for ScaledVersion materials and cannot be used as a PQS material");
+
+    public override void OnParentApply(IPQSModWithMaterial mod, PQSMod_OnDemandHandler handler)
+        => throw new InvalidOperationException(
+            $"Material loader `{GetType().Name}` is for ScaledVersion materials and cannot be used as a PQS mod scatter material");
+}

@@ -38,7 +38,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
     [MaterialLoader(PQSMainShaderLoader.SHADER_NAME)]
-    public class PQSMainShaderLoader : MaterialLoader
+    public class PQSMainShaderLoader : PQSMaterialLoader
     {
         public const String SHADER_NAME = "Terrain/PQS/PQS Main Shader";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);
