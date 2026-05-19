@@ -36,7 +36,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
     [MaterialLoader(PQSMainFastBlendLoader.SHADER_NAME)]
-    public class PQSMainFastBlendLoader : MaterialLoader
+    public class PQSMainFastBlendLoader : PQSMaterialLoader
     {
         public const String SHADER_NAME = "Terrain/PQS/PQS Main Shader - Fast Blend";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);

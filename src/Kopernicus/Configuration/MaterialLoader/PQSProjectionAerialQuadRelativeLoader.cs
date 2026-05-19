@@ -38,7 +38,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
     [MaterialLoader(PQSProjectionAerialQuadRelativeLoader.SHADER_NAME)]
-    public class PQSProjectionAerialQuadRelativeLoader : MaterialLoader
+    public class PQSProjectionAerialQuadRelativeLoader : PQSMaterialLoader
     {
         public const String SHADER_NAME = "Terrain/PQS/Sphere Projection SURFACE QUAD (AP) ";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);

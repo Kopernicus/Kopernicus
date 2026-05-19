@@ -36,7 +36,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
     [MaterialLoader(ScaledPlanetSimpleLoader.SHADER_NAME)]
-    public class ScaledPlanetSimpleLoader : MaterialLoader
+    public class ScaledPlanetSimpleLoader : ScaledMaterialLoader
     {
         public const String SHADER_NAME = "Terrain/Scaled Planet (Simple)";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);

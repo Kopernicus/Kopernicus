@@ -38,7 +38,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
     [MaterialLoader(ScaledPlanetRimAerialStandardLoader.SHADER_NAME)]
-    public class ScaledPlanetRimAerialStandardLoader : MaterialLoader
+    public class ScaledPlanetRimAerialStandardLoader : ScaledMaterialLoader
     {
         public const String SHADER_NAME = "Terrain/Scaled Planet (RimAerial) Standard";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);
