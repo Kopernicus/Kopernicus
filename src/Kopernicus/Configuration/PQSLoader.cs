@@ -174,12 +174,12 @@ namespace Kopernicus.Configuration
         // Surface Material of the PQS.
         [ParserTarget("Material", AllowMerge = true, GetChild = false)]
         [KittopiaUntouchable]
-        public BaseMaterialLoader SurfaceMaterial { get; set; }
+        public MaterialLoader.MaterialLoader SurfaceMaterial { get; set; }
 
         // Fallback Material of the PQS.
         [ParserTarget("FallbackMaterial", AllowMerge = true, GetChild = false)]
         [KittopiaUntouchable]
-        public BaseMaterialLoader FallbackMaterial
+        public MaterialLoader.MaterialLoader FallbackMaterial
         {
             get => field ??= new PQSProjectionFallbackLoader(Value.fallbackMaterial);
             set => field = value;
@@ -481,7 +481,7 @@ namespace Kopernicus.Configuration
             Parser.SetState("Kopernicus:pqsOnDemandHandler", () => handler);
 
             SurfaceMaterial = GetInitialSurfaceMaterialLoader(node.GetNode("Material"));
-            FallbackMaterial = BaseMaterialLoader.Create(
+            FallbackMaterial = MaterialLoader.MaterialLoader.Create(
                 node.GetNode("FallbackMaterial")?.GetValue("shader") ?? PQSProjectionFallbackLoader.SHADER_NAME,
                 Value.fallbackMaterial);
 
@@ -547,12 +547,12 @@ namespace Kopernicus.Configuration
             _ => null,
         };
 
-        BaseMaterialLoader GetInitialSurfaceMaterialLoader(ConfigNode node)
+        MaterialLoader.MaterialLoader GetInitialSurfaceMaterialLoader(ConfigNode node)
         {
             var material = BasicSurfaceMaterial;
             var materialType = NewMaterialType?.Value ?? GetInitialMaterialType();
             var shaderName = node?.GetValue("shader") ?? MaterialTypeToShaderName(materialType);
-            return BaseMaterialLoader.Create(shaderName, material);
+            return MaterialLoader.MaterialLoader.Create(shaderName, material);
         }
 
     }

@@ -36,7 +36,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
     [MaterialLoader(DiffuseWrapLoader.SHADER_NAME)]
-    public class DiffuseWrapLoader : BaseMaterialLoader
+    public class DiffuseWrapLoader : MaterialLoader
     {
         public const String SHADER_NAME = "Diffuse Wrapped";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);

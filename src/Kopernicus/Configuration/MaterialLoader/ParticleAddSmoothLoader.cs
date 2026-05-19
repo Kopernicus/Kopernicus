@@ -36,7 +36,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
     [MaterialLoader(ParticleAddSmoothLoader.SHADER_NAME)]
-    public class ParticleAddSmoothLoader : BaseMaterialLoader
+    public class ParticleAddSmoothLoader : MaterialLoader
     {
         public const String SHADER_NAME = "Legacy Shaders/Particles/Additive (Soft)";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);

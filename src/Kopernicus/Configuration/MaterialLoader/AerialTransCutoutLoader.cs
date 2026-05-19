@@ -36,7 +36,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
     [MaterialLoader(AerialTransCutoutLoader.SHADER_NAME)]
-    public class AerialTransCutoutLoader : BaseMaterialLoader
+    public class AerialTransCutoutLoader : MaterialLoader
     {
         public const String SHADER_NAME = "Terrain/PQS/Aerial Cutout";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);

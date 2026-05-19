@@ -36,7 +36,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
     [MaterialLoader(NormalBumpedLoader.SHADER_NAME)]
-    public class NormalBumpedLoader : BaseMaterialLoader
+    public class NormalBumpedLoader : MaterialLoader
     {
         public const String SHADER_NAME = "Legacy Shaders/Bumped Diffuse";
         private static readonly Shader Shader = Shader.Find(SHADER_NAME);

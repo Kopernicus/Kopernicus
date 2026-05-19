@@ -42,7 +42,7 @@ namespace Kopernicus.Configuration.MaterialLoader
     /// </summary>
     [RequireConfigType(ConfigType.Node)]
     [MaterialLoader(GasGiantLoader.SHADER_NAME)]
-    public class GasGiantLoader : BaseMaterialLoader
+    public class GasGiantLoader : MaterialLoader
     {
         public const string SHADER_NAME = "Terrain/Gas Giant";
         private static readonly Shader Shader = UnityEngine.Shader.Find(SHADER_NAME);

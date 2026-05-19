@@ -31,7 +31,7 @@ namespace Kopernicus.Configuration.MaterialLoader.Parsing;
 
 /// <summary>
 /// A value-holding parser for shader texture properties. The parsed string
-/// path is preserved so <see cref="BaseMaterialLoader.SetTexture(string, MaterialTextureParser)"/>
+/// path is preserved so <see cref="MaterialLoader.SetTexture(string, MaterialTextureParser)"/>
 /// can route through the on-demand pipeline, BUILTIN/ lookups, or
 /// synchronous loading as needed.
 /// </summary>

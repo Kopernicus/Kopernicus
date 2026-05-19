@@ -150,7 +150,7 @@ namespace Kopernicus
 #endif
 
                 // Find all material loaders
-                BaseMaterialLoader.BuildRegistry();
+                MaterialLoader.BuildRegistry();
 
                 // Backup the old prefab
                 StockSystemPrefab = PSystemManager.Instance.systemPrefab;

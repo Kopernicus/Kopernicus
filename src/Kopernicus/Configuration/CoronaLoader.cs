@@ -87,11 +87,11 @@ namespace Kopernicus.Configuration
             set { Value.Rotation = value; }
         }
 
-        private BaseMaterialLoader _material;
+        private MaterialLoader.MaterialLoader _material;
 
         [ParserTarget("Material", AllowMerge = true, GetChild = false)]
         [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-        public BaseMaterialLoader Material
+        public MaterialLoader.MaterialLoader Material
         {
             get { return _material ??= new ParticleAddSmoothLoader(Value.GetComponent<Renderer>().sharedMaterial); }
             set { _material = value; }
@@ -106,7 +106,7 @@ namespace Kopernicus.Configuration
         // Parser apply event
         void IParserEventSubscriber.Apply(ConfigNode node)
         {
-            Material = BaseMaterialLoader.Create(
+            Material = MaterialLoader.MaterialLoader.Create(
                 node.GetNode("Material")?.GetValue("shader") ?? ParticleAddSmoothLoader.SHADER_NAME,
                 Value.GetComponent<Renderer>().sharedMaterial);
 

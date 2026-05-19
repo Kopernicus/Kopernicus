@@ -41,7 +41,7 @@ using UnityEngine.Rendering;
 namespace Kopernicus.Configuration.MaterialLoader;
 
 [RequireConfigType(ConfigType.Node)]
-public class CustomMaterialLoader : BaseMaterialLoader
+public class CustomMaterialLoader : MaterialLoader
 {
     /// <summary>
     /// The shader that will actually be loaded.
