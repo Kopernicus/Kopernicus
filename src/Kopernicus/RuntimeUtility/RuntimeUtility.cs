@@ -907,7 +907,7 @@ namespace Kopernicus.RuntimeUtility
         private static void PatchContracts()
         {
             //Small Contract fixer to remove Sentinel Contracts
-            if (ContractSystem.ContractTypes != null && !KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("stock"))
+            if (ContractSystem.ContractTypes != null && KopernicusConfig.UseKopernicusAsteroidSystem != AsteroidSpawner.Stock)
             {
                 if (ContractSystem.ContractTypes.Remove(typeof(SentinelContract)))
                 {
@@ -1069,12 +1069,8 @@ namespace Kopernicus.RuntimeUtility
                 if (KopernicusConfig.EnforcedShaderLevel != defaults.EnforcedShaderLevel)
                     configFile.WriteLine("\t%EnforcedShaderLevel = " + KopernicusConfig.EnforcedShaderLevel);
 
-                // Validate UseKopernicusAsteroidSystem before comparing
-                string asteroidSystem = KopernicusConfig.UseKopernicusAsteroidSystem;
-                if (!asteroidSystem.ToLower().Equals("true") && !asteroidSystem.ToLower().Equals("false") && !asteroidSystem.ToLower().Equals("stock"))
-                    asteroidSystem = defaults.UseKopernicusAsteroidSystem;
-                if (asteroidSystem != defaults.UseKopernicusAsteroidSystem)
-                    configFile.WriteLine("\t%UseKopernicusAsteroidSystem = " + asteroidSystem);
+                if (KopernicusConfig.UseKopernicusAsteroidSystem != defaults.UseKopernicusAsteroidSystem)
+                    configFile.WriteLine("\t%UseKopernicusAsteroidSystem = " + KopernicusConfig.UseKopernicusAsteroidSystem);
 
                 if (KopernicusConfig.SolarRefreshRate != defaults.SolarRefreshRate)
                     configFile.WriteLine("\t%SolarRefreshRate = " + KopernicusConfig.SolarRefreshRate);

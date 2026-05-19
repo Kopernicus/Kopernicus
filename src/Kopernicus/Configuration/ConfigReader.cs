@@ -34,6 +34,13 @@ using UnityEngine;
 
 namespace Kopernicus.Configuration
 {
+    public enum AsteroidSpawner
+    {
+        True,
+        False,
+        Stock
+    }
+
     public class ConfigReader
     {
         [Persistent]
@@ -44,8 +51,8 @@ namespace Kopernicus.Configuration
         public bool WarnShaders = false;
         [Persistent]
         public int EnforcedShaderLevel = 2;
-        [Persistent]
-        public string UseKopernicusAsteroidSystem = "True";
+        // Enum parsing is case-sensitive, so this is loaded manually below.
+        public AsteroidSpawner UseKopernicusAsteroidSystem = AsteroidSpawner.True;
         [Persistent]
         public int SolarRefreshRate = 1;
         [Persistent]
@@ -110,6 +117,14 @@ namespace Kopernicus.Configuration
             try
             {
                 ConfigNode.LoadObjectFromConfig(this, baseConfigs[0].config);
+
+                string rawAsteroidSystem = baseConfigs[0].config.GetValue("UseKopernicusAsteroidSystem");
+                if (!string.IsNullOrEmpty(rawAsteroidSystem)
+                    && Enum.TryParse(rawAsteroidSystem, ignoreCase: true, out AsteroidSpawner parsedAsteroidSystem))
+                {
+                    UseKopernicusAsteroidSystem = parsedAsteroidSystem;
+                }
+
                 Debug.Log("[Kopernicus Configurations] Using: ");
                 Debug.Log("HomeWorldName: " + HomeWorldName);
                 Debug.Log("EnforceShaders: " + EnforceShaders);
