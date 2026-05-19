@@ -312,27 +312,21 @@ namespace Kopernicus.RuntimeUtility
         }
 
         // Asteroid Spawner
-        [SuppressMessage("ReSharper", "IteratorNeverReturns")]
         private IEnumerator<WaitForSecondsRealtime> AsteroidDaemon(Asteroid asteroidGroup)
         {
-            while (true)
+            while (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem == AsteroidSpawner.True)
             {
-                if (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem == AsteroidSpawner.True)
-                {
-                    // Update Asteroids
-                    UpdateAsteroid(asteroidGroup);
-                    // Don't adjust waiting time if we're in physical timewarp, and don't reduce interval by more than /50 when in on-rails timewarp.
-                    float waitSeconds = TimeWarp.WarpMode == TimeWarp.Modes.LOW
-                        ? Mathf.Max(asteroidGroup.Interval, spawnInterval)
-                        : Mathf.Max(asteroidGroup.Interval / Mathf.Min(TimeWarp.CurrentRate, 50), spawnInterval);
+                UpdateAsteroid(asteroidGroup);
+                // Don't adjust waiting time if we're in physical timewarp, and don't reduce interval by more than /50 when in on-rails timewarp.
+                float waitSeconds = TimeWarp.WarpMode == TimeWarp.Modes.LOW
+                    ? Mathf.Max(asteroidGroup.Interval, spawnInterval)
+                    : Mathf.Max(asteroidGroup.Interval / Mathf.Min(TimeWarp.CurrentRate, 50), spawnInterval);
 
-                    // Add some random jitter to the wait time.
-                    float minMaxJitter = waitSeconds / 4;
-                    waitSeconds = Random.Range(waitSeconds - minMaxJitter, waitSeconds + minMaxJitter);
+                // Add some random jitter to the wait time.
+                float minMaxJitter = waitSeconds / 4;
+                waitSeconds = Random.Range(waitSeconds - minMaxJitter, waitSeconds + minMaxJitter);
 
-                    // Wait
-                    yield return new WaitForSecondsRealtime(waitSeconds);
-                }
+                yield return new WaitForSecondsRealtime(waitSeconds);
             }
         }
 
