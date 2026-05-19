@@ -73,6 +73,9 @@ namespace Kopernicus.OnDemand
 
         void PreloadMapSOs()
         {
+            if (mapSOs.Count == 0)
+                return;
+
             if (mapSOState >= State.Preloaded)
                 return;
 
@@ -101,6 +104,9 @@ namespace Kopernicus.OnDemand
 
         void LoadMapSOs()
         {
+            if (mapSOs.Count == 0)
+                return;
+
             if (mapSOState == State.Loaded)
                 return;
 
@@ -128,6 +134,9 @@ namespace Kopernicus.OnDemand
 
         void UnloadMapSOs()
         {
+            if (mapSOs.Count == 0)
+                return;
+
             if (mapSOState == State.Unloaded)
                 return;
 
@@ -149,6 +158,9 @@ namespace Kopernicus.OnDemand
 
         void StartMapSOUnload()
         {
+            if (mapSOs.Count == 0)
+                return;
+
             if (unloadMapSOCoroutine is not null)
                 return;
 
@@ -422,6 +434,9 @@ namespace Kopernicus.OnDemand
 
         internal void Activate()
         {
+            if (mapSOs.Count == 0)
+                return;
+
             if (mapSOState != State.Unloaded)
             {
                 // Refresh unload time at most once every 5 frames per OnDemandHandler.
