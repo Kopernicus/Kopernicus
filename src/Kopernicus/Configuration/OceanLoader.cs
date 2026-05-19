@@ -321,6 +321,10 @@ namespace Kopernicus.Configuration
 
                     Utility.CopyObjectFields(oceans[i], Value);
 
+
+                    // Make sure to set the ocean's layer appropriately
+                    controllerRoot.layer = oceans[i].gameObject.layer;
+
                     // Create the material (always the same shader)
                     BasicSurfaceMaterial = new PQSOceanSurfaceQuad(oceans[i].surfaceMaterial);
                     Value.fallbackMaterial = new PQSOceanSurfaceQuadFallback(oceans[i].fallbackMaterial);
