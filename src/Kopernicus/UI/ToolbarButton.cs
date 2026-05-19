@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using KSP.UI.Screens;
 using KSP;
+using Kopernicus.Configuration;
 using Kopernicus.RuntimeUtility;
 using Expansions.Missions;
 using static Targeting;
@@ -114,7 +115,16 @@ namespace Kopernicus.UI
             RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOnDemandLoader = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOnDemandLoader, "UseOnDemandLoader: Turning this on can save ram and thus improve perforamnce situationally but will break some mods requiring long distance viewing and also increase stutter.", toggleStyle);
             GUILayout.Label("UseKopernicusAsteroidSystem: Three valid values, True, False, and Stock. True means use the old customizable Kopernicus asteroid generator with no comet support,  False means don't do anything/wait for an external generator. Stock means use the internal games generator.", labelStyle);
             GUILayout.BeginHorizontal();
-            RuntimeUtility.RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem = GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToString());
+            if (GUILayout.Button(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToString()))
+            {
+                var current = RuntimeUtility.RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem;
+                RuntimeUtility.RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem = current switch
+                {
+                    AsteroidSpawner.True => AsteroidSpawner.False,
+                    AsteroidSpawner.False => AsteroidSpawner.Stock,
+                    _ => AsteroidSpawner.True,
+                };
+            }
             GUILayout.Label("RESTART REQUIRED WHEN CHANGING ASTEROID SPAWNER", labelStyle);
             GUILayout.EndHorizontal();
 

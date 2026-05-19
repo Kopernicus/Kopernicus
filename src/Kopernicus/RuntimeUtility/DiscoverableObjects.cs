@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Expansions.Missions.Actions;
+using Kopernicus.Configuration;
 using Kopernicus.Configuration.DiscoverableObjects;
 using Kopernicus.Constants;
 using KSPAchievements;
@@ -68,45 +69,40 @@ namespace Kopernicus.RuntimeUtility
         // Startup
         private void Start()
         {
-            if (!RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("stock"))
+            switch (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem)
             {
-                // Kill old Scenario Discoverable Objects without editing the collection while iterating through the same collection
-                // @Squad: I stab you with a try { } catch { } block.
-
-                if (HighLogic.CurrentGame.RemoveProtoScenarioModule(typeof(ScenarioDiscoverableObjects)))
-                {
-                    // RemoveProtoScenarioModule doesn't remove the actual Scenario; workaround!
-                    foreach (Object o in
-                        Resources.FindObjectsOfTypeAll(typeof(ScenarioDiscoverableObjects)))
-                    {
-                        ScenarioDiscoverableObjects scenario = (ScenarioDiscoverableObjects)o;
-                        scenario.StopAllCoroutines();
-                        Destroy(scenario);
-                    }
-                }
-                if (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("true"))
-                {
+                case AsteroidSpawner.True:
+                    KillStockScenarioDiscoverableObjects();
                     Debug.Log("[Kopernicus] Using Kopernicus Discoverable Object Spawner.");
                     AsteroidSetup();
                     foreach (var asteroidGroup in Asteroids)
                     {
                         StartCoroutine(AsteroidDaemon(asteroidGroup));
                     }
-                }
-                else if (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("false"))
-                {
+                    break;
+                case AsteroidSpawner.False:
+                    KillStockScenarioDiscoverableObjects();
                     Debug.Log("[Kopernicus] Discoverable Object Spawners disabled.  Unless external spawner mod is installed no discoverable objects will be spawned.");
-                }
-                else
-                {
-                    Injector.DisplayWarning();
-                    throw new InvalidCastException("Invalid value for Enum UseKopernicusAsteroidSystem.  Valid values are true, false, and stock.");
-                }
-
+                    break;
+                case AsteroidSpawner.Stock:
+                    Debug.Log("[Kopernicus] Using stock Squad Discoverable Object Spawner.");
+                    break;
             }
-            else if (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("stock"))
+        }
+
+        private static void KillStockScenarioDiscoverableObjects()
+        {
+            // Kill old Scenario Discoverable Objects without editing the collection while iterating through the same collection
+            // @Squad: I stab you with a try { } catch { } block.
+            if (HighLogic.CurrentGame.RemoveProtoScenarioModule(typeof(ScenarioDiscoverableObjects)))
             {
-                Debug.Log("[Kopernicus] Using stock Squad Discoverable Object Spawner.");
+                // RemoveProtoScenarioModule doesn't remove the actual Scenario; workaround!
+                foreach (Object o in Resources.FindObjectsOfTypeAll(typeof(ScenarioDiscoverableObjects)))
+                {
+                    ScenarioDiscoverableObjects scenario = (ScenarioDiscoverableObjects)o;
+                    scenario.StopAllCoroutines();
+                    Destroy(scenario);
+                }
             }
         }
 
@@ -321,7 +317,7 @@ namespace Kopernicus.RuntimeUtility
         {
             while (true)
             {
-                if (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("true"))
+                if (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem == AsteroidSpawner.True)
                 {
                     // Update Asteroids
                     UpdateAsteroid(asteroidGroup);
