@@ -44,7 +44,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Main Color, default = (1,1,1,1)
         [ParserTarget("color")]
-        public ColorParser ColorSetter
+        public ColorParser Color
         {
             get => GetColor("_Color");
             set => SetColor("_Color", value);
@@ -52,7 +52,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Specular Color, default = (0.5,0.5,0.5,1)
         [ParserTarget("specColor")]
-        public ColorParser SpecColorSetter
+        public ColorParser SpecColor
         {
             get => GetColor("_SpecColor");
             set => SetColor("_SpecColor", value);
@@ -60,7 +60,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Shininess, default = 0.078125
         [ParserTarget("shininess")]
-        public NumericParser<float> ShininessSetter
+        public NumericParser<float> Shininess
         {
             get => GetFloat("_Shininess");
             set => SetFloat("_Shininess", value);
@@ -68,21 +68,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Base (RGB) Gloss (A), default = "white" { }
         [ParserTarget("mainTex")]
-        public MaterialTextureParser MainTexSetter
+        public MaterialTextureParser MainTex
         {
-            get => null;
+            get => GetTexture("_MainTex")?.name;
             set => SetTexture("_MainTex", value);
         }
 
         [ParserTarget("mainTexScale")]
-        public Vector2Parser MainTexScaleSetter
+        public Vector2Parser MainTexScale
         {
             get => GetTextureScale("_MainTex");
             set => SetTextureScale("_MainTex", value);
         }
 
         [ParserTarget("mainTexOffset")]
-        public Vector2Parser MainTexOffsetSetter
+        public Vector2Parser MainTexOffset
         {
             get => GetTextureOffset("_MainTex");
             set => SetTextureOffset("_MainTex", value);
@@ -90,21 +90,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Normalmap, default = "bump" { }
         [ParserTarget("bumpMap")]
-        public MaterialTextureParser BumpMapSetter
+        public MaterialTextureParser BumpMap
         {
-            get => null;
+            get => GetTexture("_BumpMap")?.name;
             set => SetTexture("_BumpMap", value);
         }
 
         [ParserTarget("bumpMapScale")]
-        public Vector2Parser BumpMapScaleSetter
+        public Vector2Parser BumpMapScale
         {
             get => GetTextureScale("_BumpMap");
             set => SetTextureScale("_BumpMap", value);
         }
 
         [ParserTarget("bumpMapOffset")]
-        public Vector2Parser BumpMapOffsetSetter
+        public Vector2Parser BumpMapOffset
         {
             get => GetTextureOffset("_BumpMap");
             set => SetTextureOffset("_BumpMap", value);
@@ -112,7 +112,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Opacity, default = 1
         [ParserTarget("opacity")]
-        public NumericParser<float> OpacitySetter
+        public NumericParser<float> Opacity
         {
             get => GetFloat("_Opacity");
             set => SetFloat("_Opacity", value);
@@ -120,7 +120,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Rim Color, default = (0.26,0.19,0.16,0)
         [ParserTarget("rimColor")]
-        public ColorParser RimColorSetter
+        public ColorParser RimColor
         {
             get => GetColor("_RimColor");
             set => SetColor("_RimColor", value);
@@ -128,7 +128,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Rim Power, default = 3
         [ParserTarget("rimPower")]
-        public NumericParser<float> RimPowerSetter
+        public NumericParser<float> RimPower
         {
             get => GetFloat("_RimPower");
             set => SetFloat("_RimPower", value);
@@ -136,21 +136,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Resource Map (RGB), default = "black" { }
         [ParserTarget("resourceMap")]
-        public MaterialTextureParser ResourceMapSetter
+        public MaterialTextureParser ResourceMap
         {
-            get => null;
+            get => GetTexture("_ResourceMap")?.name;
             set => SetTexture("_ResourceMap", value);
         }
 
         [ParserTarget("resourceMapScale")]
-        public Vector2Parser ResourceMapScaleSetter
+        public Vector2Parser ResourceMapScale
         {
             get => GetTextureScale("_ResourceMap");
             set => SetTextureScale("_ResourceMap", value);
         }
 
         [ParserTarget("resourceMapOffset")]
-        public Vector2Parser ResourceMapOffsetSetter
+        public Vector2Parser ResourceMapOffset
         {
             get => GetTextureOffset("_ResourceMap");
             set => SetTextureOffset("_ResourceMap", value);

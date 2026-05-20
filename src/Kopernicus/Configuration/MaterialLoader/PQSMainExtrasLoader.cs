@@ -46,7 +46,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Saturation, default = 1
         [ParserTarget("saturation")]
-        public NumericParser<float> SaturationSetter
+        public NumericParser<float> Saturation
         {
             get => GetFloat("_saturation");
             set => SetFloat("_saturation", value);
@@ -54,7 +54,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Contrast, default = 1
         [ParserTarget("contrast")]
-        public NumericParser<float> ContrastSetter
+        public NumericParser<float> Contrast
         {
             get => GetFloat("_contrast");
             set => SetFloat("_contrast", value);
@@ -62,7 +62,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Colour Unsaturation (A = Factor), default = (1,1,1,0)
         [ParserTarget("tintColor")]
-        public ColorParser TintColorSetter
+        public ColorParser TintColor
         {
             get => GetColor("_tintColor");
             set => SetColor("_tintColor", value);
@@ -70,7 +70,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Near Blend, default = 0.5
         [ParserTarget("powerNear")]
-        public NumericParser<float> PowerNearSetter
+        public NumericParser<float> PowerNear
         {
             get => GetFloat("_powerNear");
             set => SetFloat("_powerNear", value);
@@ -78,7 +78,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Far Blend, default = 0.5
         [ParserTarget("powerFar")]
-        public NumericParser<float> PowerFarSetter
+        public NumericParser<float> PowerFar
         {
             get => GetFloat("_powerFar");
             set => SetFloat("_powerFar", value);
@@ -86,7 +86,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // NearFar Start, default = 2000
         [ParserTarget("groundTexStart")]
-        public NumericParser<float> GroundTexStartSetter
+        public NumericParser<float> GroundTexStart
         {
             get => GetFloat("_groundTexStart");
             set => SetFloat("_groundTexStart", value);
@@ -94,7 +94,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // NearFar End, default = 10000
         [ParserTarget("groundTexEnd")]
-        public NumericParser<float> GroundTexEndSetter
+        public NumericParser<float> GroundTexEnd
         {
             get => GetFloat("_groundTexEnd");
             set => SetFloat("_groundTexEnd", value);
@@ -102,7 +102,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Steep Blend, default = 1
         [ParserTarget("steepPower")]
-        public NumericParser<float> SteepPowerSetter
+        public NumericParser<float> SteepPower
         {
             get => GetFloat("_steepPower");
             set => SetFloat("_steepPower", value);
@@ -110,7 +110,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Steep Fade Start, default = 20000
         [ParserTarget("steepTexStart")]
-        public NumericParser<float> SteepTexStartSetter
+        public NumericParser<float> SteepTexStart
         {
             get => GetFloat("_steepTexStart");
             set => SetFloat("_steepTexStart", value);
@@ -118,7 +118,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Steep Fade End, default = 30000
         [ParserTarget("steepTexEnd")]
-        public NumericParser<float> SteepTexEndSetter
+        public NumericParser<float> SteepTexEnd
         {
             get => GetFloat("_steepTexEnd");
             set => SetFloat("_steepTexEnd", value);
@@ -126,21 +126,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Steep Texture, default = "white" {}
         [ParserTarget("steepTex")]
-        public MaterialTextureParser SteepTexSetter
+        public MaterialTextureParser SteepTex
         {
-            get => null;
+            get => GetTexture("_steepTex")?.name;
             set => SetTexture("_steepTex", value);
         }
 
         [ParserTarget("steepTexScale")]
-        public Vector2Parser SteepTexScaleSetter
+        public Vector2Parser SteepTexScale
         {
             get => GetTextureScale("_steepTex");
             set => SetTextureScale("_steepTex", value);
         }
 
         [ParserTarget("steepTexOffset")]
-        public Vector2Parser SteepTexOffsetSetter
+        public Vector2Parser SteepTexOffset
         {
             get => GetTextureOffset("_steepTex");
             set => SetTextureOffset("_steepTex", value);
@@ -148,21 +148,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Steep Bump Map, default = "bump" {}
         [ParserTarget("steepBumpMap")]
-        public MaterialTextureParser SteepBumpMapSetter
+        public MaterialTextureParser SteepBumpMap
         {
-            get => null;
+            get => GetTexture("_steepBumpMap")?.name;
             set => SetTexture("_steepBumpMap", value);
         }
 
         [ParserTarget("steepBumpMapScale")]
-        public Vector2Parser SteepBumpMapScaleSetter
+        public Vector2Parser SteepBumpMapScale
         {
             get => GetTextureScale("_steepBumpMap");
             set => SetTextureScale("_steepBumpMap", value);
         }
 
         [ParserTarget("steepBumpMapOffset")]
-        public Vector2Parser SteepBumpMapOffsetSetter
+        public Vector2Parser SteepBumpMapOffset
         {
             get => GetTextureOffset("_steepBumpMap");
             set => SetTextureOffset("_steepBumpMap", value);
@@ -170,7 +170,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Steep Near Tiling, default = 1
         [ParserTarget("steepNearTiling")]
-        public NumericParser<float> SteepNearTilingSetter
+        public NumericParser<float> SteepNearTiling
         {
             get => GetFloat("_steepNearTiling");
             set => SetFloat("_steepNearTiling", value);
@@ -178,7 +178,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Steep Far Tiling, default = 1
         [ParserTarget("steepTiling")]
-        public NumericParser<float> SteepTilingSetter
+        public NumericParser<float> SteepTiling
         {
             get => GetFloat("_steepTiling");
             set => SetFloat("_steepTiling", value);
@@ -186,21 +186,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Low Texture, default = "white" {}
         [ParserTarget("lowTex")]
-        public MaterialTextureParser LowTexSetter
+        public MaterialTextureParser LowTex
         {
-            get => null;
+            get => GetTexture("_lowTex")?.name;
             set => SetTexture("_lowTex", value);
         }
 
         [ParserTarget("lowTexScale")]
-        public Vector2Parser LowTexScaleSetter
+        public Vector2Parser LowTexScale
         {
             get => GetTextureScale("_lowTex");
             set => SetTextureScale("_lowTex", value);
         }
 
         [ParserTarget("lowTexOffset")]
-        public Vector2Parser LowTexOffsetSetter
+        public Vector2Parser LowTexOffset
         {
             get => GetTextureOffset("_lowTex");
             set => SetTextureOffset("_lowTex", value);
@@ -208,21 +208,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Low Bump Map, default = "bump" {}
         [ParserTarget("lowBumpMap")]
-        public MaterialTextureParser LowBumpMapSetter
+        public MaterialTextureParser LowBumpMap
         {
-            get => null;
+            get => GetTexture("_lowBumpMap")?.name;
             set => SetTexture("_lowBumpMap", value);
         }
 
         [ParserTarget("lowBumpMapScale")]
-        public Vector2Parser LowBumpMapScaleSetter
+        public Vector2Parser LowBumpMapScale
         {
             get => GetTextureScale("_lowBumpMap");
             set => SetTextureScale("_lowBumpMap", value);
         }
 
         [ParserTarget("lowBumpMapOffset")]
-        public Vector2Parser LowBumpMapOffsetSetter
+        public Vector2Parser LowBumpMapOffset
         {
             get => GetTextureOffset("_lowBumpMap");
             set => SetTextureOffset("_lowBumpMap", value);
@@ -230,7 +230,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Low Near Tiling, default = 1000
         [ParserTarget("lowNearTiling")]
-        public NumericParser<float> LowNearTilingSetter
+        public NumericParser<float> LowNearTiling
         {
             get => GetFloat("_lowNearTiling");
             set => SetFloat("_lowNearTiling", value);
@@ -238,7 +238,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Low Far Tiling, default = 10
         [ParserTarget("lowMultiFactor")]
-        public NumericParser<float> LowMultiFactorSetter
+        public NumericParser<float> LowMultiFactor
         {
             get => GetFloat("_lowMultiFactor");
             set => SetFloat("_lowMultiFactor", value);
@@ -246,7 +246,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Low Bump Near Tiling, default = 1
         [ParserTarget("lowBumpNearTiling")]
-        public NumericParser<float> LowBumpNearTilingSetter
+        public NumericParser<float> LowBumpNearTiling
         {
             get => GetFloat("_lowBumpNearTiling");
             set => SetFloat("_lowBumpNearTiling", value);
@@ -254,7 +254,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Low Bump Far Tiling, default = 1
         [ParserTarget("lowBumpFarTiling")]
-        public NumericParser<float> LowBumpFarTilingSetter
+        public NumericParser<float> LowBumpFarTiling
         {
             get => GetFloat("_lowBumpFarTiling");
             set => SetFloat("_lowBumpFarTiling", value);
@@ -262,21 +262,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Mid Texture, default = "white" {}
         [ParserTarget("midTex")]
-        public MaterialTextureParser MidTexSetter
+        public MaterialTextureParser MidTex
         {
-            get => null;
+            get => GetTexture("_midTex")?.name;
             set => SetTexture("_midTex", value);
         }
 
         [ParserTarget("midTexScale")]
-        public Vector2Parser MidTexScaleSetter
+        public Vector2Parser MidTexScale
         {
             get => GetTextureScale("_midTex");
             set => SetTextureScale("_midTex", value);
         }
 
         [ParserTarget("midTexOffset")]
-        public Vector2Parser MidTexOffsetSetter
+        public Vector2Parser MidTexOffset
         {
             get => GetTextureOffset("_midTex");
             set => SetTextureOffset("_midTex", value);
@@ -284,21 +284,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Mid Bump Map, default = "bump" {}
         [ParserTarget("midBumpMap")]
-        public MaterialTextureParser MidBumpMapSetter
+        public MaterialTextureParser MidBumpMap
         {
-            get => null;
+            get => GetTexture("_midBumpMap")?.name;
             set => SetTexture("_midBumpMap", value);
         }
 
         [ParserTarget("midBumpMapScale")]
-        public Vector2Parser MidBumpMapScaleSetter
+        public Vector2Parser MidBumpMapScale
         {
             get => GetTextureScale("_midBumpMap");
             set => SetTextureScale("_midBumpMap", value);
         }
 
         [ParserTarget("midBumpMapOffset")]
-        public Vector2Parser MidBumpMapOffsetSetter
+        public Vector2Parser MidBumpMapOffset
         {
             get => GetTextureOffset("_midBumpMap");
             set => SetTextureOffset("_midBumpMap", value);
@@ -306,7 +306,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Mid Near Tiling, default = 1000
         [ParserTarget("midNearTiling")]
-        public NumericParser<float> MidNearTilingSetter
+        public NumericParser<float> MidNearTiling
         {
             get => GetFloat("_midNearTiling");
             set => SetFloat("_midNearTiling", value);
@@ -314,7 +314,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Mid Far Tiling, default = 10
         [ParserTarget("midMultiFactor")]
-        public NumericParser<float> MidMultiFactorSetter
+        public NumericParser<float> MidMultiFactor
         {
             get => GetFloat("_midMultiFactor");
             set => SetFloat("_midMultiFactor", value);
@@ -322,7 +322,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Mid Bump Near Tiling, default = 1
         [ParserTarget("midBumpNearTiling")]
-        public NumericParser<float> MidBumpNearTilingSetter
+        public NumericParser<float> MidBumpNearTiling
         {
             get => GetFloat("_midBumpNearTiling");
             set => SetFloat("_midBumpNearTiling", value);
@@ -330,7 +330,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Mid Bump Far Tiling, default = 1
         [ParserTarget("midBumpFarTiling")]
-        public NumericParser<float> MidBumpFarTilingSetter
+        public NumericParser<float> MidBumpFarTiling
         {
             get => GetFloat("_midBumpFarTiling");
             set => SetFloat("_midBumpFarTiling", value);
@@ -338,21 +338,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // High Texture, default = "white" {}
         [ParserTarget("highTex")]
-        public MaterialTextureParser HighTexSetter
+        public MaterialTextureParser HighTex
         {
-            get => null;
+            get => GetTexture("_highTex")?.name;
             set => SetTexture("_highTex", value);
         }
 
         [ParserTarget("highTexScale")]
-        public Vector2Parser HighTexScaleSetter
+        public Vector2Parser HighTexScale
         {
             get => GetTextureScale("_highTex");
             set => SetTextureScale("_highTex", value);
         }
 
         [ParserTarget("highTexOffset")]
-        public Vector2Parser HighTexOffsetSetter
+        public Vector2Parser HighTexOffset
         {
             get => GetTextureOffset("_highTex");
             set => SetTextureOffset("_highTex", value);
@@ -360,21 +360,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // High Bump Map, default = "bump" {}
         [ParserTarget("highBumpMap")]
-        public MaterialTextureParser HighBumpMapSetter
+        public MaterialTextureParser HighBumpMap
         {
-            get => null;
+            get => GetTexture("_highBumpMap")?.name;
             set => SetTexture("_highBumpMap", value);
         }
 
         [ParserTarget("highBumpMapScale")]
-        public Vector2Parser HighBumpMapScaleSetter
+        public Vector2Parser HighBumpMapScale
         {
             get => GetTextureScale("_highBumpMap");
             set => SetTextureScale("_highBumpMap", value);
         }
 
         [ParserTarget("highBumpMapOffset")]
-        public Vector2Parser HighBumpMapOffsetSetter
+        public Vector2Parser HighBumpMapOffset
         {
             get => GetTextureOffset("_highBumpMap");
             set => SetTextureOffset("_highBumpMap", value);
@@ -382,7 +382,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // High Near Tiling, default = 1000
         [ParserTarget("highNearTiling")]
-        public NumericParser<float> HighNearTilingSetter
+        public NumericParser<float> HighNearTiling
         {
             get => GetFloat("_highNearTiling");
             set => SetFloat("_highNearTiling", value);
@@ -390,7 +390,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // High Far Tiling, default = 10
         [ParserTarget("highMultiFactor")]
-        public NumericParser<float> HighMultiFactorSetter
+        public NumericParser<float> HighMultiFactor
         {
             get => GetFloat("_highMultiFactor");
             set => SetFloat("_highMultiFactor", value);
@@ -398,7 +398,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // High Bump Near Tiling, default = 1
         [ParserTarget("highBumpNearTiling")]
-        public NumericParser<float> HighBumpNearTilingSetter
+        public NumericParser<float> HighBumpNearTiling
         {
             get => GetFloat("_highBumpNearTiling");
             set => SetFloat("_highBumpNearTiling", value);
@@ -406,7 +406,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // High Bump Far Tiling, default = 1
         [ParserTarget("highBumpFarTiling")]
-        public NumericParser<float> HighBumpFarTilingSetter
+        public NumericParser<float> HighBumpFarTiling
         {
             get => GetFloat("_highBumpFarTiling");
             set => SetFloat("_highBumpFarTiling", value);
@@ -414,7 +414,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Low Transition Start, default = 0
         [ParserTarget("lowStart")]
-        public NumericParser<float> LowStartSetter
+        public NumericParser<float> LowStart
         {
             get => GetFloat("_lowStart");
             set => SetFloat("_lowStart", value);
@@ -422,7 +422,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Low Transition End, default = 0.3
         [ParserTarget("lowEnd")]
-        public NumericParser<float> LowEndSetter
+        public NumericParser<float> LowEnd
         {
             get => GetFloat("_lowEnd");
             set => SetFloat("_lowEnd", value);
@@ -430,7 +430,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // High Transition Start, default = 0.8
         [ParserTarget("highStart")]
-        public NumericParser<float> HighStartSetter
+        public NumericParser<float> HighStart
         {
             get => GetFloat("_highStart");
             set => SetFloat("_highStart", value);
@@ -438,7 +438,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // High Transition End, default = 1
         [ParserTarget("highEnd")]
-        public NumericParser<float> HighEndSetter
+        public NumericParser<float> HighEnd
         {
             get => GetFloat("_highEnd");
             set => SetFloat("_highEnd", value);
@@ -446,7 +446,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // AP Global Density, default = 1
         [ParserTarget("globalDensity")]
-        public NumericParser<float> GlobalDensitySetter
+        public NumericParser<float> GlobalDensity
         {
             get => GetFloat("_globalDensity");
             set => SetFloat("_globalDensity", value);
@@ -454,29 +454,29 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // FogColorRamp, default = "white" {}
         [ParserTarget("fogColorRamp")]
-        public MaterialTextureParser FogColorRampSetter
+        public MaterialTextureParser FogColorRamp
         {
-            get => null;
+            get => GetTexture("_fogColorRamp")?.name;
             set => SetTexture("_fogColorRamp", value);
         }
 
         // FogColorRamp, default = "white" { }
         [ParserTarget("FogColorRamp")]
         [KittopiaHideOption]
-        public Gradient FogColorRampGradientSetter
+        public Gradient FogColorRampGradient
         {
             set => SetGradient("_fogColorRamp", value);
         }
 
         [ParserTarget("fogColorRampScale")]
-        public Vector2Parser FogColorRampScaleSetter
+        public Vector2Parser FogColorRampScale
         {
             get => GetTextureScale("_fogColorRamp");
             set => SetTextureScale("_fogColorRamp", value);
         }
 
         [ParserTarget("fogColorRampOffset")]
-        public Vector2Parser FogColorRampOffsetSetter
+        public Vector2Parser FogColorRampOffset
         {
             get => GetTextureOffset("_fogColorRamp");
             set => SetTextureOffset("_fogColorRamp", value);
@@ -484,7 +484,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // PlanetOpacity, default = 1
         [ParserTarget("planetOpacity")]
-        public NumericParser<float> PlanetOpacitySetter
+        public NumericParser<float> PlanetOpacity
         {
             get => GetFloat("_PlanetOpacity");
             set => SetFloat("_PlanetOpacity", value);
@@ -492,7 +492,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Ocean Fog Dist, default = 1000
         [ParserTarget("oceanFogDistance")]
-        public NumericParser<float> OceanFogDistanceSetter
+        public NumericParser<float> OceanFogDistance
         {
             get => GetFloat("_oceanFogDistance");
             set => SetFloat("_oceanFogDistance", value);

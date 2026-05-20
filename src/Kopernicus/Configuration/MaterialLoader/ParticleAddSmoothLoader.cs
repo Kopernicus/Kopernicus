@@ -44,21 +44,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Particle Texture, default = "white" { }
         [ParserTarget("texture")]
-        public MaterialTextureParser MainTexSetter
+        public MaterialTextureParser MainTex
         {
-            get => null;
+            get => GetTexture("_MainTex")?.name;
             set => SetTexture("_MainTex", value);
         }
 
         [ParserTarget("mainTexScale")]
-        public Vector2Parser MainTexScaleSetter
+        public Vector2Parser MainTexScale
         {
             get => GetTextureScale("_MainTex");
             set => SetTextureScale("_MainTex", value);
         }
 
         [ParserTarget("mainTexOffset")]
-        public Vector2Parser MainTexOffsetSetter
+        public Vector2Parser MainTexOffset
         {
             get => GetTextureOffset("_MainTex");
             set => SetTextureOffset("_MainTex", value);
@@ -66,7 +66,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Soft Particles Factor, default = 1
         [ParserTarget("invFade")]
-        public NumericParser<float> InvFadeSetter
+        public NumericParser<float> InvFade
         {
             get => GetFloat("_InvFade");
             set => SetFloat("_InvFade", value);
