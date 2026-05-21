@@ -52,21 +52,21 @@ namespace Kopernicus.Configuration.MaterialLoader
         // movement speed, blue blends between the two band texture reads, and
         // alpha controls the swirl pan speed.
         [ParserTarget("movementControlTexture")]
-        public MaterialTextureParser MovementTextureSetter
+        public MaterialTextureParser MovementTexture
         {
-            get => null;
+            get => GetTexture("_MovementTexture")?.name;
             set => SetTexture("_MovementTexture", value);
         }
 
         [ParserTarget("movementControlTextureScale")]
-        public Vector2Parser MovementTextureScaleSetter
+        public Vector2Parser MovementTextureScale
         {
             get => GetTextureScale("_MovementTexture");
             set => SetTextureScale("_MovementTexture", value);
         }
 
         [ParserTarget("movementControlTextureOffset")]
-        public Vector2Parser MovementTextureOffsetSetter
+        public Vector2Parser MovementTextureOffset
         {
             get => GetTextureOffset("_MovementTexture");
             set => SetTextureOffset("_MovementTexture", value);
@@ -75,21 +75,21 @@ namespace Kopernicus.Configuration.MaterialLoader
         // Swirl control texture. Red/green channels are the uv position of the
         // centre of rotation, blue is the swirl rotation amount.
         [ParserTarget("swirlControlTexture")]
-        public MaterialTextureParser SwirlRotationControlTextureSetter
+        public MaterialTextureParser SwirlRotationControlTexture
         {
-            get => null;
+            get => GetTexture("_SwirlRotationControlTexture")?.name;
             set => SetTexture("_SwirlRotationControlTexture", value);
         }
 
         [ParserTarget("swirlControlTextureScale")]
-        public Vector2Parser SwirlRotationControlTextureScaleSetter
+        public Vector2Parser SwirlRotationControlTextureScale
         {
             get => GetTextureScale("_SwirlRotationControlTexture");
             set => SetTextureScale("_SwirlRotationControlTexture", value);
         }
 
         [ParserTarget("swirlControlTextureOffset")]
-        public Vector2Parser SwirlRotationControlTextureOffsetSetter
+        public Vector2Parser SwirlRotationControlTextureOffset
         {
             get => GetTextureOffset("_SwirlRotationControlTexture");
             set => SetTextureOffset("_SwirlRotationControlTexture", value);
@@ -99,21 +99,21 @@ namespace Kopernicus.Configuration.MaterialLoader
         // channel, then blended with cloudColorMap2 by the pattern's green
         // channel.
         [ParserTarget("colorMap")]
-        public MaterialTextureParser CloudColorMapSetter
+        public MaterialTextureParser CloudColorMap
         {
-            get => null;
+            get => GetTexture("_CloudColorMap")?.name;
             set => SetTexture("_CloudColorMap", value);
         }
 
         [ParserTarget("colorMapScale")]
-        public Vector2Parser CloudColorMapScaleSetter
+        public Vector2Parser CloudColorMapScale
         {
             get => GetTextureScale("_CloudColorMap");
             set => SetTextureScale("_CloudColorMap", value);
         }
 
         [ParserTarget("colorMapOffset")]
-        public Vector2Parser CloudColorMapOffsetSetter
+        public Vector2Parser CloudColorMapOffset
         {
             get => GetTextureOffset("_CloudColorMap");
             set => SetTextureOffset("_CloudColorMap", value);
@@ -121,21 +121,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Second far-texturing colour ramp; blended against colorMap.
         [ParserTarget("colorMap2")]
-        public MaterialTextureParser CloudColorMap2Setter
+        public MaterialTextureParser CloudColorMap2
         {
-            get => null;
+            get => GetTexture("_CloudColorMap2")?.name;
             set => SetTexture("_CloudColorMap2", value);
         }
 
         [ParserTarget("colorMap2Scale")]
-        public Vector2Parser CloudColorMap2ScaleSetter
+        public Vector2Parser CloudColorMap2Scale
         {
             get => GetTextureScale("_CloudColorMap2");
             set => SetTextureScale("_CloudColorMap2", value);
         }
 
         [ParserTarget("colorMap2Offset")]
-        public Vector2Parser CloudColorMap2OffsetSetter
+        public Vector2Parser CloudColorMap2Offset
         {
             get => GetTextureOffset("_CloudColorMap2");
             set => SetTextureOffset("_CloudColorMap2", value);
@@ -143,21 +143,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Near-texturing colour ramp; sampled with the detail cloud pattern.
         [ParserTarget("detailColorMap")]
-        public MaterialTextureParser DetailCloudColorMapSetter
+        public MaterialTextureParser DetailCloudColorMap
         {
-            get => null;
+            get => GetTexture("_DetailCloudColorMap")?.name;
             set => SetTexture("_DetailCloudColorMap", value);
         }
 
         [ParserTarget("detailColorMapScale")]
-        public Vector2Parser DetailCloudColorMapScaleSetter
+        public Vector2Parser DetailCloudColorMapScale
         {
             get => GetTextureScale("_DetailCloudColorMap");
             set => SetTextureScale("_DetailCloudColorMap", value);
         }
 
         [ParserTarget("detailColorMapOffset")]
-        public Vector2Parser DetailCloudColorMapOffsetSetter
+        public Vector2Parser DetailCloudColorMapOffset
         {
             get => GetTextureOffset("_DetailCloudColorMap");
             set => SetTextureOffset("_DetailCloudColorMap", value);
@@ -166,21 +166,21 @@ namespace Kopernicus.Configuration.MaterialLoader
         // Far-texturing pattern. Red channel is the pattern, green channel
         // controls the blend between colorMap and colorMap2.
         [ParserTarget("cloudPatternMap")]
-        public MaterialTextureParser CloudPatternTextureSetter
+        public MaterialTextureParser CloudPatternTexture
         {
-            get => null;
+            get => GetTexture("_CloudPatternTexture")?.name;
             set => SetTexture("_CloudPatternTexture", value);
         }
 
         [ParserTarget("cloudPatternMapScale")]
-        public Vector2Parser CloudPatternTextureScaleSetter
+        public Vector2Parser CloudPatternTextureScale
         {
             get => GetTextureScale("_CloudPatternTexture");
             set => SetTextureScale("_CloudPatternTexture", value);
         }
 
         [ParserTarget("cloudPatternMapOffset")]
-        public Vector2Parser CloudPatternTextureOffsetSetter
+        public Vector2Parser CloudPatternTextureOffset
         {
             get => GetTextureOffset("_CloudPatternTexture");
             set => SetTextureOffset("_CloudPatternTexture", value);
@@ -188,21 +188,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Near-texturing pattern. Only the red channel is read.
         [ParserTarget("detailCloudPatternMap")]
-        public MaterialTextureParser DetailCloudPatternTextureSetter
+        public MaterialTextureParser DetailCloudPatternTexture
         {
-            get => null;
+            get => GetTexture("_DetailCloudPatternTexture")?.name;
             set => SetTexture("_DetailCloudPatternTexture", value);
         }
 
         [ParserTarget("detailCloudPatternMapScale")]
-        public Vector2Parser DetailCloudPatternTextureScaleSetter
+        public Vector2Parser DetailCloudPatternTextureScale
         {
             get => GetTextureScale("_DetailCloudPatternTexture");
             set => SetTextureScale("_DetailCloudPatternTexture", value);
         }
 
         [ParserTarget("detailCloudPatternMapOffset")]
-        public Vector2Parser DetailCloudPatternTextureOffsetSetter
+        public Vector2Parser DetailCloudPatternTextureOffset
         {
             get => GetTextureOffset("_DetailCloudPatternTexture");
             set => SetTextureOffset("_DetailCloudPatternTexture", value);
@@ -212,21 +212,21 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("normalMap")]
         [ParserTarget("normals")]
         [ParserTarget("bumpMap")]
-        public MaterialTextureParser NormalMapSetter
+        public MaterialTextureParser NormalMap
         {
-            get => null;
+            get => GetTexture("_NormalMap")?.name;
             set => SetTexture("_NormalMap", value);
         }
 
         [ParserTarget("normalMapScale")]
-        public Vector2Parser NormalMapScaleSetter
+        public Vector2Parser NormalMapScale
         {
             get => GetTextureScale("_NormalMap");
             set => SetTextureScale("_NormalMap", value);
         }
 
         [ParserTarget("normalMapOffset")]
-        public Vector2Parser NormalMapOffsetSetter
+        public Vector2Parser NormalMapOffset
         {
             get => GetTextureOffset("_NormalMap");
             set => SetTextureOffset("_NormalMap", value);
@@ -234,21 +234,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Near normal map.
         [ParserTarget("detailNormalMap")]
-        public MaterialTextureParser DetailNormalMapSetter
+        public MaterialTextureParser DetailNormalMap
         {
-            get => null;
+            get => GetTexture("_DetailNormalMap")?.name;
             set => SetTexture("_DetailNormalMap", value);
         }
 
         [ParserTarget("detailNormalMapScale")]
-        public Vector2Parser DetailNormalMapScaleSetter
+        public Vector2Parser DetailNormalMapScale
         {
             get => GetTextureScale("_DetailNormalMap");
             set => SetTextureScale("_DetailNormalMap", value);
         }
 
         [ParserTarget("detailNormalMapOffset")]
-        public Vector2Parser DetailNormalMapOffsetSetter
+        public Vector2Parser DetailNormalMapOffset
         {
             get => GetTextureOffset("_DetailNormalMap");
             set => SetTextureOffset("_DetailNormalMap", value);
@@ -256,7 +256,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // UV scale applied to the far uvs to produce the detail uvs.
         [ParserTarget("detailTiling")]
-        public NumericParser<float> DetailTilingSetter
+        public NumericParser<float> DetailTiling
         {
             get => GetFloat("_DetailTiling");
             set => SetFloat("_DetailTiling", value);
@@ -265,7 +265,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         // Camera distance at which detail texturing is at full nearDetail
         // strength.
         [ParserTarget("nearDetailDistance")]
-        public NumericParser<float> NearDistanceForDetailSetter
+        public NumericParser<float> NearDistanceForDetail
         {
             get => GetFloat("_NearDistanceForDetail");
             set => SetFloat("_NearDistanceForDetail", value);
@@ -274,7 +274,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         // Camera distance at which detail texturing is at full farDetail
         // strength. Detail blends between the two distances.
         [ParserTarget("farDetailDistance")]
-        public NumericParser<float> FarDistanceForDetailSetter
+        public NumericParser<float> FarDistanceForDetail
         {
             get => GetFloat("_FarDistanceForDetail");
             set => SetFloat("_FarDistanceForDetail", value);
@@ -282,7 +282,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Maximum strength of the detail texturing when zoomed in.
         [ParserTarget("nearDetailStrength")]
-        public NumericParser<float> NearDetailSetter
+        public NumericParser<float> NearDetail
         {
             get => GetFloat("_NearDetail");
             set => SetFloat("_NearDetail", value);
@@ -290,7 +290,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Maximum strength of the detail texturing when zoomed out.
         [ParserTarget("farDetailStrength")]
-        public NumericParser<float> FarDetailSetter
+        public NumericParser<float> FarDetail
         {
             get => GetFloat("_FarDetail");
             set => SetFloat("_FarDetail", value);
@@ -298,7 +298,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Band scroll speed. GasGiantMaterialControls clamps this to [-10, 10].
         [ParserTarget("bandMovementSpeed")]
-        public NumericParser<float> BandMovementSpeedSetter
+        public NumericParser<float> BandMovementSpeed
         {
             get => GetFloat("_BandMovementSpeed");
             set => SetFloat("_BandMovementSpeed", value);
@@ -306,7 +306,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Swirl rotation rate. GasGiantMaterialControls clamps this to [0, 10].
         [ParserTarget("swirlRotationSpeed")]
-        public NumericParser<float> SwirlRotationSpeedSetter
+        public NumericParser<float> SwirlRotationSpeed
         {
             get => GetFloat("_SwirlRotationSpeed");
             set => SetFloat("_SwirlRotationSpeed", value);
@@ -314,7 +314,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Final extent of the swirl rotation. Clamped to [-10, 10] at runtime.
         [ParserTarget("swirlRotationSwirliness")]
-        public NumericParser<float> SwirlRotationSwirlinessSetter
+        public NumericParser<float> SwirlRotationSwirliness
         {
             get => GetFloat("_SwirlRotationSwirliness");
             set => SetFloat("_SwirlRotationSwirliness", value);
@@ -322,7 +322,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Swirl pan speed. Clamped to [-10, 10] at runtime.
         [ParserTarget("swirlPanSpeed")]
-        public NumericParser<float> SwirlPanSpeedSetter
+        public NumericParser<float> SwirlPanSpeed
         {
             get => GetFloat("_SwirlPanSpeed");
             set => SetFloat("_SwirlPanSpeed", value);

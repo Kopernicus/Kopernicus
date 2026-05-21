@@ -44,21 +44,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Ramp Map (RGBA), default = "white" { }
         [ParserTarget("rampMap")]
-        public MaterialTextureParser RampMapSetter
+        public MaterialTextureParser RampMap
         {
-            get => null;
+            get => GetTexture("_RampMap")?.name;
             set => SetTexture("_RampMap", value);
         }
 
         [ParserTarget("rampMapScale")]
-        public Vector2Parser RampMapScaleSetter
+        public Vector2Parser RampMapScale
         {
             get => GetTextureScale("_RampMap");
             set => SetTextureScale("_RampMap", value);
         }
 
         [ParserTarget("rampMapOffset")]
-        public Vector2Parser RampMapOffsetSetter
+        public Vector2Parser RampMapOffset
         {
             get => GetTextureOffset("_RampMap");
             set => SetTextureOffset("_RampMap", value);
@@ -66,21 +66,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Noise Map (RGBA), default = "white" { }
         [ParserTarget("noiseMap")]
-        public MaterialTextureParser NoiseMapSetter
+        public MaterialTextureParser NoiseMap
         {
-            get => null;
+            get => GetTexture("_NoiseMap")?.name;
             set => SetTexture("_NoiseMap", value);
         }
 
         [ParserTarget("noiseMapScale")]
-        public Vector2Parser NoiseMapScaleSetter
+        public Vector2Parser NoiseMapScale
         {
             get => GetTextureScale("_NoiseMap");
             set => SetTextureScale("_NoiseMap", value);
         }
 
         [ParserTarget("noiseMapOffset")]
-        public Vector2Parser NoiseMapOffsetSetter
+        public Vector2Parser NoiseMapOffset
         {
             get => GetTextureOffset("_NoiseMap");
             set => SetTextureOffset("_NoiseMap", value);
@@ -88,7 +88,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Emission Color 0, default = (1,1,1,1)
         [ParserTarget("emitColor0")]
-        public ColorParser EmitColor0Setter
+        public ColorParser EmitColor0
         {
             get => GetColor("_EmitColor0");
             set => SetColor("_EmitColor0", value);
@@ -96,7 +96,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Emission Color 1, default = (1,1,1,1)
         [ParserTarget("emitColor1")]
-        public ColorParser EmitColor1Setter
+        public ColorParser EmitColor1
         {
             get => GetColor("_EmitColor1");
             set => SetColor("_EmitColor1", value);
@@ -104,21 +104,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Sunspot Map (R), default = "white" { }
         [ParserTarget("sunspotTex")]
-        public MaterialTextureParser SunspotTexSetter
+        public MaterialTextureParser SunspotTex
         {
-            get => null;
+            get => GetTexture("_SunspotTex")?.name;
             set => SetTexture("_SunspotTex", value);
         }
 
         [ParserTarget("sunspotTexScale")]
-        public Vector2Parser SunspotTexScaleSetter
+        public Vector2Parser SunspotTexScale
         {
             get => GetTextureScale("_SunspotTex");
             set => SetTextureScale("_SunspotTex", value);
         }
 
         [ParserTarget("sunspotTexOffset")]
-        public Vector2Parser SunspotTexOffsetSetter
+        public Vector2Parser SunspotTexOffset
         {
             get => GetTextureOffset("_SunspotTex");
             set => SetTextureOffset("_SunspotTex", value);
@@ -126,7 +126,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Sunspot Power, default = 1
         [ParserTarget("sunspotPower")]
-        public NumericParser<float> SunspotPowerSetter
+        public NumericParser<float> SunspotPower
         {
             get => GetFloat("_SunspotPower");
             set => SetFloat("_SunspotPower", value);
@@ -134,7 +134,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Sunspot Color, default = (0,0,0,0)
         [ParserTarget("sunspotColor")]
-        public ColorParser SunspotColorSetter
+        public ColorParser SunspotColor
         {
             get => GetColor("_SunspotColor");
             set => SetColor("_SunspotColor", value);
@@ -142,7 +142,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Rimlight Color, default = (1,1,1,1)
         [ParserTarget("rimColor")]
-        public ColorParser RimColorSetter
+        public ColorParser RimColor
         {
             get => GetColor("_RimColor");
             set => SetColor("_RimColor", value);
@@ -150,7 +150,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Rimlight Power, default = 0.2
         [ParserTarget("rimPower")]
-        public NumericParser<float> RimPowerSetter
+        public NumericParser<float> RimPower
         {
             get => GetFloat("_RimPower");
             set => SetFloat("_RimPower", value);
@@ -158,7 +158,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Rimlight Blend, default = 0.2
         [ParserTarget("rimBlend")]
-        public NumericParser<float> RimBlendSetter
+        public NumericParser<float> RimBlend
         {
             get => GetFloat("_RimBlend");
             set => SetFloat("_RimBlend", value);

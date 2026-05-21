@@ -45,7 +45,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Main Color, default = (1,1,1,1)
         [ParserTarget("color")]
-        public ColorParser ColorSetter
+        public ColorParser Color
         {
             get => GetColor("_Color");
             set => SetColor("_Color", value);
@@ -53,7 +53,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Color From Space, default = (1,1,1,1)
         [ParserTarget("colorFromSpace")]
-        public ColorParser ColorFromSpaceSetter
+        public ColorParser ColorFromSpace
         {
             get => GetColor("_ColorFromSpace");
             set => SetColor("_ColorFromSpace", value);
@@ -61,7 +61,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Specular Color, default = (1,1,1,1)
         [ParserTarget("specColor")]
-        public ColorParser SpecColorSetter
+        public ColorParser SpecColor
         {
             get => GetColor("_SpecColor");
             set => SetColor("_SpecColor", value);
@@ -69,7 +69,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Shininess, default = 0.078125
         [ParserTarget("shininess")]
-        public NumericParser<float> ShininessSetter
+        public NumericParser<float> Shininess
         {
             get => GetFloat("_Shininess");
             set => SetFloat("_Shininess", value);
@@ -77,7 +77,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Gloss, default = 0.078125
         [ParserTarget("gloss")]
-        public NumericParser<float> GlossSetter
+        public NumericParser<float> Gloss
         {
             get => GetFloat("_Gloss");
             set => SetFloat("_Gloss", value);
@@ -85,7 +85,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Tex Tiling, default = 1
         [ParserTarget("tiling")]
-        public NumericParser<float> TilingSetter
+        public NumericParser<float> Tiling
         {
             get => GetFloat("_tiling");
             set => SetFloat("_tiling", value);
@@ -93,21 +93,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Tex0, default = "white" { }
         [ParserTarget("waterTex")]
-        public MaterialTextureParser WaterTexSetter
+        public MaterialTextureParser WaterTex
         {
-            get => null;
+            get => GetTexture("_WaterTex")?.name;
             set => SetTexture("_WaterTex", value);
         }
 
         [ParserTarget("waterTexScale")]
-        public Vector2Parser WaterTexScaleSetter
+        public Vector2Parser WaterTexScale
         {
             get => GetTextureScale("_WaterTex");
             set => SetTextureScale("_WaterTex", value);
         }
 
         [ParserTarget("waterTexOffset")]
-        public Vector2Parser WaterTexOffsetSetter
+        public Vector2Parser WaterTexOffset
         {
             get => GetTextureOffset("_WaterTex");
             set => SetTextureOffset("_WaterTex", value);
@@ -115,21 +115,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Tex1, default = "white" { }
         [ParserTarget("waterTex1")]
-        public MaterialTextureParser WaterTex1Setter
+        public MaterialTextureParser WaterTex1
         {
-            get => null;
+            get => GetTexture("_WaterTex1")?.name;
             set => SetTexture("_WaterTex1", value);
         }
 
         [ParserTarget("waterTex1Scale")]
-        public Vector2Parser WaterTex1ScaleSetter
+        public Vector2Parser WaterTex1Scale
         {
             get => GetTextureScale("_WaterTex1");
             set => SetTextureScale("_WaterTex1", value);
         }
 
         [ParserTarget("waterTex1Offset")]
-        public Vector2Parser WaterTex1OffsetSetter
+        public Vector2Parser WaterTex1Offset
         {
             get => GetTextureOffset("_WaterTex1");
             set => SetTextureOffset("_WaterTex1", value);
@@ -137,7 +137,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // FadeStart, default = 1
         [ParserTarget("fadeStart")]
-        public NumericParser<float> FadeStartSetter
+        public NumericParser<float> FadeStart
         {
             get => GetFloat("_fadeStart");
             set => SetFloat("_fadeStart", value);
@@ -145,7 +145,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // FadeEnd, default = 1
         [ParserTarget("fadeEnd")]
-        public NumericParser<float> FadeEndSetter
+        public NumericParser<float> FadeEnd
         {
             get => GetFloat("_fadeEnd");
             set => SetFloat("_fadeEnd", value);
@@ -153,7 +153,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // PlanetOpacity, default = 1
         [ParserTarget("planetOpacity")]
-        public NumericParser<float> PlanetOpacitySetter
+        public NumericParser<float> PlanetOpacity
         {
             get => GetFloat("_PlanetOpacity");
             set => SetFloat("_PlanetOpacity", value);

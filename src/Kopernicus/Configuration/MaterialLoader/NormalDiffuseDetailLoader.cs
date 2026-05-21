@@ -44,7 +44,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Main Color, default = (1,1,1,1)
         [ParserTarget("color")]
-        public ColorParser ColorSetter
+        public ColorParser Color
         {
             get => GetColor("_Color");
             set => SetColor("_Color", value);
@@ -52,21 +52,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Base (RGB), default = "white" { }
         [ParserTarget("mainTex")]
-        public MaterialTextureParser MainTexSetter
+        public MaterialTextureParser MainTex
         {
-            get => null;
+            get => GetTexture("_MainTex")?.name;
             set => SetTexture("_MainTex", value);
         }
 
         [ParserTarget("mainTexScale")]
-        public Vector2Parser MainTexScaleSetter
+        public Vector2Parser MainTexScale
         {
             get => GetTextureScale("_MainTex");
             set => SetTextureScale("_MainTex", value);
         }
 
         [ParserTarget("mainTexOffset")]
-        public Vector2Parser MainTexOffsetSetter
+        public Vector2Parser MainTexOffset
         {
             get => GetTextureOffset("_MainTex");
             set => SetTextureOffset("_MainTex", value);
@@ -74,21 +74,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Detail (RGB), default = "gray" { }
         [ParserTarget("detail")]
-        public MaterialTextureParser DetailSetter
+        public MaterialTextureParser Detail
         {
-            get => null;
+            get => GetTexture("_Detail")?.name;
             set => SetTexture("_Detail", value);
         }
 
         [ParserTarget("detailScale")]
-        public Vector2Parser DetailScaleSetter
+        public Vector2Parser DetailScale
         {
             get => GetTextureScale("_Detail");
             set => SetTextureScale("_Detail", value);
         }
 
         [ParserTarget("detailOffset")]
-        public Vector2Parser DetailOffsetSetter
+        public Vector2Parser DetailOffset
         {
             get => GetTextureOffset("_Detail");
             set => SetTextureOffset("_Detail", value);

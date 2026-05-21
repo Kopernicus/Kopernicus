@@ -44,7 +44,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Main Color, default = (1,1,1,1)
         [ParserTarget("color")]
-        public ColorParser ColorSetter
+        public ColorParser Color
         {
             get => GetColor("_Color");
             set => SetColor("_Color", value);
@@ -52,21 +52,21 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Base (RGB) Trans (A), default = "white" { }
         [ParserTarget("mainTex")]
-        public MaterialTextureParser MainTexSetter
+        public MaterialTextureParser MainTex
         {
-            get => null;
+            get => GetTexture("_MainTex")?.name;
             set => SetTexture("_MainTex", value);
         }
 
         [ParserTarget("mainTexScale")]
-        public Vector2Parser MainTexScaleSetter
+        public Vector2Parser MainTexScale
         {
             get => GetTextureScale("_MainTex");
             set => SetTextureScale("_MainTex", value);
         }
 
         [ParserTarget("mainTexOffset")]
-        public Vector2Parser MainTexOffsetSetter
+        public Vector2Parser MainTexOffset
         {
             get => GetTextureOffset("_MainTex");
             set => SetTextureOffset("_MainTex", value);
@@ -74,7 +74,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Alpha cutoff, default = 0.5
         [ParserTarget("texCutoff")]
-        public NumericParser<float> TexCutoffSetter
+        public NumericParser<float> TexCutoff
         {
             get => GetFloat("_texCutoff");
             set => SetFloat("_texCutoff", value);
@@ -82,7 +82,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // AP Fog Color, default = (0,0,1,1)
         [ParserTarget("fogColor")]
-        public ColorParser FogColorSetter
+        public ColorParser FogColor
         {
             get => GetColor("_fogColor");
             set => SetColor("_fogColor", value);
@@ -90,7 +90,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // AP Height Fall Off, default = 1
         [ParserTarget("heightFallOff")]
-        public NumericParser<float> HeightFallOffSetter
+        public NumericParser<float> HeightFallOff
         {
             get => GetFloat("_heightFallOff");
             set => SetFloat("_heightFallOff", value);
@@ -98,7 +98,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // AP Global Density, default = 1
         [ParserTarget("globalDensity")]
-        public NumericParser<float> GlobalDensitySetter
+        public NumericParser<float> GlobalDensity
         {
             get => GetFloat("_globalDensity");
             set => SetFloat("_globalDensity", value);
@@ -106,7 +106,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // AP Atmosphere Depth, default = 1
         [ParserTarget("atmosphereDepth")]
-        public NumericParser<float> AtmosphereDepthSetter
+        public NumericParser<float> AtmosphereDepth
         {
             get => GetFloat("_atmosphereDepth");
             set => SetFloat("_atmosphereDepth", value);
