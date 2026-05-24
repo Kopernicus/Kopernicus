@@ -54,7 +54,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("mainTex", Optional = true)]
         public MaterialTextureParser mainTex
         {
-            get => GetTexture("_MainTex")?.name;
+            get => GetTextureName("_MainTex");
             set => SetTexture("_MainTex", value);
         }
 
@@ -116,7 +116,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("metallicGlossMap", Optional = true)]
         public MaterialTextureParser metallicGlossMap
         {
-            get => GetTexture("_MetallicGlossMap")?.name;
+            get => GetTextureName("_MetallicGlossMap");
             set => SetTexture("_MetallicGlossMap", value);
         }
 
@@ -162,7 +162,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("bumpMap", Optional = true)]
         public MaterialTextureParser bumpMap
         {
-            get => GetTexture("_BumpMap")?.name;
+            get => GetTextureName("_BumpMap");
             set => SetTexture("_BumpMap", value);
         }
 
@@ -192,7 +192,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("parallaxMap", Optional = true)]
         public MaterialTextureParser parallaxMap
         {
-            get => GetTexture("_ParallaxMap")?.name;
+            get => GetTextureName("_ParallaxMap");
             set => SetTexture("_ParallaxMap", value);
         }
 
@@ -222,7 +222,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("occlusionMap", Optional = true)]
         public MaterialTextureParser occlusionMap
         {
-            get => GetTexture("_OcclusionMap")?.name;
+            get => GetTextureName("_OcclusionMap");
             set => SetTexture("_OcclusionMap", value);
         }
 
@@ -252,7 +252,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("emissionMap", Optional = true)]
         public MaterialTextureParser emissionMap
         {
-            get => GetTexture("_EmissionMap")?.name;
+            get => GetTextureName("_EmissionMap");
             set => SetTexture("_EmissionMap", value);
         }
 
@@ -274,7 +274,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("detailMask", Optional = true)]
         public MaterialTextureParser detailMask
         {
-            get => GetTexture("_DetailMask")?.name;
+            get => GetTextureName("_DetailMask");
             set => SetTexture("_DetailMask", value);
         }
 
@@ -296,7 +296,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("detailAlbedoMap", Optional = true)]
         public MaterialTextureParser detailAlbedoMap
         {
-            get => GetTexture("_DetailAlbedoMap")?.name;
+            get => GetTextureName("_DetailAlbedoMap");
             set => SetTexture("_DetailAlbedoMap", value);
         }
 
@@ -318,7 +318,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("detailNormalMap", Optional = true)]
         public MaterialTextureParser detailNormalMap
         {
-            get => GetTexture("_DetailNormalMap")?.name;
+            get => GetTextureName("_DetailNormalMap");
             set => SetTexture("_DetailNormalMap", value);
         }
 

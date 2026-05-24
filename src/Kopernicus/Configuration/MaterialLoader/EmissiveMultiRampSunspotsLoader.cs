@@ -46,7 +46,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("rampMap")]
         public MaterialTextureParser RampMap
         {
-            get => GetTexture("_RampMap")?.name;
+            get => GetTextureName("_RampMap");
             set => SetTexture("_RampMap", value);
         }
 
@@ -68,7 +68,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("noiseMap")]
         public MaterialTextureParser NoiseMap
         {
-            get => GetTexture("_NoiseMap")?.name;
+            get => GetTextureName("_NoiseMap");
             set => SetTexture("_NoiseMap", value);
         }
 
@@ -106,7 +106,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("sunspotTex")]
         public MaterialTextureParser SunspotTex
         {
-            get => GetTexture("_SunspotTex")?.name;
+            get => GetTextureName("_SunspotTex");
             set => SetTexture("_SunspotTex", value);
         }
 

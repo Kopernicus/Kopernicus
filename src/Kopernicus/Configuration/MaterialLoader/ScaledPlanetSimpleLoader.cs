@@ -71,7 +71,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("mainTex")]
         public MaterialTextureParser MainTex
         {
-            get => GetTexture("_MainTex")?.name;
+            get => GetTextureName("_MainTex");
             set => SetTexture("_MainTex", value);
         }
 
@@ -94,7 +94,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("bumpMap")]
         public MaterialTextureParser BumpMap
         {
-            get => GetTexture("_BumpMap")?.name;
+            get => GetTextureName("_BumpMap");
             set => SetTexture("_BumpMap", value);
         }
 
@@ -124,7 +124,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("resourceMap")]
         public MaterialTextureParser ResourceMap
         {
-            get => GetTexture("_ResourceMap")?.name;
+            get => GetTextureName("_ResourceMap");
             set => SetTexture("_ResourceMap", value);
         }
 

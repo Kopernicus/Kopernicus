@@ -46,7 +46,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("texture")]
         public MaterialTextureParser MainTex
         {
-            get => GetTexture("_MainTex")?.name;
+            get => GetTextureName("_MainTex");
             set => SetTexture("_MainTex", value);
         }
 

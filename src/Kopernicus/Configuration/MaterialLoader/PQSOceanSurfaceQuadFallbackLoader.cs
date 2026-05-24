@@ -95,7 +95,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("waterTex")]
         public MaterialTextureParser WaterTex
         {
-            get => GetTexture("_WaterTex")?.name;
+            get => GetTextureName("_WaterTex");
             set => SetTexture("_WaterTex", value);
         }
 
@@ -117,7 +117,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("waterTex1")]
         public MaterialTextureParser WaterTex1
         {
-            get => GetTexture("_WaterTex1")?.name;
+            get => GetTextureName("_WaterTex1");
             set => SetTexture("_WaterTex1", value);
         }
 
