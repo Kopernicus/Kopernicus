@@ -400,6 +400,29 @@ public abstract class MaterialLoader : BaseLoader, IParserEventSubscriber
         return Value.GetTexture(key);
     }
 
+    /// <summary>
+    /// Get the texture path or name associated with <paramref name="key"/>.
+    /// </summary>
+    public string GetTextureName(string key)
+    {
+        if (Entries.TryGetValue(key, out var path))
+            return path;
+        if (Value is null)
+            return null;
+
+        var texture = Value.GetTexture(key);
+        if (texture == null)
+            return null;
+
+        var name = texture.name;
+        if (GameDatabase.Instance.ExistsTexture(name))
+            return name;
+        if (TextureLoader.TextureExists(name))
+            return name;
+
+        return $"BUILTIN/{name}";
+    }
+
     public void SetTexture(string key, MaterialTextureParser path)
     {
         if (path is null)

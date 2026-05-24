@@ -142,7 +142,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("deepTex")]
         public MaterialTextureParser DeepTex
         {
-            get => GetTexture("_deepTex")?.name;
+            get => GetTextureName("_deepTex");
             set => SetTexture("_deepTex", value);
         }
 
@@ -164,7 +164,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("deepMultiTex")]
         public MaterialTextureParser DeepMultiTex
         {
-            get => GetTexture("_deepMultiTex")?.name;
+            get => GetTextureName("_deepMultiTex");
             set => SetTexture("_deepMultiTex", value);
         }
 
@@ -194,7 +194,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("mainTex")]
         public MaterialTextureParser MainTex
         {
-            get => GetTexture("_mainTex")?.name;
+            get => GetTextureName("_mainTex");
             set => SetTexture("_mainTex", value);
         }
 
@@ -216,7 +216,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("mainMultiTex")]
         public MaterialTextureParser MainMultiTex
         {
-            get => GetTexture("_mainMultiTex")?.name;
+            get => GetTextureName("_mainMultiTex");
             set => SetTexture("_mainMultiTex", value);
         }
 
@@ -246,7 +246,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("highTex")]
         public MaterialTextureParser HighTex
         {
-            get => GetTexture("_highTex")?.name;
+            get => GetTextureName("_highTex");
             set => SetTexture("_highTex", value);
         }
 
@@ -268,7 +268,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("highMultiTex")]
         public MaterialTextureParser HighMultiTex
         {
-            get => GetTexture("_highMultiTex")?.name;
+            get => GetTextureName("_highMultiTex");
             set => SetTexture("_highMultiTex", value);
         }
 
@@ -298,7 +298,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("snowTex")]
         public MaterialTextureParser SnowTex
         {
-            get => GetTexture("_snowTex")?.name;
+            get => GetTextureName("_snowTex");
             set => SetTexture("_snowTex", value);
         }
 
@@ -320,7 +320,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("snowMultiTex")]
         public MaterialTextureParser SnowMultiTex
         {
-            get => GetTexture("_snowMultiTex")?.name;
+            get => GetTextureName("_snowMultiTex");
             set => SetTexture("_snowMultiTex", value);
         }
 
@@ -350,7 +350,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("steepTex")]
         public MaterialTextureParser SteepTex
         {
-            get => GetTexture("_steepTex")?.name;
+            get => GetTextureName("_steepTex");
             set => SetTexture("_steepTex", value);
         }
 

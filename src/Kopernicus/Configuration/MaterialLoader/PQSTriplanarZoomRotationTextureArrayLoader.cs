@@ -204,7 +204,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("steepTex")]
         public MaterialTextureParser SteepTex
         {
-            get => GetTexture("_steepTex")?.name;
+            get => GetTextureName("_steepTex");
             set => SetTexture("_steepTex", value);
         }
 
@@ -226,7 +226,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("steepBumpMap")]
         public MaterialTextureParser SteepBumpMap
         {
-            get => GetTexture("_steepBumpMap")?.name;
+            get => GetTextureName("_steepBumpMap");
             set => SetTexture("_steepBumpMap", value);
         }
 
@@ -272,7 +272,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("fogColorRamp")]
         public MaterialTextureParser FogColorRamp
         {
-            get => GetTexture("_fogColorRamp")?.name;
+            get => GetTextureName("_fogColorRamp");
             set => SetTexture("_fogColorRamp", value);
         }
 

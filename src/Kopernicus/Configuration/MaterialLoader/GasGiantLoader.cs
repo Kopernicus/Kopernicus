@@ -54,7 +54,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("movementControlTexture")]
         public MaterialTextureParser MovementTexture
         {
-            get => GetTexture("_MovementTexture")?.name;
+            get => GetTextureName("_MovementTexture");
             set => SetTexture("_MovementTexture", value);
         }
 
@@ -77,7 +77,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("swirlControlTexture")]
         public MaterialTextureParser SwirlRotationControlTexture
         {
-            get => GetTexture("_SwirlRotationControlTexture")?.name;
+            get => GetTextureName("_SwirlRotationControlTexture");
             set => SetTexture("_SwirlRotationControlTexture", value);
         }
 
@@ -101,7 +101,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("colorMap")]
         public MaterialTextureParser CloudColorMap
         {
-            get => GetTexture("_CloudColorMap")?.name;
+            get => GetTextureName("_CloudColorMap");
             set => SetTexture("_CloudColorMap", value);
         }
 
@@ -123,7 +123,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("colorMap2")]
         public MaterialTextureParser CloudColorMap2
         {
-            get => GetTexture("_CloudColorMap2")?.name;
+            get => GetTextureName("_CloudColorMap2");
             set => SetTexture("_CloudColorMap2", value);
         }
 
@@ -145,7 +145,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("detailColorMap")]
         public MaterialTextureParser DetailCloudColorMap
         {
-            get => GetTexture("_DetailCloudColorMap")?.name;
+            get => GetTextureName("_DetailCloudColorMap");
             set => SetTexture("_DetailCloudColorMap", value);
         }
 
@@ -168,7 +168,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("cloudPatternMap")]
         public MaterialTextureParser CloudPatternTexture
         {
-            get => GetTexture("_CloudPatternTexture")?.name;
+            get => GetTextureName("_CloudPatternTexture");
             set => SetTexture("_CloudPatternTexture", value);
         }
 
@@ -190,7 +190,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("detailCloudPatternMap")]
         public MaterialTextureParser DetailCloudPatternTexture
         {
-            get => GetTexture("_DetailCloudPatternTexture")?.name;
+            get => GetTextureName("_DetailCloudPatternTexture");
             set => SetTexture("_DetailCloudPatternTexture", value);
         }
 
@@ -214,7 +214,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("bumpMap")]
         public MaterialTextureParser NormalMap
         {
-            get => GetTexture("_NormalMap")?.name;
+            get => GetTextureName("_NormalMap");
             set => SetTexture("_NormalMap", value);
         }
 
@@ -236,7 +236,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("detailNormalMap")]
         public MaterialTextureParser DetailNormalMap
         {
-            get => GetTexture("_DetailNormalMap")?.name;
+            get => GetTextureName("_DetailNormalMap");
             set => SetTexture("_DetailNormalMap", value);
         }
 

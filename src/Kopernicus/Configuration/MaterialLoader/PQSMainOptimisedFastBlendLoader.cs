@@ -126,7 +126,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("steepTex")]
         public MaterialTextureParser SteepTex
         {
-            get => GetTexture("_steepTex")?.name;
+            get => GetTextureName("_steepTex");
             set => SetTexture("_steepTex", value);
         }
 
@@ -148,7 +148,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("steepBumpMap")]
         public MaterialTextureParser SteepBumpMap
         {
-            get => GetTexture("_steepBumpMap")?.name;
+            get => GetTextureName("_steepBumpMap");
             set => SetTexture("_steepBumpMap", value);
         }
 
@@ -186,7 +186,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("lowTex")]
         public MaterialTextureParser LowTex
         {
-            get => GetTexture("_lowTex")?.name;
+            get => GetTextureName("_lowTex");
             set => SetTexture("_lowTex", value);
         }
 
@@ -224,7 +224,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("midTex")]
         public MaterialTextureParser MidTex
         {
-            get => GetTexture("_midTex")?.name;
+            get => GetTextureName("_midTex");
             set => SetTexture("_midTex", value);
         }
 
@@ -246,7 +246,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("midBumpMap")]
         public MaterialTextureParser MidBumpMap
         {
-            get => GetTexture("_midBumpMap")?.name;
+            get => GetTextureName("_midBumpMap");
             set => SetTexture("_midBumpMap", value);
         }
 
@@ -292,7 +292,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("highTex")]
         public MaterialTextureParser HighTex
         {
-            get => GetTexture("_highTex")?.name;
+            get => GetTextureName("_highTex");
             set => SetTexture("_highTex", value);
         }
 
@@ -370,7 +370,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("fogColorRamp")]
         public MaterialTextureParser FogColorRamp
         {
-            get => GetTexture("_fogColorRamp")?.name;
+            get => GetTextureName("_fogColorRamp");
             set => SetTexture("_fogColorRamp", value);
         }
 
