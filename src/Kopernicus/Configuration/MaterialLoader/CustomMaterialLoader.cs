@@ -64,4 +64,7 @@ public class CustomMaterialLoader : MaterialLoader
         foreach (var keyword in node.GetValues("keyword"))
             SetKeyword(keyword, true);
     }
+
+    public CustomMaterialLoader() { }
+    public CustomMaterialLoader(Material material) => Value = material;
 }
