@@ -407,16 +407,20 @@ namespace Kopernicus.Configuration
                 return;
             }
 
-            // Compute hash from PQS config, template, body name, radius, version, and spherical flag
-            ConfigNode pqsNode = node.GetNode("PQS");
-            ConfigNode templateNode = node.GetNode("Template");
-            String meshHash = RuntimeUtility.MeshHashManager.ComputeHash(
-                pqsNode,
-                templateNode,
-                GeneratedBody.celestialBody.bodyName,
-                GeneratedBody.celestialBody.Radius,
-                ScaledVersion.SphericalModel
-            );
+            // A custom cacheFile opts out of automatic hash-based invalidation.
+            String meshHash = null;
+            if (String.IsNullOrEmpty(ScaledVersion.Value.Get("cacheFile", "")))
+            {
+                ConfigNode pqsNode = node.GetNode("PQS");
+                ConfigNode templateNode = node.GetNode("Template");
+                meshHash = RuntimeUtility.MeshHashManager.ComputeHash(
+                    pqsNode,
+                    templateNode,
+                    GeneratedBody.celestialBody.bodyName,
+                    GeneratedBody.celestialBody.Radius,
+                    ScaledVersion.SphericalModel
+                );
+            }
 
             ScaledVersion.RebuildScaledSpace(meshHash);
             Events.OnBodyGenerateScaledSpace.Fire(this, node);

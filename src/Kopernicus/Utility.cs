@@ -32,7 +32,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security.Principal;
 using System.Text.RegularExpressions;
 using Kopernicus.ConfigParser;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
@@ -355,21 +354,18 @@ namespace Kopernicus
 
             Directory.CreateDirectory(cacheDirectory ?? throw new InvalidOperationException());
 
-            // Compute relative cache path for hash lookup
             String gameDataRoot = KSPUtil.ApplicationRootPath + "GameData/";
             String relativeCachePath = cacheFile.StartsWith(gameDataRoot)
                 ? cacheFile.Substring(gameDataRoot.Length)
                 : cacheFile;
 
-            // Check if cached mesh is still valid via hash
-            bool cacheValid = File.Exists(cacheFile) && exportMesh && hash is not null;
-            if (cacheValid)
+            // A null hash means the caller opted out of hash-based invalidation.
+            bool cacheValid = File.Exists(cacheFile) && exportMesh;
+            if (cacheValid && hash != null
+                && !RuntimeUtility.MeshHashManager.IsValid(relativeCachePath, hash))
             {
-                if (!RuntimeUtility.MeshHashManager.IsValid(relativeCachePath, hash))
-                {
-                    Logger.Active.Log("Body hash changed! Regenerating scaled space mesh");
-                    cacheValid = false;
-                }
+                Logger.Active.Log("Body hash changed! Regenerating scaled space mesh");
+                cacheValid = false;
             }
 
             if (cacheValid)
