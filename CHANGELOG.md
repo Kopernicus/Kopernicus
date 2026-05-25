@@ -1,7 +1,10 @@
 # Kopernicus Changelog
 
 ## Unreleased
-1. Fixed a bug where custom oceans were not assigned to the right layer, causing them to glow orange during reentry.
+1. Fixed a bug where custom oceans were not assigned to the right layer, causing them to 
+   glow orange during reentry.
+2. Fixed a bug where a body `identifier` with more than one `/` would be truncated to
+   only the first two segements of the identifier.
 
 ## 244
 1. Restore NativeByteArray class, because some major mods still use it (RSS).
