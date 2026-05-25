@@ -157,16 +157,20 @@ public static class UBI
             throw new InvalidOperationException("The body has no primary UBI assigned to it!");
         }
 
-        // This is probably the most hacky way to do this, but still easier than to reflect and combine multiple 
-        // UBIIdent Components from multiple assemblies
-        String[] split = ubi.Split('/');
+        // This is probably the most hacky way to do this, but still easier than to reflect and combine multiple
+        // UBIIdent Components from multiple assemblies. Split on the LAST '/' so multi-segment UBIs survive
+        // round-tripping: the body name (final segment) is the second field and the system can contain further '/'s.
+        Int32 lastSlash = ubi.LastIndexOf('/');
+        String system = ubi.Substring(0, lastSlash);
+        String bodyName = ubi.Substring(lastSlash + 1);
+
         GameObject ubiParent = body.gameObject.GetChild("UBI");
         if (!ubiParent)
         {
             ubiParent = new GameObject("UBI");
             ubiParent.transform.parent = body.transform;
         }
-        GameObject ident = new GameObject(split[0] + ";" + split[1] + ";" + isAbstract);
+        GameObject ident = new GameObject(system + ";" + bodyName + ";" + isAbstract);
         ident.transform.parent = ubiParent.transform;
     }
 
@@ -227,12 +231,16 @@ public static class UBI
 
         foreach (Transform ident in ubiParent.transform)
         {
-            String[] split = ident.name.Split(';');
+            // Format is "system;body;isAbstract" where system may itself contain '/'s.
+            String name = ident.name;
+            Int32 last = name.LastIndexOf(';');
+            Int32 second = name.LastIndexOf(';', last - 1);
+
             idents.Add(new UBIIdent
             {
-                System = split[0],
-                Body = split[1],
-                IsAbstract = Boolean.Parse(split[2]),
+                System = name.Substring(0, second),
+                Body = name.Substring(second + 1, last - second - 1),
+                IsAbstract = Boolean.Parse(name.Substring(last + 1)),
                 Object = ident.gameObject
             });
         }
