@@ -100,6 +100,8 @@ internal static class MeshHashManager
             Spherical: {spherical}
             {pqsNode?.ToString() ?? ""}
             {templateNode?.ToString() ?? ""}
+            Files:
+            {CollectFileMTimes(pqsNode, templateNode)}
             """;
 
         using (SHA256 sha256 = SHA256.Create())
@@ -110,6 +112,93 @@ internal static class MeshHashManager
             checksum = checksum.ToLower();
             return checksum;
         }
+    }
+
+    private static string CollectFileMTimes(params ConfigNode[] nodes)
+    {
+        SortedDictionary<string, long> seen = new SortedDictionary<string, long>(StringComparer.Ordinal);
+        foreach (ConfigNode node in nodes)
+        {
+            if (node == null)
+                continue;
+            CollectFileMTimes(node, seen);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        foreach (var entry in seen)
+            sb.AppendLine($"{entry.Value.ToString(CultureInfo.InvariantCulture)} {entry.Key}");
+        return sb.ToString();
+    }
+
+    private static void CollectFileMTimes(ConfigNode node, SortedDictionary<string, long> seen)
+    {
+        foreach (ConfigNode.Value value in node.values)
+        {
+            string url = value.value;
+            if (string.IsNullOrEmpty(url))
+                continue;
+
+            foreach (string path in ResolveReferencedFiles(url))
+            {
+                if (seen.ContainsKey(path))
+                    continue;
+                try
+                {
+                    seen[path] = File.GetLastWriteTimeUtc(path).Ticks;
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        foreach (ConfigNode child in node.nodes)
+            CollectFileMTimes(child, seen);
+    }
+
+    private static IEnumerable<string> ResolveReferencedFiles(string url)
+    {
+        if (url.StartsWith("BUILTIN/", StringComparison.Ordinal))
+            yield break;
+        if (url.IndexOfAny(Path.GetInvalidPathChars()) >= 0)
+            yield break;
+
+        string combined;
+        try
+        {
+            combined = Path.Combine(KSPUtil.ApplicationRootPath, "GameData", url);
+        }
+        catch
+        {
+            yield break;
+        }
+
+        if (File.Exists(combined))
+        {
+            yield return combined;
+            yield break;
+        }
+
+        // Extensionless KSP convention: value names the file without its
+        // extension. Match anything in the parent directory with that base.
+        string dir = Path.GetDirectoryName(combined);
+        string baseName = Path.GetFileName(combined);
+        if (string.IsNullOrEmpty(dir) || string.IsNullOrEmpty(baseName))
+            yield break;
+        if (!Directory.Exists(dir))
+            yield break;
+
+        string[] matches;
+        try
+        {
+            matches = Directory.GetFiles(dir, baseName + ".*");
+        }
+        catch
+        {
+            yield break;
+        }
+        foreach (string match in matches)
+            yield return match;
     }
 
     public static bool IsValid(string relativeCachePath, string computedHash)
