@@ -607,6 +607,7 @@ public abstract class MaterialLoader : BaseLoader, IParserEventSubscriber
         {
             path = Utility.ValidateOnDemandTexture(path);
             Entries[key] = path;
+            Value.SetTexture(key, null);
             return null;
         }
         else
