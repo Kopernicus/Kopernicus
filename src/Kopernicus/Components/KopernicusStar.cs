@@ -366,6 +366,10 @@ namespace Kopernicus.Components
         [SuppressMessage("ReSharper", "ArrangeStaticMemberQualifier")]
         private void LateUpdate()
         {
+            // Avoid spamming NREs if we got set up wrong.
+            if (shifter.IsNullOrDestroyed() || lensFlare.IsNullOrDestroyed() || target.IsNullOrDestroyed())
+                return;
+
             // Set precision
             sunRotationPrecision = MapView.MapIsEnabled ? sunRotationPrecisionMapView : sunRotationPrecisionDefault;
 
