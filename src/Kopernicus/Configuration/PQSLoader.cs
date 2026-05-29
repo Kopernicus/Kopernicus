@@ -529,7 +529,7 @@ namespace Kopernicus.Configuration
             if (PQSMainTriplanarZoomRotation.UsesSameShader(material))
                 return NewShaderSurfaceMaterialType.MainTriplanarZoomRotation;
 
-            throw new Exception("The shader '" + material.shader.name + "' is not supported.");
+            return NewShaderSurfaceMaterialType.Custom;
         }
 
         static string MaterialTypeToShaderName(NewShaderSurfaceMaterialType? type) => type switch
