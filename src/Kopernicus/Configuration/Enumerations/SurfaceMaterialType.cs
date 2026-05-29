@@ -46,6 +46,9 @@ namespace Kopernicus.Configuration.Enumerations
         // 1.8 "Main Shader - Triplanar Zoom Rotation" variant (Kerbin, Terrain Quality High)
         MainTriplanarZoomRotation = 256,
 
+        // User-supplied shader specified via the Material node's "shader" value
+        Custom = 512,
+
         // Old names, kept around for compatibility
         AtmosphericBasic = 1,
         AtmosphericMain = 2,
