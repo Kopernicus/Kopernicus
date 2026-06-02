@@ -436,7 +436,7 @@ public abstract class MaterialLoader : BaseLoader, IParserEventSubscriber
             return;
 
         var dim = Value.shader.GetPropertyTextureDimension(index);
-        using var handle = LoadTextureForDim(dim, key, path);
+        using var handle = LoadTextureForDim(dim, key, path, OnDemand.Value);
         if (handle is null)
             return;
 
@@ -450,6 +450,61 @@ public abstract class MaterialLoader : BaseLoader, IParserEventSubscriber
             Logger.Active.LogWarning($"Failed to load texture {handle.Path}");
             Logger.Active.LogException(e);
             Utility.LogMissingTexture(CurrentBody, handle.Path);
+        }
+    }
+
+    struct ForceLoadEntry : IDisposable
+    {
+        public string key;
+        public TextureHandle handle;
+
+        public void Dispose() => handle.Dispose();
+    }
+
+    /// <summary>
+    /// Force any on-demand textures to be loaded immediately.
+    /// </summary>
+    public void ForceLoadTextures()
+    {
+        OnDemand = false;
+
+        var entries = new List<ForceLoadEntry>(Entries.Count);
+        using var guard = new ListDisposeGuard<ForceLoadEntry>(entries);
+
+        foreach (var (key, path) in Entries.ToArray())
+        {
+            if (!TryFindProperty(key, ShaderPropertyType.Texture, "texture", out var index))
+                continue;
+
+            var dim = Value.shader.GetPropertyTextureDimension(index);
+            var handle = LoadTextureForDim(dim, key, path, onDemand: false);
+            if (handle is null)
+                continue;
+
+            entries.Add(new()
+            {
+                key = key,
+                handle = handle
+            });
+        }
+
+        Entries.Clear();
+
+        foreach (var entry in entries)
+        {
+            var handle = entry.handle;
+
+            try
+            {
+                Value.SetTexture(entry.key, handle.GetTexture());
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[Kopernicus] Failed to load texture {handle.Path}");
+                Logger.Active.LogWarning($"Failed to load texture {handle.Path}");
+                Logger.Active.LogException(e);
+                Utility.LogMissingTexture(CurrentBody, handle.Path);
+            }
         }
     }
 
@@ -570,7 +625,7 @@ public abstract class MaterialLoader : BaseLoader, IParserEventSubscriber
     static PSystemBody CurrentBody =>
         Parser.GetState<Body>("Kopernicus:currentBody")?.GeneratedBody;
 
-    TextureHandle<T> LoadTexture<T>(string key, string path)
+    TextureHandle<T> LoadTexture<T>(string key, string path, bool onDemand)
         where T : Texture
     {
         if (string.IsNullOrEmpty(path))
@@ -603,7 +658,7 @@ public abstract class MaterialLoader : BaseLoader, IParserEventSubscriber
             }
         }
 
-        if (OnDemand.Value)
+        if (onDemand)
         {
             path = Utility.ValidateOnDemandTexture(path);
             Entries[key] = path;
@@ -625,24 +680,24 @@ public abstract class MaterialLoader : BaseLoader, IParserEventSubscriber
         }
     }
 
-    TextureHandle LoadTextureForDim(TextureDimension dim, string key, string path)
+    TextureHandle LoadTextureForDim(TextureDimension dim, string key, string path, bool onDemand)
     {
         switch (dim)
         {
             case TextureDimension.Tex2D:
-                return LoadTexture<Texture2D>(key, path);
+                return LoadTexture<Texture2D>(key, path, onDemand);
 
             case TextureDimension.Tex3D:
-                return LoadTexture<Texture3D>(key, path);
+                return LoadTexture<Texture3D>(key, path, onDemand);
 
             case TextureDimension.Tex2DArray:
-                return LoadTexture<Texture2DArray>(key, path);
+                return LoadTexture<Texture2DArray>(key, path, onDemand);
 
             case TextureDimension.CubeArray:
-                return LoadTexture<CubemapArray>(key, path);
+                return LoadTexture<CubemapArray>(key, path, onDemand);
 
             default:
-                return LoadTexture<Texture>(key, path);
+                return LoadTexture<Texture>(key, path, onDemand);
         }
     }
 
@@ -742,6 +797,37 @@ public abstract class MaterialLoader : BaseLoader, IParserEventSubscriber
 
                 Registry.Add(attr.Shader, new RegistryEntry { type = type, ctor = func });
             }
+        }
+    }
+    #endregion
+
+    #region Helpers
+    struct ListDisposeGuard<T>(List<T> items) : IDisposable
+        where T : IDisposable
+    {
+        public void Dispose()
+        {
+            List<Exception> exceptions = null;
+            foreach (var value in items)
+            {
+                try
+                {
+                    value.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    exceptions ??= [];
+                    exceptions.Add(ex);
+                }
+            }
+
+            if (exceptions is null)
+                return;
+
+            if (exceptions.Count == 1)
+                throw exceptions[0];
+
+            throw new AggregateException(exceptions);
         }
     }
     #endregion
