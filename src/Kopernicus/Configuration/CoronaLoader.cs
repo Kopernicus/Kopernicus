@@ -116,6 +116,9 @@ namespace Kopernicus.Configuration
         // Parser post apply event
         void IParserEventSubscriber.PostApply(ConfigNode node)
         {
+            // We don't do on-demand loading for coronas at the moment.
+            _material?.ForceLoadTextures();
+
             if (_material != null)
                 Value.GetComponent<Renderer>().sharedMaterial = _material.Value;
 
