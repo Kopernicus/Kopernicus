@@ -1,10 +1,13 @@
 # Kopernicus Changelog
 
-## Unreleased
+## 245
 1. Fixed a bug where custom oceans were not assigned to the right layer, causing them to 
    glow orange during reentry.
 2. Fixed a bug where a body `identifier` with more than one `/` would be truncated to
    only the first two segements of the identifier.
+3. Remove NRE spam when a star does not have a LightEmitter component (singularity, etc)
+4. Add proper cache invalidation for scaled space meshes
+5. A lot of new features.  See associated blog post:  https://kopernicuswiki.org/RelNotes/release-245.html
 
 ## 244
 1. Restore NativeByteArray class, because some major mods still use it (RSS).
