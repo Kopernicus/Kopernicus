@@ -1,5 +1,8 @@
 # Kopernicus Changelog
 
+## 246
+1. Hotfixed a material loader regression that caused issues with MPE and other mods.
+
 ## 245
 1. Fixed a bug where custom oceans were not assigned to the right layer, causing them to 
    glow orange during reentry.
