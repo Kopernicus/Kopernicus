@@ -24,6 +24,7 @@
  */
 
 using System;
+using Kopernicus.Components.MaterialWrapper;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
@@ -98,10 +99,10 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Smoothness texture channel, default = 0.000000
         [ParserTarget("smoothnessTextureChannel", Optional = true)]
-        public NumericParser<float> smoothnessTextureChannel
+        public EnumParser<Standard.TextureChannel> smoothnessTextureChannel
         {
-            get => GetFloat("_SmoothnessTextureChannel");
-            set => SetFloat("_SmoothnessTextureChannel", value);
+            get => (Standard.TextureChannel)(Int32)GetFloat("_SmoothnessTextureChannel");
+            set => SetFloat("_SmoothnessTextureChannel", (Int32)value.Value);
         }
 
         // Metallic, default = 0.000000
@@ -136,18 +137,18 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Specular Highlights, default = 1.000000
         [ParserTarget("specularHighlights", Optional = true)]
-        public NumericParser<float> specularHighlights
+        public NumericParser<Boolean> specularHighlights
         {
-            get => GetFloat("_SpecularHighlights");
-            set => SetFloat("_SpecularHighlights", value);
+            get => GetFloat("_SpecularHighlights") > 0f;
+            set => SetFloat("_SpecularHighlights", value.Value ? 1f : 0f);
         }
 
         // Glossy Reflections, default = 1.000000
         [ParserTarget("glossyReflections", Optional = true)]
-        public NumericParser<float> glossyReflections
+        public NumericParser<Boolean> glossyReflections
         {
-            get => GetFloat("_GlossyReflections");
-            set => SetFloat("_GlossyReflections", value);
+            get => GetFloat("_GlossyReflections") > 0f;
+            set => SetFloat("_GlossyReflections", value.Value ? 1f : 0f);
         }
 
         // Scale, default = 1.000000
@@ -339,18 +340,18 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // UV Set for secondary textures, default = 0.000000
         [ParserTarget("UVSec", Optional = true)]
-        public NumericParser<float> UVSec
+        public EnumParser<Standard.UvSet> UVSec
         {
-            get => GetFloat("_UVSec");
-            set => SetFloat("_UVSec", value);
+            get => (Standard.UvSet)(Int32)GetFloat("_UVSec");
+            set => SetFloat("_UVSec", (Int32)value.Value);
         }
 
         // __mode, default = 0.000000
         [ParserTarget("mode", Optional = true)]
-        public NumericParser<float> mode
+        public EnumParser<Standard.BlendMode> mode
         {
-            get => GetFloat("_Mode");
-            set => SetFloat("_Mode", value);
+            get => (Standard.BlendMode)(Int32)GetFloat("_Mode");
+            set => SetFloat("_Mode", (Int32)value.Value);
         }
 
         // __src, default = 1.000000

@@ -351,8 +351,8 @@ namespace Kopernicus.Configuration.ModLoader
             [ParserTarget("instancing")]
             public NumericParser<Boolean> Instancing
             {
-                get { return Value.material.enableInstancing; }
-                set { Value.material.enableInstancing = value; }
+                get { return CurrentMaterial.enableInstancing; }
+                set { CurrentMaterial.enableInstancing = value; }
             }
 
             [ParserTarget("rotation")]
