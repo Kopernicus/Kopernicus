@@ -36,7 +36,12 @@ namespace Kopernicus.OnDemand
 {
     public class PQSMod_OnDemandHandler : PQSMod, ISerializationCallbackReceiver
     {
-        enum State
+        // Ordering matters: PreloadMapSOs is a no-op once we are >= Preloaded, so
+        // AutoLoaded deliberately sorts below it.
+        //   AutoLoaded - background GetSurfaceHeight on an inactive body; nothing loaded
+        //                eagerly (MapSODemand decodes maps lazily) + unload timer armed.
+        //   Preloaded  - all maps staged (Preload, no decode); distinct from Loaded.
+        enum MapLoadState
         {
             Unloaded,
             AutoLoaded,
@@ -62,7 +67,7 @@ namespace Kopernicus.OnDemand
         #region PQS
         // PQS and on-demand MapSO data
         private List<ILoadOnDemand> mapSOs = [];
-        private State mapSOState;
+        private MapLoadState mapLoadState;
         private Coroutine unloadMapSOCoroutine;
 
         // If non-zero the MapSOs will be unloaded once the timer exceeds the value
@@ -71,21 +76,29 @@ namespace Kopernicus.OnDemand
 
         private int _lastUpdateFrame = 0;
 
-        void PreloadMapSOs()
+        // Map view calls DeactivateSphere (firing OnSphereInactive) but the sphere is
+        // needed again the instant the map closes, so treat it as still in use to avoid
+        // us unloading texture that will be needed the instant it loads back.
+        private bool SurfaceInUse =>
+            sphere.IsNotNullOrDestroyed() && (sphere.isActive || MapView.MapIsEnabled);
+
+        void StopUnloadWatcher()
         {
-            if (mapSOs.Count == 0)
-                return;
-
-            if (mapSOState >= State.Preloaded)
-                return;
-
             if (unloadMapSOCoroutine != null)
             {
                 StopCoroutine(unloadMapSOCoroutine);
                 unloadMapSOCoroutine = null;
             }
+        }
 
-            mapSOState = State.Preloaded;
+        void PreloadMapSOs()
+        {
+            if (mapSOs.Count == 0 || mapLoadState >= MapLoadState.Preloaded)
+                return;
+
+            StopUnloadWatcher();
+
+            mapLoadState = MapLoadState.Preloaded;
             foreach (var entry in mapSOs)
             {
                 if (entry is not IPreloadOnDemand preload)
@@ -104,21 +117,14 @@ namespace Kopernicus.OnDemand
 
         void LoadMapSOs()
         {
-            if (mapSOs.Count == 0)
+            if (mapSOs.Count == 0 || mapLoadState == MapLoadState.Loaded)
                 return;
 
-            if (mapSOState == State.Loaded)
-                return;
-
-            if (unloadMapSOCoroutine != null)
-            {
-                StopCoroutine(unloadMapSOCoroutine);
-                unloadMapSOCoroutine = null;
-            }
+            StopUnloadWatcher();
 
             Debug.Log($"[OD] Loading {sphere.name}");
 
-            mapSOState = State.Loaded;
+            mapLoadState = MapLoadState.Loaded;
             foreach (var entry in mapSOs)
             {
                 try
@@ -134,15 +140,14 @@ namespace Kopernicus.OnDemand
 
         void UnloadMapSOs()
         {
-            if (mapSOs.Count == 0)
+            if (mapSOs.Count == 0 || mapLoadState == MapLoadState.Unloaded)
                 return;
 
-            if (mapSOState == State.Unloaded)
-                return;
-
+            // No StopUnloadWatcher(): this runs inside the watcher, which nulls
+            // unloadMapSOCoroutine itself via MapSOCoroutineGuard.
             Debug.Log($"[OD] Unloading {sphere.name}");
 
-            mapSOState = State.Unloaded;
+            mapLoadState = MapLoadState.Unloaded;
             foreach (var entry in mapSOs)
             {
                 try
@@ -174,6 +179,19 @@ namespace Kopernicus.OnDemand
             while (true)
             {
                 yield return WaitForEndOfFrame;
+
+                // If the sphere is active then we aren't needed. A future OnSphereInactive
+                // call will start a new UnloadMapWatcherInstance so there's no need for us
+                // to spin every frame.
+                if (sphere.IsNotNullOrDestroyed() && sphere.isActive)
+                    yield break;
+
+                // OnSphereInactive happens when switching to the map view, even if we are
+                // currently landed on the surface. Obviously we don't want to unload textures
+                // in this case so keep them loaded until the user switches out of map view,
+                // at which point we can recheck.
+                if (MapView.MapIsEnabled)
+                    continue;
 
                 // If we are the currently active body, do not unload.
                 if (sphere.IsNotNullOrDestroyed() && FlightGlobals.ActiveVessel.IsNotNullOrDestroyed())
@@ -353,11 +371,12 @@ namespace Kopernicus.OnDemand
             using var guard = new UnloadCoroutineGuard(this);
             var minEndFrame = Time.frameCount + UnloadFrameDelay;
 
+            // Hold while the surface is in use so map view doesn't thrash textures.
             do
             {
                 yield return UnloadDelay;
             }
-            while (Time.frameCount < minEndFrame);
+            while (Time.frameCount < minEndFrame || SurfaceInUse);
 
             UnloadTextures();
         }
@@ -410,19 +429,21 @@ namespace Kopernicus.OnDemand
         public override void OnSphereInactive()
         {
             StartMapSOUnload();
+            UpdateUnloadTime();
             StartTextureUnload();
         }
 
         public override void OnSphereReset()
         {
             StartMapSOUnload();
+            UpdateUnloadTime();
             StartTextureUnload();
         }
 
         // Enabling
         public override void OnQuadPreBuild(PQ quad)
         {
-            if (mapSOState != State.Unloaded)
+            if (mapLoadState != MapLoadState.Unloaded)
                 LoadMapSOs();
 
             UpdateUnloadTime();
@@ -437,7 +458,7 @@ namespace Kopernicus.OnDemand
             if (mapSOs.Count == 0)
                 return;
 
-            if (mapSOState != State.Unloaded)
+            if (mapLoadState != MapLoadState.Unloaded)
             {
                 // Refresh unload time at most once every 5 frames per OnDemandHandler.
                 if (_lastUpdateFrame + UpdateInterval >= Time.frameCount)
@@ -451,7 +472,7 @@ namespace Kopernicus.OnDemand
                 // hanging around forever.
 
                 StartMapSOUnload();
-                mapSOState = State.AutoLoaded;
+                mapLoadState = MapLoadState.AutoLoaded;
             }
 
             UpdateUnloadTime();
