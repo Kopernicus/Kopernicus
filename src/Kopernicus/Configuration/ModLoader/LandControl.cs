@@ -99,17 +99,23 @@ namespace Kopernicus.Configuration.ModLoader
             [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
             public NumericParser<Boolean> Delete = false;
 
+            private EnumParser<ScatterMaterialType> _materialType;
+
             [PreApply]
             [ParserTarget("materialType")]
             public EnumParser<ScatterMaterialType> Type
             {
-                get => field ??= GetInitialMaterialType();
-                set => field = value;
+                get => _materialType ??= DeduceMaterialType(CurrentMaterial)
+                    ?? throw new Exception("The shader '<null>' is not supported.");
+                set => _materialType = value;
             }
 
-            private ScatterMaterialType GetInitialMaterialType()
+            // Type matching the material's shader, null if there's no material to
+            // deduce from, or throws if the shader is non-null but unrecognized.
+            private static ScatterMaterialType? DeduceMaterialType(Material material)
             {
-                Material material = CurrentMaterial;
+                if (material == null)
+                    return null;
 
                 if (NormalDiffuse.UsesSameShader(material))
                     return ScatterMaterialType.Diffuse;
@@ -132,8 +138,7 @@ namespace Kopernicus.Configuration.ModLoader
                 if (KSPBumpedSpecular.UsesSameShader(material))
                     return ScatterMaterialType.KSPBumpedSpecular;
 
-                var shaderName = material?.shader?.name ?? "<null>";
-                throw new Exception("The shader '" + shaderName + "' is not supported.");
+                throw new Exception("The shader '" + (material.shader?.name ?? "<null>") + "' is not supported.");
             }
 
             // Custom scatter material. Initialized up front by the constructor
@@ -485,15 +490,23 @@ namespace Kopernicus.Configuration.ModLoader
             }
 
             // Build the material loader from whatever signal is available —
-            // `Material { shader = X }` wins, otherwise the [PreApply] Type
-            // (either explicitly parsed or lazily deduced from the existing
-            // material via GetInitialMaterialType). The Material and
-            // StockMaterial parser targets run after this and may overwrite
-            // _material / Value.material to suit the user's intent.
+            // `Material { shader = X }` wins, then an explicitly parsed
+            // materialType, then the shader of an existing stock material. A
+            // bare scatter with none of these (e.g. a Parallax placeholder)
+            // gets no material loader. The Material and StockMaterial parser
+            // targets run after this and may overwrite _material / Value.material
+            // to suit the user's intent.
             void IParserApplyEventSubscriber.Apply(ConfigNode node)
             {
-                var shaderName = node.GetNode("Material")?.GetValue("shader")
-                                 ?? MaterialTypeToShaderName(Type.Value);
+                var shaderName = node.GetNode("Material")?.GetValue("shader");
+                if (shaderName == null)
+                {
+                    ScatterMaterialType? type = _materialType?.Value ?? DeduceMaterialType(CurrentMaterial);
+                    if (type == null)
+                        return;
+                    shaderName = MaterialTypeToShaderName(type.Value);
+                }
+
                 _material = MaterialLoader.MaterialLoader.Create(shaderName, Value.material);
             }
 
