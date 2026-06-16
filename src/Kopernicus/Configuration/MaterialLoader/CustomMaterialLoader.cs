@@ -66,5 +66,10 @@ public class CustomMaterialLoader : MaterialLoader
     }
 
     public CustomMaterialLoader() { }
-    public CustomMaterialLoader(Material material) => Value = material;
+    public CustomMaterialLoader(Material material)
+    {
+        Value = material;
+        if (material != null)
+            ShaderParser = material.shader;
+    }
 }

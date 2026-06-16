@@ -105,13 +105,20 @@ namespace Kopernicus.Configuration.ModLoader
             [ParserTarget("materialType")]
             public EnumParser<ScatterMaterialType> Type
             {
-                get => _materialType ??= DeduceMaterialType(CurrentMaterial)
-                    ?? throw new Exception("The shader '<null>' is not supported.");
+                // Null when the shader has no matching ScatterMaterialType (a
+                // custom material). Export skips it and the Material node carries
+                // the shader instead.
+                get
+                {
+                    if (_materialType == null && DeduceMaterialType(CurrentMaterial) is { } type)
+                        _materialType = type;
+                    return _materialType;
+                }
                 set => _materialType = value;
             }
 
-            // Type matching the material's shader, null if there's no material to
-            // deduce from, or throws if the shader is non-null but unrecognized.
+            // Type matching the material's shader, or null if there's no material
+            // or its shader isn't one we have a loader for.
             private static ScatterMaterialType? DeduceMaterialType(Material material)
             {
                 if (material == null)
@@ -138,7 +145,7 @@ namespace Kopernicus.Configuration.ModLoader
                 if (KSPBumpedSpecular.UsesSameShader(material))
                     return ScatterMaterialType.KSPBumpedSpecular;
 
-                throw new Exception("The shader '" + (material.shader?.name ?? "<null>") + "' is not supported.");
+                return null;
             }
 
             // Custom scatter material. Initialized up front by the constructor
@@ -169,8 +176,8 @@ namespace Kopernicus.Configuration.ModLoader
 
             // Wrap an existing scatter material with the matching loader type
             // so subsequent edits preserve the material's existing textures and
-            // properties. Returns null for unknown shaders — caller must supply
-            // a loader some other way (materialType= or Material{shader=}).
+            // properties. Unknown shaders fall back to CustomMaterialLoader,
+            // which keeps the material and lets it be edited via a Material node.
             private static MaterialLoader.MaterialLoader WrapExistingMaterial(Material existing)
             {
                 if (existing == null)
@@ -197,7 +204,7 @@ namespace Kopernicus.Configuration.ModLoader
                 if (KSPBumpedSpecular.UsesSameShader(existing))
                     return new KSPBumpedSpecularLoader(existing);
 
-                return null;
+                return new CustomMaterialLoader(existing);
             }
 
             // The biome list of the landclass
@@ -489,15 +496,14 @@ namespace Kopernicus.Configuration.ModLoader
                 return new LandClassScatterLoader(value);
             }
 
-            // Build the material loader from whatever signal is available —
-            // `Material { shader = X }` wins, then an explicitly parsed
-            // materialType, then the shader of an existing stock material. A
-            // bare scatter with none of these (e.g. a Parallax placeholder)
-            // gets no material loader. The Material and StockMaterial parser
-            // targets run after this and may overwrite _material / Value.material
-            // to suit the user's intent.
             void IParserApplyEventSubscriber.Apply(ConfigNode node)
             {
+                // Build the material loader from whatever we have available.
+                // This is, in order:
+                // - An explicitly provided shader name in the material block,
+                // - materialType, if specified, otherwise,
+                // - a CustomMaterialLoader that uses the existing material.
+
                 var shaderName = node.GetNode("Material")?.GetValue("shader");
                 if (shaderName == null)
                 {
