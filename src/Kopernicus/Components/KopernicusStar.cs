@@ -542,11 +542,6 @@ namespace Kopernicus.Components
                 Double flux = Flux(flightIntegrator, star);
 
                 // And save them
-                if (flux <= 0)
-                {
-                    directSunlight = false;
-                }
-
                 solarFlux += flux;
                 if (!SolarFlux.ContainsKey(star.StarName))
                 {
