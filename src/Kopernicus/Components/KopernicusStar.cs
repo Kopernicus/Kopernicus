@@ -579,17 +579,11 @@ namespace Kopernicus.Components
         private static Double Flux(ModularFlightIntegrator fi, KopernicusStar star)
         {
             if (fi == null)
-            {
                 return 0;
-            }
             if (fi.Vessel == null || fi.Vessel.state == Vessel.State.DEAD || fi.CurrentMainBody == null)
-            {
                 return 0;
-            }
-            if (star == null)
-            {
+            if (star == null || star.sun?.scaledBody == null)
                 return 0;
-            }
 
             // Get sunVector
             Boolean directSunlight = false;
@@ -607,7 +601,7 @@ namespace Kopernicus.Components
                 directSunlight = true;
                 realDistanceToSun = scale * ScaledSpace.ScaleFactor - star.sun.Radius;
             }
-            else if (raycastHit.transform.GetComponent<ScaledMovement>().celestialBody == star.sun)
+            else if (raycastHit.transform.GetComponent<ScaledMovement>()?.celestialBody == star.sun)
             {
                 realDistanceToSun = ScaledSpace.ScaleFactor * raycastHit.distance;
                 directSunlight = true;
