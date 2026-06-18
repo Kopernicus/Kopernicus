@@ -1,5 +1,10 @@
 # Kopernicus Changelog
 
+## 247
+1. Added a series of fallback implementations to prevent old mods from not working with the new material loaders (this means if your mod didn't work with 244 forward, it should now).
+2  Fixed NRE spam with black holes lacking a sclaedbody.  Needs testing.
+3. Reworked PQSMod_OnDemandHandler to better handle when maps and textures should be unloaded.
+
 ## 246
 1. Hotfixed a material loader regression that caused issues with MPE and other mods.
 
