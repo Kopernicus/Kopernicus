@@ -542,11 +542,7 @@ namespace Kopernicus.Components
                 Double flux = Flux(flightIntegrator, star);
 
                 // And save them
-                if (flux > 0)
-                {
-                    directSunlight = true;
-                }
-                else
+                if (flux <= 0)
                 {
                     directSunlight = false;
                 }
