@@ -484,12 +484,24 @@ namespace Kopernicus.Components
             }
             else
             {
-                KopernicusStar[] orderedStars = KopernicusStar.Stars
-                    .OrderBy(s => Vector3.Distance(vessel.transform.position, s.sun.position)).ToArray();
-                if (!manualTracking && trackedSun != orderedStars[0].sun)
+                // No visible stars: track the geometrically nearest star (avoid LINQ allocs in FixedUpdate)
+                KopernicusStar nearestStar = null;
+                double nearestDistSq = double.MaxValue;
+                Vector3d vesselPos = vessel.transform.position;
+                for (int i = 0; i < KopernicusStar.Stars.Count; i++)
                 {
-                    trackedSunIndex = orderedStars[0].sun.flightGlobalsIndex;
-                    trackedSun = orderedStars[0].sun;
+                    KopernicusStar star = KopernicusStar.Stars[i];
+                    double distSq = Vector3d.SqrMagnitude(star.sun.position - vesselPos);
+                    if (distSq < nearestDistSq)
+                    {
+                        nearestDistSq = distSq;
+                        nearestStar = star;
+                    }
+                }
+                if (nearestStar != null && !manualTracking && trackedSun != nearestStar.sun)
+                {
+                    trackedSunIndex = nearestStar.sun.flightGlobalsIndex;
+                    trackedSun = nearestStar.sun;
                     SolarPanel.SetTrackedBody(trackedSun);
                 }
             }
@@ -579,7 +591,7 @@ namespace Kopernicus.Components
 
             // get wear factor (time based output degradation)
             wearFactor = 1.0;
-            if (timeEfficCurve?.Curve.keys.Length > 1)
+            if (timeEfficCurve?.Curve.length > 1)
                 wearFactor = Clamp(timeEfficCurve.Evaluate((float)((Planetarium.GetUniversalTime() - launchUT) / 3600.0)), 0.0, 1.0);
 
             // get final output rate in EC/s
@@ -1157,7 +1169,7 @@ namespace Kopernicus.Components
             public override FloatCurve GetTimeCurve()
             {
 
-                if (panelModule.timeEfficCurve?.Curve.keys.Length > 1)
+                if (panelModule.timeEfficCurve?.Curve.length > 1)
                 {
                     FloatCurve timeCurve = new FloatCurve();
                     foreach (Keyframe key in panelModule.timeEfficCurve.Curve.keys)
