@@ -447,7 +447,10 @@ namespace Kopernicus.Components
                 return;
             }
 
-            Vessel vesselActive = FlightGlobals.ActiveVessel;
+            Vessel vesselActive = FlightGlobals.ActiveVessel ?? vessel;
+            if (vesselActive == null)
+                return;
+
             Vector3d position = VesselPosition(vesselActive);
             List<KopernicusStar> starList = new List<KopernicusStar>();
 
@@ -1173,6 +1176,9 @@ namespace Kopernicus.Components
                 if (sunCatcherPosition == null)
                     sunCatcherPosition = panelModule.part.FindModelTransform(panelModule.secondaryTransformName);
 
+                if (sunCatcherPosition == null)
+                    return occludingFactor;
+
                 Physics.Raycast(sunCatcherPosition.position + (sunDir * panelModule.raycastOffset), sunDir, out raycastHit, 10000f, occlusionLayerMask);
 
                 if (raycastHit.collider != null)
@@ -1198,6 +1204,10 @@ namespace Kopernicus.Components
             // we use the current panel orientation, only doing it ourself when analytic = true
             public override double GetCosineFactor(Vector3d sunDir)
             {
+                // trackingDotTransform can be null for a few FixedUpdates after vessel unpack
+                if (panelModule.trackingDotTransform == null)
+                    return 0.0;
+
                 switch (panelModule.panelType)
                 {
                     case ModuleDeployableSolarPanel.PanelType.FLAT:
