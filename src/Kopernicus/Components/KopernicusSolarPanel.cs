@@ -728,8 +728,9 @@ namespace Kopernicus.Components
 
             // for very small bodies the analytic method is very unreliable at high latitudes
             // we use a physic raycast (a lot slower)
+            // Pass body as ignoreBody: hitting the target CB's own scaled mesh is not occlusion.
             if (Landed(vessel) && vessel.mainBody.Radius < 100000.0 && (vessel.latitude < -45.0 || vessel.latitude > 45.0))
-                return RaytracePhysic(vessel, vesselPos, body.position, body.Radius);
+                return RaytracePhysic(vessel, vesselPos, body.position, body.Radius, body);
 
             // check if the ray intersect one of the provided bodies
             foreach (CelestialBody occludingBody in occludingBodies)
@@ -742,7 +743,14 @@ namespace Kopernicus.Components
         }
 
         private static int planetaryLayerMask = int.MaxValue;
+
         public static bool RaytracePhysic(Vessel vessel, Vector3d vesselPos, Vector3d end, double endNegOffset = 0.0)
+        {
+            return RaytracePhysic(vessel, vesselPos, end, endNegOffset, null);
+        }
+
+        /// <summary>Return true if there is no CelestialBody between the vessel position and the 'end' point. Hits on <paramref name="ignoreBody"/> are treated as reaching the ray target.</summary>
+        public static bool RaytracePhysic(Vessel vessel, Vector3d vesselPos, Vector3d end, double endNegOffset, CelestialBody ignoreBody)
         {
             // for unloaded vessels, position in scaledSpace is 1 fixedUpdate frame desynchronized :
             if (!vessel.loaded)
@@ -752,9 +760,39 @@ namespace Kopernicus.Components
             ScaledSpace.LocalToScaledSpace(ref vesselPos);
             ScaledSpace.LocalToScaledSpace(ref end);
             Vector3d dir = end - vesselPos;
-            if (endNegOffset > 0) dir -= dir.normalized * (endNegOffset * ScaledSpace.InverseScaleFactor);
+            if (endNegOffset > 0.0)
+                dir -= dir.normalized * (endNegOffset * ScaledSpace.InverseScaleFactor);
 
-            return !Physics.Raycast(vesselPos, dir, (float)dir.magnitude, planetaryLayerMask);
+            float maxDist = (float)dir.magnitude;
+            if (maxDist <= 0f)
+                return true;
+
+            if (!Physics.Raycast(vesselPos, dir, out RaycastHit hit, maxDist, planetaryLayerMask))
+                return true;
+
+            // Hitting the target body itself means the line of sight reached it - not occlusion.
+            // Same approach as KopernicusStar.CalculateFluxAt and Kerbalism Sim.RaytracePhysic.
+            if (ignoreBody != null && IsScaledBodyCollider(hit.collider, ignoreBody))
+                return true;
+
+            return false;
+        }
+
+        /// <summary>True if <paramref name="col"/> belongs to <paramref name="body"/>'s scaled-space hierarchy.</summary>
+        static bool IsScaledBodyCollider(Collider col, CelestialBody body)
+        {
+            if (col == null || body == null || body.scaledBody == null)
+                return false;
+
+            Transform root = body.scaledBody.transform;
+            Transform t = col.transform;
+            while (t != null)
+            {
+                if (t == root)
+                    return true;
+                t = t.parent;
+            }
+            return false;
         }
 
         public static bool RayAvoidBody(Vector3d start, Vector3d dir, double dist, CelestialBody body)
