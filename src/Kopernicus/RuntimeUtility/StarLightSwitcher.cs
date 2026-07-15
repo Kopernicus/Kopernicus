@@ -53,7 +53,15 @@ namespace Kopernicus.RuntimeUtility
         {
             // Set star as active star
             Debug.Log("[Kopernicus]: StarLightSwitcher: Set active star => " + CelestialBody.bodyName);
-            KopernicusStar.Current = KopernicusStar.Stars.Find(s => s.sun == CelestialBody);
+            KopernicusStar.Current = null;
+            for (int i = 0; i < KopernicusStar.Stars.Count; i++)
+            {
+                if (KopernicusStar.Stars[i].sun == CelestialBody)
+                {
+                    KopernicusStar.Current = KopernicusStar.Stars[i];
+                    break;
+                }
+            }
 
             // Set custom powerCurve for solar panels and reset Radiators
             if (FlightGlobals.ActiveVessel)
