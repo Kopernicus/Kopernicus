@@ -1204,15 +1204,16 @@ namespace Kopernicus.Components
             // we use the current panel orientation, only doing it ourself when analytic = true
             public override double GetCosineFactor(Vector3d sunDir)
             {
-                // trackingDotTransform can be null for a few FixedUpdates after vessel unpack
-                if (panelModule.trackingDotTransform == null)
-                    return 0.0;
-
                 switch (panelModule.panelType)
                 {
                     case ModuleDeployableSolarPanel.PanelType.FLAT:
+                        // trackingDotTransform can be null for a few FixedUpdates after vessel unpack
+                        if (panelModule.trackingDotTransform == null)
+                            return 0.0;
                         return Math.Max(Vector3d.Dot(sunDir, panelModule.trackingDotTransform.forward), 0.0);
                     case ModuleDeployableSolarPanel.PanelType.CYLINDRICAL:
+                        if (panelModule.trackingDotTransform == null)
+                            return 0.0;
                         return Math.Max((1.0 - Math.Abs(Vector3d.Dot(sunDir, panelModule.trackingDotTransform.forward))) * (1.0 / Math.PI), 0.0);
                     case ModuleDeployableSolarPanel.PanelType.SPHERICAL:
                         return 0.25;
