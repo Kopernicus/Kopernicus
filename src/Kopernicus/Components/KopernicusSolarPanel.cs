@@ -686,6 +686,7 @@ namespace Kopernicus.Components
                     case "USSolarSwitch": SolarPanel = new UniversalStorage2Panel(); break;
                     case "ModuleROSolar": SolarPanel = new ROConfigurablePanel(); break;
                     case "ModuleROSolarPanel": SolarPanel = new ROConfigurablePanel(); break;
+                    case "ModuleDualAxisSolarPanel": SolarPanel = new DualAxisPanel(); break;
                     default:
                         if (pm is ModuleDeployableSolarPanel)
                             SolarPanel = new StockPanel();
@@ -2034,6 +2035,421 @@ namespace Kopernicus.Components
                         deployMethod.Invoke(panelModule, new object[] { true });
                     else if (state == PanelState.Retracted)
                         deployMethod.Invoke(panelModule, new object[] { false });
+                }
+            }
+        }
+        #endregion
+
+        #region DualAxisSolar support (ModuleDualAxisSolarPanel)
+        // Handles DualAxisSolar by disabling its update loop and reflecting its config into Kopernicus.
+        private class DualAxisPanel : SupportedPanel<PartModule>
+        {
+            private bool isTracking;
+            private bool trackYawBeforePitch;
+            private string yawPivotName;
+            private string pitchPivotName;
+            private string pitchRotationAxis;
+            private string secondaryTransformName;
+            private string pivotName;
+            private string animationName;
+            private string resourceName;
+            private float pitchMin;
+            private float pitchMax;
+            private float pitchTrackSpeed;
+            private float pitchAngleMultiplier;
+            private float pitchAngleOffset;
+            private float yawAlignThreshold;
+            private float pitchAngleSign;
+            private float trackingSpeed;
+            private float raycastOffset;
+            private double chargeRate;
+            private bool pitchMinWhenBelowHorizon;
+            private bool useAnimation;
+            private bool retractable;
+            private ModuleDeployableSolarPanel deployablePanel;
+            private Transform yawPivot;
+            private Transform pitchPivot;
+            private Transform sunCatcher;
+            private Transform aimTransform;
+            private Quaternion pitchBaseLocalRotation = Quaternion.identity;
+            private float smoothedPitchAngle;
+            private bool pitchBaseCaptured;
+            private bool pitchTrackingActive;
+            private bool deployAnimFrozen;
+            private Animation partAnimation;
+
+            public override void OnLoad(KopernicusSolarPanel fixerModule, PartModule targetModule)
+            {
+                this.fixerModule = fixerModule;
+                panelModule = targetModule;
+                deployablePanel = targetModule as ModuleDeployableSolarPanel;
+            }
+
+            public override bool OnStart(bool initialized, ref double nominalRate)
+            {
+                LoadReflectedFields();
+                ResolveTransforms();
+                if (sunCatcher == null)
+                {
+                    Debug.Log($"Could not find suncatcher transform `{secondaryTransformName}` in part `{panelModule.part.name}`");
+                    return false;
+                }
+
+                fixerModule.resourceName = string.IsNullOrEmpty(resourceName) ? "ElectricCharge" : resourceName;
+                nominalRate = chargeRate;
+                ZeroOutRate();
+                HideTargetModuleFields();
+                smoothedPitchAngle = 0f;
+                pitchTrackingActive = !trackYawBeforePitch;
+                return true;
+            }
+
+            private static void HideTargetModuleFields(PartModule module)
+            {
+                foreach (string fieldName in new[] { "sunAOA", "flowRate", "status" })
+                {
+                    try
+                    {
+                        BaseField field = module.Fields[fieldName];
+                        field.guiActive = false;
+                        field.guiActiveEditor = false;
+                    }
+                    catch
+                    {
+                        // field not present on this part module
+                    }
+                }
+            }
+
+            private void HideTargetModuleFields() => HideTargetModuleFields(panelModule);
+
+            public override void OnUpdate()
+            {
+                if (HighLogic.LoadedSceneIsEditor)
+                    return;
+
+                PanelState state = GetState();
+                if (!(state == PanelState.Extended || state == PanelState.ExtendedFixed || state == PanelState.Static))
+                    return;
+
+                if (!isTracking || yawPivot == null || pitchPivot == null)
+                    return;
+
+                if (fixerModule.trackedSun == null)
+                    return;
+
+                FreezeDeployAnimation();
+                Vector3 sunDir = (fixerModule.trackedSun.position - panelModule.part.transform.position).normalized;
+                ApplyYawTracking(sunDir);
+
+                if (trackYawBeforePitch && !pitchTrackingActive)
+                {
+                    HoldDeployPitchPose();
+                    if (GetYawAlignmentError(sunDir) <= yawAlignThreshold)
+                        pitchTrackingActive = true;
+                    return;
+                }
+
+                ApplyPitchTracking(sunDir);
+            }
+
+            public override double GetOccludedFactor(Vector3d sunDir, out string occludingPart)
+            {
+                double occludingFactor = 1.0;
+                occludingPart = null;
+                RaycastHit raycastHit;
+                Transform raycastTransform = sunCatcher ?? aimTransform;
+                if (raycastTransform == null)
+                    return 0.0;
+
+                Physics.Raycast(raycastTransform.position + (sunDir * raycastOffset), sunDir, out raycastHit, 10000f, occlusionLayerMask);
+
+                if (raycastHit.collider != null)
+                {
+                    Part blockingPart = Part.GetComponentUpwards<Part>(raycastHit.collider.gameObject);
+                    if (blockingPart != null)
+                    {
+                        if (blockingPart == panelModule.part)
+                            return occludingFactor;
+
+                        occludingPart = blockingPart.partInfo.title;
+                    }
+                    else
+                    {
+                        occludingPart = "Environment";
+                    }
+                    occludingFactor = 0.0;
+                }
+                return occludingFactor;
+            }
+
+            public override double GetCosineFactor(Vector3d sunDir)
+            {
+                Transform cosineTransform = sunCatcher ?? aimTransform;
+                if (cosineTransform == null)
+                    return 0.0;
+                return Math.Max(Vector3d.Dot(sunDir, cosineTransform.forward), 0.0);
+            }
+
+            public override PanelState GetState()
+            {
+                if (fixerModule.state == PanelState.Failure || fixerModule.state == PanelState.Broken)
+                    return fixerModule.state;
+
+                if (deployablePanel == null || !useAnimation)
+                    return PanelState.Static;
+
+                switch (deployablePanel.deployState)
+                {
+                    case ModuleDeployablePart.DeployState.EXTENDED:
+                        if (!IsRetractable()) return PanelState.ExtendedFixed;
+                        return PanelState.Extended;
+                    case ModuleDeployablePart.DeployState.RETRACTED: return PanelState.Retracted;
+                    case ModuleDeployablePart.DeployState.RETRACTING: return PanelState.Retracting;
+                    case ModuleDeployablePart.DeployState.EXTENDING: return PanelState.Extending;
+                    case ModuleDeployablePart.DeployState.BROKEN: return PanelState.Broken;
+                }
+                return PanelState.Unknown;
+            }
+
+            public override bool IsTracking => isTracking;
+
+            public override void SetTrackedBody(CelestialBody body)
+            {
+                fixerModule.trackedSun = body;
+            }
+
+            public override bool IsRetractable() { return retractable; }
+
+            public override void Break(bool isBroken)
+            {
+                if (isBroken)
+                    panelModule.part.FindModelComponents<Animation>().ForEach(k => k.Stop());
+            }
+
+            public override void Extend()
+            {
+                if (deployablePanel == null)
+                    return;
+
+                deployablePanel.enabled = true;
+                deployablePanel.Extend();
+            }
+
+            public override void Retract()
+            {
+                if (deployablePanel == null || !retractable)
+                    return;
+
+                deployablePanel.enabled = true;
+                deployablePanel.Retract();
+            }
+
+            public override void SetDeployedStateOnLoad(PanelState state)
+            {
+                if (deployablePanel == null)
+                    return;
+
+                switch (state)
+                {
+                    case PanelState.Retracted:
+                        deployablePanel.deployState = ModuleDeployablePart.DeployState.RETRACTED;
+                        break;
+                    case PanelState.Extended:
+                    case PanelState.ExtendedFixed:
+                        deployablePanel.deployState = ModuleDeployablePart.DeployState.EXTENDED;
+                        break;
+                }
+            }
+
+            public override bool SupportProtoAutomation(ProtoPartModuleSnapshot protoModule)
+            {
+                switch (GetString(protoModule, "state"))
+                {
+                    case "Retracted":
+                    case "Extended":
+                    case "ExtendedFixed":
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            private void LoadReflectedFields()
+            {
+                isTracking = ReflectionValue<bool>(panelModule, "isTracking");
+                trackYawBeforePitch = ReflectionValue<bool>(panelModule, "trackYawBeforePitch");
+                yawPivotName = ReflectionValue<string>(panelModule, "yawPivotName");
+                pitchPivotName = ReflectionValue<string>(panelModule, "pitchPivotName");
+                pitchRotationAxis = ReflectionValue<string>(panelModule, "pitchRotationAxis");
+                secondaryTransformName = ReflectionValue<string>(panelModule, "secondaryTransformName");
+                pivotName = ReflectionValue<string>(panelModule, "pivotName");
+                animationName = ReflectionValue<string>(panelModule, "animationName");
+                resourceName = ReflectionValue<string>(panelModule, "resourceName");
+                pitchMin = ReflectionValue<float>(panelModule, "pitchMin");
+                pitchMax = ReflectionValue<float>(panelModule, "pitchMax");
+                pitchTrackSpeed = ReflectionValue<float>(panelModule, "pitchTrackSpeed");
+                pitchAngleMultiplier = ReflectionValue<float>(panelModule, "pitchAngleMultiplier");
+                pitchAngleOffset = ReflectionValue<float>(panelModule, "pitchAngleOffset");
+                yawAlignThreshold = ReflectionValue<float>(panelModule, "yawAlignThreshold");
+                pitchAngleSign = ReflectionValue<float>(panelModule, "pitchAngleSign");
+                trackingSpeed = ReflectionValue<float>(panelModule, "trackingSpeed");
+                raycastOffset = ReflectionValue<float>(panelModule, "raycastOffset");
+                chargeRate = ReflectionValue<float>(panelModule, "chargeRate");
+                pitchMinWhenBelowHorizon = ReflectionValue<bool>(panelModule, "pitchMinWhenBelowHorizon");
+                useAnimation = deployablePanel == null || deployablePanel.useAnimation;
+                retractable = deployablePanel != null && deployablePanel.retractable;
+            }
+
+            private void ZeroOutRate()
+            {
+                if (panelModule.resHandler != null && panelModule.resHandler.outputResources.Count > 0)
+                {
+                    foreach (var res in panelModule.resHandler.outputResources) res.rate = 0.0;
+                }
+            }
+
+            private void ResolveTransforms()
+            {
+                string yawName = string.IsNullOrEmpty(yawPivotName) ? pivotName : yawPivotName;
+                yawPivot = string.IsNullOrEmpty(yawName) ? null : panelModule.part.FindModelTransform(yawName);
+                pitchPivot = string.IsNullOrEmpty(pitchPivotName) ? null : panelModule.part.FindModelTransform(pitchPivotName);
+                string aimName = string.IsNullOrEmpty(secondaryTransformName) ? "sunCatcher" : secondaryTransformName;
+                sunCatcher = panelModule.part.FindModelTransform(aimName);
+                aimTransform = sunCatcher;
+
+                if (yawPivot == null || pitchPivot == null || aimTransform == null)
+                    Debug.LogWarning($"[KopernicusSolarPanel] {panelModule.part.partInfo.name}: missing yaw={yawName}, pitch={pitchPivotName}, or aim={aimName}");
+            }
+
+            private void FreezeDeployAnimation()
+            {
+                if (deployAnimFrozen || string.IsNullOrEmpty(animationName))
+                    return;
+
+                if (partAnimation == null)
+                    partAnimation = panelModule.part.GetComponentInChildren<Animation>();
+
+                if (partAnimation == null)
+                {
+                    deployAnimFrozen = true;
+                    return;
+                }
+
+                AnimationState clip = partAnimation[animationName];
+                if (clip != null)
+                {
+                    clip.normalizedTime = 1f;
+                    partAnimation.Sample();
+                    clip.speed = 0f;
+                    clip.enabled = false;
+                }
+
+                partAnimation.Stop();
+                deployAnimFrozen = true;
+                CapturePitchBaseRotation();
+            }
+
+            private void CapturePitchBaseRotation()
+            {
+                if (pitchPivot == null || pitchBaseCaptured)
+                    return;
+
+                pitchBaseLocalRotation = pitchPivot.localRotation;
+                pitchBaseCaptured = true;
+            }
+
+            private void HoldDeployPitchPose()
+            {
+                if (!pitchBaseCaptured)
+                    CapturePitchBaseRotation();
+
+                smoothedPitchAngle = 0f;
+                if (pitchPivot != null)
+                    pitchPivot.localRotation = pitchBaseLocalRotation;
+            }
+
+            private void ApplyYawTracking(Vector3 sunDirWorld)
+            {
+                if (yawPivot == null || aimTransform == null)
+                    return;
+
+                Vector3 axis = yawPivot.up;
+                Vector3 sunFlat = Vector3.ProjectOnPlane(sunDirWorld, axis);
+                Vector3 aimFlat = Vector3.ProjectOnPlane(aimTransform.forward, axis);
+                if (sunFlat.sqrMagnitude < 1e-8f || aimFlat.sqrMagnitude < 1e-8f)
+                    return;
+
+                float error = Vector3.SignedAngle(aimFlat.normalized, sunFlat.normalized, axis);
+                float speed = Mathf.Max(1f, trackingSpeed * 60f);
+                float step = Mathf.Clamp(error, -speed * Time.deltaTime, speed * Time.deltaTime);
+                yawPivot.Rotate(axis, step, Space.World);
+            }
+
+            private float GetYawAlignmentError(Vector3 sunDirWorld)
+            {
+                if (yawPivot == null || aimTransform == null)
+                    return 180f;
+
+                Vector3 axis = yawPivot.up;
+                Vector3 sunFlat = Vector3.ProjectOnPlane(sunDirWorld, axis);
+                Vector3 aimFlat = Vector3.ProjectOnPlane(aimTransform.forward, axis);
+                if (sunFlat.sqrMagnitude < 1e-8f || aimFlat.sqrMagnitude < 1e-8f)
+                    return 0f;
+
+                return Vector3.Angle(sunFlat.normalized, aimFlat.normalized);
+            }
+
+            private void ApplyPitchTracking(Vector3 sunDirWorld)
+            {
+                if (pitchPivot == null || yawPivot == null)
+                    return;
+
+                if (!pitchBaseCaptured)
+                    CapturePitchBaseRotation();
+
+                float target = ComputeTargetPitchAngle(sunDirWorld);
+                float step = Mathf.Max(1f, pitchTrackSpeed) * Time.deltaTime;
+                smoothedPitchAngle = Mathf.MoveTowards(smoothedPitchAngle, target, step);
+
+                Vector3 axis = GetLocalAxisVector(pitchRotationAxis);
+                pitchPivot.localRotation = pitchBaseLocalRotation *
+                    Quaternion.AngleAxis(smoothedPitchAngle * pitchAngleSign, axis);
+            }
+
+            private float ComputeTargetPitchAngle(Vector3 sunDirWorld)
+            {
+                Vector3 localSun = yawPivot.InverseTransformDirection(sunDirWorld.normalized);
+                float elevation = Mathf.Atan2(
+                    localSun.y,
+                    new Vector2(localSun.x, localSun.z).magnitude) * Mathf.Rad2Deg;
+                if (pitchMinWhenBelowHorizon && elevation < 0f)
+                    return pitchMin;
+
+                return Mathf.Clamp((elevation * pitchAngleMultiplier) + pitchAngleOffset, pitchMin, pitchMax);
+            }
+
+            private static Vector3 GetLocalAxisVector(string axisName)
+            {
+                switch (axisName?.Trim().ToUpperInvariant())
+                {
+                    case "X":
+                    case "+X":
+                        return Vector3.right;
+                    case "-X":
+                        return Vector3.left;
+                    case "Y":
+                    case "+Y":
+                        return Vector3.up;
+                    case "-Y":
+                        return Vector3.down;
+                    case "Z":
+                    case "+Z":
+                        return Vector3.forward;
+                    case "-Z":
+                        return Vector3.back;
+                    default:
+                        return Vector3.right;
                 }
             }
         }
