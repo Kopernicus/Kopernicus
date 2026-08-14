@@ -90,6 +90,24 @@ namespace Kopernicus.Configuration.DiscoverableObjects
 
         public FloatCurve Size { get; set; }
 
+        // The smallest size class this group generates. The Size curve maps its [0,1] output onto
+        // the MinClass..MaxClass range, so narrowing the range here concentrates the distribution
+        // instead of spreading it over every class the game defines.
+        [ParserTarget("minClass")]
+        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
+        public EnumParser<UntrackedObjectClass> MinClass = UntrackedObjectClass.A;
+
+        // The largest size class this group generates. Defaults to I so the class spread matches
+        // what Kopernicus has always produced; stock's own spawner only goes up to E by default.
+        [ParserTarget("maxClass")]
+        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
+        public EnumParser<UntrackedObjectClass> MaxClass = UntrackedObjectClass.I;
+
+        // Physical radius per size class, in meters. Optional - any class left out keeps the stock
+        // ModuleAsteroid scaling. See ClassRadiusLoader for why this exists.
+        [ParserTarget("ClassRadius")]
+        public ClassRadiusLoader ClassRadius { get; set; }
+
         public int InternalOrderID { get; set; }
     }
 }

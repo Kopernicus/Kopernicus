@@ -276,7 +276,7 @@ namespace Kopernicus.RuntimeUtility
             double lifetime = Random.Range(asteroid.MinUntrackedLifetime, asteroid.MaxUntrackedLifetime) * 24d * 60d * 60d;
             ;
             double maxLifetime = asteroid.MaxUntrackedLifetime * 24d * 60d * 60d;
-            UntrackedObjectClass size = (UntrackedObjectClass)(Int32)(asteroid.Size.Evaluate(Random.Range(0f, 1f)) * Enum.GetNames(typeof(UntrackedObjectClass)).Length);
+            UntrackedObjectClass size = SelectClass(asteroid);
 
             // Spawn
             ConfigNode vessel = ProtoVessel.CreateVesselNode(
@@ -311,6 +311,26 @@ namespace Kopernicus.RuntimeUtility
             Debug.Log("[Kopernicus] New object found near " + body.name + ": " + protoVessel.vesselName + "!");
         }
 
+        // Picks the size class for a new object by mapping the group's Size curve onto its
+        // [minClass, maxClass] range. The result is clamped rather than cast straight from the
+        // curve: a curve that evaluates to exactly 1 used to produce an out-of-range enum value,
+        // which stock then turned into a prefab URL ("Procedural/PA_9") that doesn't resolve.
+        private static UntrackedObjectClass SelectClass(Asteroid asteroid)
+        {
+            Int32 minIndex = (Int32)asteroid.MinClass.Value;
+            Int32 maxIndex = (Int32)asteroid.MaxClass.Value;
+            if (maxIndex < minIndex)
+            {
+                Int32 swap = minIndex;
+                minIndex = maxIndex;
+                maxIndex = swap;
+            }
+
+            Single roll = Mathf.Clamp01(asteroid.Size.Evaluate(Random.Range(0f, 1f)));
+            Int32 index = minIndex + Mathf.FloorToInt(roll * (maxIndex - minIndex + 1));
+            return (UntrackedObjectClass)Mathf.Clamp(index, minIndex, maxIndex);
+        }
+
         // Asteroid Spawner
         private IEnumerator<WaitForSecondsRealtime> AsteroidDaemon(Asteroid asteroidGroup)
         {
@@ -331,6 +351,66 @@ namespace Kopernicus.RuntimeUtility
         }
 
         public static string LaunchedFromName(Asteroid asteroid) => $"AST-{asteroid.Name}";
+
+        // Maps the launch site name stamped onto every object we spawn back to the group that
+        // spawned it. Vessel.launchedFrom is what stock persists for us - a non persistent
+        // PartModule field written into the spawned vessel node would survive the first load and
+        // then be dropped the next time the game saved, so this is the only channel that holds.
+        // Built lazily off the config rather than in AsteroidSetup so that a vessel loading early
+        // in a scene can't beat this scenario's Start() to it.
+        private static Dictionary<String, Asteroid> _groupsByLaunchSite;
+        private static Int32 _groupsBuiltFor = -1;
+
+        public static Asteroid FindGroup(String launchedFrom)
+        {
+            if (String.IsNullOrEmpty(launchedFrom))
+            {
+                return null;
+            }
+
+            if (_groupsByLaunchSite == null || _groupsBuiltFor != Asteroids.Count)
+            {
+                _groupsByLaunchSite = new Dictionary<String, Asteroid>();
+                _groupsBuiltFor = Asteroids.Count;
+                foreach (Asteroid asteroid in Asteroids)
+                {
+                    ValidateClassRadius(asteroid);
+                    _groupsByLaunchSite[LaunchedFromName(asteroid)] = asteroid;
+                }
+            }
+
+            return _groupsByLaunchSite.TryGetValue(launchedFrom, out Asteroid group) ? group : null;
+        }
+
+        // Warns about ClassRadius ranges that can't produce a usable radius. Done once, when the
+        // lookup is built, so a broken config shows up in the log once instead of per object.
+        private static void ValidateClassRadius(Asteroid asteroid)
+        {
+            if (asteroid.ClassRadius == null)
+            {
+                return;
+            }
+
+            foreach (UntrackedObjectClass sizeClass in Enum.GetValues(typeof(UntrackedObjectClass)))
+            {
+                Location.RandomRangeLoader range = asteroid.ClassRadius.Get(sizeClass);
+                if (range == null)
+                {
+                    continue;
+                }
+
+                if (range.MinValue.Value <= 0f || range.MaxValue.Value <= 0f)
+                {
+                    Debug.LogWarning("[Kopernicus] Asteroid group " + asteroid.Name + " has a non-positive ClassRadius for class " +
+                                     sizeClass + "; that class falls back to the stock scaling.");
+                }
+                else if (range.MaxValue.Value < range.MinValue.Value)
+                {
+                    Debug.LogWarning("[Kopernicus] Asteroid group " + asteroid.Name +
+                                     " has ClassRadius minValue > maxValue for class " + sizeClass + ".");
+                }
+            }
+        }
 
         private Location.AroundLoader[][] _aroundLoaders;
         private Location.NearbyLoader[][] _nearbyLoaders;
