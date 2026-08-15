@@ -312,9 +312,7 @@ namespace Kopernicus.RuntimeUtility
         }
 
         // Picks the size class for a new object by mapping the group's Size curve onto its
-        // [minClass, maxClass] range. The result is clamped rather than cast straight from the
-        // curve: a curve that evaluates to exactly 1 used to produce an out-of-range enum value,
-        // which stock then turned into a prefab URL ("Procedural/PA_9") that doesn't resolve.
+        // [minClass, maxClass] range.
         private static UntrackedObjectClass SelectClass(Asteroid asteroid)
         {
             Int32 minIndex = (Int32)asteroid.MinClass.Value;

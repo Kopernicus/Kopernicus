@@ -29,20 +29,14 @@ using Kopernicus.ConfigParser.Enumerations;
 
 namespace Kopernicus.Configuration.DiscoverableObjects
 {
-    // Physical radius ranges per size class, in meters.
+    // Radius configuration for asteroid size classes.
     //
-    // Stock derives the radius of a spawned object from the ProceduralAsteroid prefab that its
-    // UntrackedObjectClass maps to - Resources.Load("Procedural/PA_<class>") - scaled by the
-    // minRadiusMultiplier/maxRadiusMultiplier fields on ModuleAsteroid. Those multipliers live on
-    // the part, so every class shares them, and the radii baked into the prefabs (~3.2m for class
-    // A up to ~193m for class I) are the only thing separating one class from another. Once the
-    // multiplier spread is wider than the ~1.67x gap between adjacent classes, the classes overlap
-    // and the class letter stops saying anything useful about the object's size.
+    // Normally, the asteroid size multipliers is controlled by the stock prefab for each individual
+    // size class. This config loader allows you to specify what radii you want for each asteroid
+    // class, then Kopernicus take care of making that apply to any asteroids spawned from that
+    // class.
     //
-    // Giving a class a range here lets a config state the radius it actually wants. Kopernicus
-    // divides out the prefab radius and hands stock the multipliers that produce that range, so
-    // the roll still happens in stock code off the persisted seed. Classes left unset are not
-    // touched at all and keep the stock scaling.
+    // Actually picking a number is still done by stock code and unset classes keep the same scaling as stock.
     [RequireConfigType(ConfigType.Node)]
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]

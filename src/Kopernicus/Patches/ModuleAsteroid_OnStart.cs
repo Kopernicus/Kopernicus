@@ -14,7 +14,14 @@ namespace Kopernicus.Patches;
 // PartModule fields shared by every class. Writing the multipliers here, before the original
 // method runs, lets a config ask for a radius in meters per class without touching stock's own
 // logic: the roll still happens in stock code, off Random.InitState(seed) with the persisted
-// seed, so an object's size stays a pure function of its seed and the config.
+// Apply configured asteroid class radius ranges to the asteroid itself.
+//
+// Stock computes the radius in ModuleAsteroid.OnStart as
+//    radius = paPrefab.radius * Random.Range(minRadiusMultiplier, maxRadiusMultiplier)
+// We override the min/max radius multipliers here in the prefab to be
+//    minRadiusMultiplier = paPrefab.radius / minRadius;
+//    maxRadiusMultiplier = paPrefab.radius / maxRadius;
+// which makes stock code pick from the radius range we want it to.
 [HarmonyPatch(typeof(ModuleAsteroid), nameof(ModuleAsteroid.OnStart))]
 static class ModuleAsteroid_OnStart
 {
