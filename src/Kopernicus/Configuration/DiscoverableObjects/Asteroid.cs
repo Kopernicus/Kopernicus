@@ -88,6 +88,8 @@ namespace Kopernicus.Configuration.DiscoverableObjects
             set { Size = Utility.ListToFloatCurve(value); }
         }
 
+        // A float curve that governs how likely each asteroid size and class is to be generated.
+        // It should range from 0 to 1, with 0 mapping to MinClass and 1 to MaxClass.
         public FloatCurve Size { get; set; }
 
         // The smallest size class this group generates. The Size curve maps its [0,1] output onto
