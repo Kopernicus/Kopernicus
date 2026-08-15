@@ -350,15 +350,19 @@ namespace Kopernicus.RuntimeUtility
 
         public static string LaunchedFromName(Asteroid asteroid) => $"AST-{asteroid.Name}";
 
-        // Maps the launch site name stamped onto every object we spawn back to the group that
-        // spawned it. Vessel.launchedFrom is what stock persists for us - a non persistent
-        // PartModule field written into the spawned vessel node would survive the first load and
-        // then be dropped the next time the game saved, so this is the only channel that holds.
-        // Built lazily off the config rather than in AsteroidSetup so that a vessel loading early
-        // in a scene can't beat this scenario's Start() to it.
-        private static Dictionary<String, Asteroid> _groupsByLaunchSite;
-        private static Int32 _groupsBuiltFor = -1;
+        // Maps back to asteroid group config, keyed by the string LaunchedFromName produces for them - "AST-<group name>".
+        // We use the stock Vessel.launchedFrom field to store the group key on every asteroid instance we spawn.
+        private static readonly Dictionary<String, Asteroid> AsteroidsByLaunchedFrom = new Dictionary<String, Asteroid>();
 
+        // Registers a group parsed from config. Called by Configuration.Loader as it loads them.
+        public static void RegisterAsteroidGroup(Asteroid asteroid)
+        {
+            Asteroids.Add(asteroid);
+            AsteroidsByLaunchedFrom[LaunchedFromName(asteroid)] = asteroid;
+            ValidateClassRadius(asteroid);
+        }
+
+        // The group that spawned the given vessel, or null if we didn't spawn it
         public static Asteroid FindGroup(String launchedFrom)
         {
             if (String.IsNullOrEmpty(launchedFrom))
@@ -366,22 +370,11 @@ namespace Kopernicus.RuntimeUtility
                 return null;
             }
 
-            if (_groupsByLaunchSite == null || _groupsBuiltFor != Asteroids.Count)
-            {
-                _groupsByLaunchSite = new Dictionary<String, Asteroid>();
-                _groupsBuiltFor = Asteroids.Count;
-                foreach (Asteroid asteroid in Asteroids)
-                {
-                    ValidateClassRadius(asteroid);
-                    _groupsByLaunchSite[LaunchedFromName(asteroid)] = asteroid;
-                }
-            }
-
-            return _groupsByLaunchSite.TryGetValue(launchedFrom, out Asteroid group) ? group : null;
+            return AsteroidsByLaunchedFrom.TryGetValue(launchedFrom, out Asteroid group) ? group : null;
         }
 
-        // Warns about ClassRadius ranges that can't produce a usable radius. Done once, when the
-        // lookup is built, so a broken config shows up in the log once instead of per object.
+        // Warns about ClassRadius ranges that can't produce a usable radius, at load time, so a
+        // broken config shows up in the log once instead of on every object it spawns.
         private static void ValidateClassRadius(Asteroid asteroid)
         {
             if (asteroid.ClassRadius == null)

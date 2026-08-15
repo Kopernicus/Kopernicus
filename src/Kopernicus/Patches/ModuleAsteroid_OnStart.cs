@@ -7,20 +7,13 @@ using UnityEngine;
 
 namespace Kopernicus.Patches;
 
-// Applies the per-class radius ranges from an asteroid group's ClassRadius node.
-// Stock computes the object's radius in ModuleAsteroid.OnStart as
-//   radius = paPrefab.radius * Random.Range(minRadiusMultiplier, maxRadiusMultiplier)
-// where paPrefab.radius is baked into the PA_<class> Unity prefab and the two multipliers are
-// PartModule fields shared by every class. Writing the multipliers here, before the original
-// method runs, lets a config ask for a radius in meters per class without touching stock's own
-// logic: the roll still happens in stock code, off Random.InitState(seed) with the persisted
 // Apply configured asteroid class radius ranges to the asteroid itself.
 //
 // Stock computes the radius in ModuleAsteroid.OnStart as
 //    radius = paPrefab.radius * Random.Range(minRadiusMultiplier, maxRadiusMultiplier)
-// We override the min/max radius multipliers here in the prefab to be
-//    minRadiusMultiplier = paPrefab.radius / minRadius;
-//    maxRadiusMultiplier = paPrefab.radius / maxRadius;
+// We override the min/max radius multipliers on the module to be
+//    minRadiusMultiplier = minRadius / paPrefab.radius;
+//    maxRadiusMultiplier = maxRadius / paPrefab.radius;
 // which makes stock code pick from the radius range we want it to.
 [HarmonyPatch(typeof(ModuleAsteroid), nameof(ModuleAsteroid.OnStart))]
 static class ModuleAsteroid_OnStart
