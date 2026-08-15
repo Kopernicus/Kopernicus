@@ -348,6 +348,14 @@ namespace Kopernicus.RuntimeUtility
             }
         }
 
+        /// <summary>
+        /// Compute the name stored <see cref="Vessel.launchedFrom" /> for an asteroid group.
+        /// </summary>
+        /// <remarks>
+        /// We don't really have a good way to track what group an asteroid belongs to within
+        /// Kopernicus, so instead we store this in <see cref="Vessel.launchedFrom" /> for asteroids
+        /// so that their group can be recovered later on.
+        /// </remarks>
         public static string LaunchedFromName(Asteroid asteroid) => $"AST-{asteroid.Name}";
 
         // Maps back to asteroid group config, keyed by the string LaunchedFromName produces for them - "AST-<group name>".
