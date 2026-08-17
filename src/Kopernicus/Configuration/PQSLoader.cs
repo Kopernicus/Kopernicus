@@ -116,7 +116,14 @@ namespace Kopernicus.Configuration
         public NumericParser<Double> DeactivateAltitude
         {
             get { return _transform.deactivateAltitude; }
-            set { _transform.deactivateAltitude = value; }
+            set { SetDeactivateAltitude(_transform, value); }
+        }
+
+        private static void SetDeactivateAltitude(
+            PQSMod_CelestialBodyTransform transform, Double altitude)
+        {
+            transform.deactivateAltitude = altitude;
+            transform.highQualityShaderDeactivateAltitude = altitude > 0.0 ? altitude : -1.0;
         }
 
         // Map Export Arguments
@@ -236,7 +243,7 @@ namespace Kopernicus.Configuration
                 // Create the celestial body transform
                 _transform = Utility.AddMod<PQSMod_CelestialBodyTransform>(Value, 10);
                 _transform.forceActivate = false;
-                _transform.deactivateAltitude = 115000;
+                SetDeactivateAltitude(_transform, 115000);
                 _transform.forceRebuildOnTargetChange = false;
                 _transform.planetFade = new PQSMod_CelestialBodyTransform.AltitudeFade
                 {
@@ -380,7 +387,7 @@ namespace Kopernicus.Configuration
                 // Create the celestial body transform
                 _transform = Utility.AddMod<PQSMod_CelestialBodyTransform>(Value, 10);
                 _transform.forceActivate = false;
-                _transform.deactivateAltitude = 115000;
+                SetDeactivateAltitude(_transform, 115000);
                 _transform.forceRebuildOnTargetChange = false;
                 _transform.planetFade = new PQSMod_CelestialBodyTransform.AltitudeFade
                 {
