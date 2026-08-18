@@ -266,6 +266,19 @@ namespace Kopernicus.Configuration
         }
 
         /// <summary>
+        /// Fraction of the texture width used by the flat side faces when tiling.
+        /// The remaining width is split evenly between the inner and outer rim faces.
+        /// </summary>
+        [ParserTarget("sideUvWidth")]
+        [KittopiaDescription(
+            "Fraction of the texture width used by the flat side faces when tiling. The remaining width is split evenly between the inner and outer rim faces.")]
+        public NumericParser<float> SideUvWidth
+        {
+            get { return Value.sideUvWidth; }
+            set { Value.sideUvWidth = value; }
+        }
+
+        /// <summary>
         /// This texture's opaque pixels cast shadows on our inner surface
         /// </summary>
         [ParserTarget("innerShadeTexture")]

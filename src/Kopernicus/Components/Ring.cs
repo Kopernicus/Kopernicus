@@ -96,6 +96,13 @@ namespace Kopernicus.Components
         public Int32 tiles;
 
         /// <summary>
+        /// Fraction of the texture width (U axis) used by the flat side faces
+        /// when tiling. The remaining width is split evenly between the inner
+        /// and outer rim faces.
+        /// </summary>
+        public float sideUvWidth = 0.2f;
+
+        /// <summary>
         /// For new shader, makes planet shadow softer (values larger than one) or less soft (smaller than one)
         /// softness still depends on distance from sun, distance from planet and radius of sun and planet
         /// </summary>
@@ -537,20 +544,22 @@ namespace Kopernicus.Components
             Single outerScale,
             Vector3 thicknessOffset)
         {
-            const Single SIDE_TEX_W = 0.2f,
-                INNER_TEX_W = 0.4f,
-                OUTER_TEX_W = 0.4f;
+            // The side faces get a configurable fraction of the texture width;
+            // the rest is split evenly between the inner and outer rim faces.
+            float sideTexW = Mathf.Clamp01(sideUvWidth);
+            float innerTexW = (1f - sideTexW) / 2f;
+            float outerTexW = innerTexW;
             // Define coordinates for 3 textures:
             //   1. The "side" faces that point normal and antinormal
             //      (classic rings)
             Vector2 sideInnerU = Vector2.zero;
-            Vector2 sideOuterU = sideInnerU + SIDE_TEX_W * Vector2.right;
+            Vector2 sideOuterU = sideInnerU + sideTexW * Vector2.right;
             //   2. The "inner" face that points at the body
             Vector2 innerBottomU = sideOuterU;
-            Vector2 innerTopU = innerBottomU + INNER_TEX_W * Vector2.right;
+            Vector2 innerTopU = innerBottomU + innerTexW * Vector2.right;
             //   3. The "outer" face that points away from the body
             Vector2 outerBottomU = innerTopU;
-            Vector2 outerTopU = outerBottomU + OUTER_TEX_W * Vector2.right;
+            Vector2 outerTopU = outerBottomU + outerTexW * Vector2.right;
 
             Int32 wrapping = steps * 2;
 
