@@ -332,7 +332,7 @@ namespace Kopernicus.Configuration
                         // Attempt to create the Asteroid
                         Asteroid asteroid =
                             Parser.CreateObjectFromConfigNode<Asteroid>(asteroidNode, "Kopernicus"); //logs to active logger
-                        Kopernicus.RuntimeUtility.DiscoverableObjects.Asteroids.Add(asteroid);
+                        Kopernicus.RuntimeUtility.DiscoverableObjects.RegisterAsteroidGroup(asteroid);
                         Events.OnLoaderLoadAsteroid.Fire(asteroid, asteroidNode);
                         Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Asteroid: " + asteroid.Name);
 
