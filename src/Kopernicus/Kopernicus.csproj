@@ -157,6 +157,14 @@
     <Publicize Include="Assembly-CSharp:ModuleAsteroidInfo.SetupAsteroidResources" />
     <Publicize Include="Assembly-CSharp:ModuleCometInfo.baseMod" />
     <Publicize Include="Assembly-CSharp:ModuleCometInfo.SetupCometResources" />
+    <Publicize Include="Assembly-CSharp:PSpaceObject.colliderMesh" />
+    <Publicize Include="Assembly-CSharp:PSpaceObject.visualMesh" />
+    <Publicize Include="Assembly-CSharp:SpaceObjectCollider.rangeScale" />
+    <Publicize Include="Assembly-CSharp:SpaceObjectCollider.chunks" />
+    <Publicize Include="Assembly-CSharp:SpaceObjectCollider.solids" />
+    <Publicize Include="Assembly-CSharp:SpaceObjectCollider.marchStepsPerFrame" />
+    <Publicize Include="Assembly-CSharp:SpaceObjectCollider.meshGensPerFrame" />
+    <Publicize Include="Assembly-CSharp:SpaceObjectCollider.colliderGensPerFrame" />
   </ItemGroup>
 
   <!-- Build excludes-->
