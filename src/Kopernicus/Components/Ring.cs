@@ -75,10 +75,11 @@ namespace Kopernicus.Components
         public Single longitudeOfAscendingNode;
 
         /// <summary>
-        /// Supplies the ring's material and registers its on-demand textures. Set by RingLoader;
-        /// a ring built in code without one gets the default shader.
+        /// The ring's material, built by RingLoader from the config. RingLoader also attaches the
+        /// MeshRenderer and wires up on-demand textures, since it can do so via the same
+        /// MaterialLoader.OnParentApply(GameObject) path used for scaled-space bodies.
         /// </summary>
-        public Configuration.MaterialLoader.MaterialLoader materialLoader;
+        public Material material;
 
         public Single radiusMultiplier = 1.0F;
 
@@ -222,19 +223,21 @@ namespace Kopernicus.Components
             meshFilter.mesh.RecalculateBounds();
             meshFilter.sharedMesh = meshFilter.mesh;
 
-            ringMr = gameObject.AddComponent<MeshRenderer>();
-
-            if (materialLoader != null)
+            // RingLoader normally already attached the MeshRenderer and material (via
+            // MaterialLoader.OnParentApply) before this ring's config even finished parsing. Fall
+            // back to creating both here for a Ring set up without going through RingLoader.
+            ringMr = gameObject.GetComponent<MeshRenderer>();
+            if (ringMr == null)
             {
-                // Assigns the material and attaches the on-demand loader for any deferred textures
-                materialLoader.OnParentApply(gameObject);
-            }
-            else
-            {
-                ringMr.sharedMaterial = new Material(ShaderLoader.GetShader(RING_SHADER));
+                ringMr = gameObject.AddComponent<MeshRenderer>();
             }
 
-            Material material = ringMr.sharedMaterial;
+            if (material == null)
+            {
+                material = new Material(ShaderLoader.GetShader(RING_SHADER));
+            }
+
+            ringMr.sharedMaterial = material;
             _hasRuntimeLighting = material.HasProperty(SunPosRelativeToPlanet);
 
             material.SetFloat(InnerRadius, innerRadius * localScale.x);
@@ -253,7 +256,8 @@ namespace Kopernicus.Components
                                            - 1 / rotationPeriod);
             }
 
-            material.renderQueue = 3010;
+            Material sharedMaterial = ringMr.sharedMaterial;
+            sharedMaterial.renderQueue = 3010;
             if (parent.GetChild("Atmosphere") != null)
             {
                 parent.GetChild("Atmosphere").GetComponent<Renderer>().sharedMaterial.renderQueue = 3020;

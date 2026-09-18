@@ -334,7 +334,6 @@ namespace Kopernicus.Configuration
         [KittopiaDescription("Updates the mesh of the planetary ring.")]
         public void RebuildRing()
         {
-            Object.DestroyImmediate(Value.GetComponent<MeshRenderer>());
             Object.DestroyImmediate(Value.GetComponent<MeshFilter>());
             Value.BuildRing();
         }
@@ -353,19 +352,11 @@ namespace Kopernicus.Configuration
                 return;
             }
 
-            if (Value.materialLoader != null)
-            {
-                RingMaterial = Value.materialLoader;
-                return;
-            }
-
-            Material material = Value.ringMr != null ? Value.ringMr.sharedMaterial : null;
-            String shaderName = material != null && material.shader != null
-                ? material.shader.name
+            String shaderName = Value.material != null && Value.material.shader != null
+                ? Value.material.shader.name
                 : MaterialLoader.RingsLoader.SHADER_NAME;
 
-            RingMaterial = MaterialLoader.MaterialLoader.Create(shaderName, material);
-            Value.materialLoader = RingMaterial;
+            RingMaterial = MaterialLoader.MaterialLoader.Create(shaderName, Value.material);
         }
 
         /// <summary>Fallback ring shader.</summary>
@@ -400,9 +391,19 @@ namespace Kopernicus.Configuration
         // Post-Apply event
         void IParserEventSubscriber.PostApply(ConfigNode node)
         {
-
             (RingMaterial as MaterialLoader.RingsLoader)?.ApplyDeferred();
-            Value.materialLoader = RingMaterial;
+            Value.material = RingMaterial.Value;
+
+            // Ring's own mesh geometry can only be built once the parent body's scale is known, so
+            // that still happens lazily in Ring.Start(). The renderer and material don't have that
+            // dependency, so attach them now and let MaterialLoader.OnParentApply wire up on-demand
+            // textures, just like it does for scaled-space bodies (ScaledVersionLoader).
+            if (Value.gameObject.GetComponent<MeshRenderer>() == null)
+            {
+                Value.gameObject.AddComponent<MeshRenderer>();
+            }
+
+            RingMaterial.OnParentApply(Value.gameObject);
 
             Events.OnRingLoaderPostApply.Fire(this, node);
         }
