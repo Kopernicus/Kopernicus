@@ -374,7 +374,7 @@ namespace Kopernicus.Configuration
         void IParserEventSubscriber.Apply(ConfigNode node)
         {
             String shaderName = node.GetNode("Material")?.GetValue("shader") ?? DefaultShaderName();
-            RingMaterial = MaterialLoader.MaterialLoader.Create(shaderName, null);
+            RingMaterial = MaterialLoader.MaterialLoader.Create(shaderName, Value.material);
 
             if (RingMaterial.ShaderParser == null)
             {
@@ -383,6 +383,11 @@ namespace Kopernicus.Configuration
                 RingMaterial.ShaderParser = shaderParser;
             }
 
+            // The parser will also recurse into the "Material" node on its own after this method
+            // returns, since RingMaterial is itself a plain ParserTarget, calling RingMaterial.Apply
+            // a second time - harmless since it's idempotent. This explicit call is what resolves and
+            // assigns the shader up front, which also has to happen for the old flat syntax, where
+            // there's no "Material" node for the parser to recurse into at all.
             RingMaterial.Apply(node.GetNode("Material") ?? new ConfigNode());
 
             Events.OnRingLoaderApply.Fire(this, node);
