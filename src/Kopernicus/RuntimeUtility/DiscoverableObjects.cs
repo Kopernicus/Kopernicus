@@ -276,7 +276,7 @@ namespace Kopernicus.RuntimeUtility
             double lifetime = Random.Range(asteroid.MinUntrackedLifetime, asteroid.MaxUntrackedLifetime) * 24d * 60d * 60d;
             ;
             double maxLifetime = asteroid.MaxUntrackedLifetime * 24d * 60d * 60d;
-            UntrackedObjectClass size = (UntrackedObjectClass)(Int32)(asteroid.Size.Evaluate(Random.Range(0f, 1f)) * Enum.GetNames(typeof(UntrackedObjectClass)).Length);
+            UntrackedObjectClass size = SelectClass(asteroid);
 
             // Spawn
             ConfigNode vessel = ProtoVessel.CreateVesselNode(
@@ -311,6 +311,24 @@ namespace Kopernicus.RuntimeUtility
             Debug.Log("[Kopernicus] New object found near " + body.name + ": " + protoVessel.vesselName + "!");
         }
 
+        // Picks the size class for a new object by mapping the group's Size curve onto its
+        // [minClass, maxClass] range.
+        private static UntrackedObjectClass SelectClass(Asteroid asteroid)
+        {
+            Int32 minIndex = (Int32)asteroid.MinClass.Value;
+            Int32 maxIndex = (Int32)asteroid.MaxClass.Value;
+            if (maxIndex < minIndex)
+            {
+                Int32 swap = minIndex;
+                minIndex = maxIndex;
+                maxIndex = swap;
+            }
+
+            Single roll = Mathf.Clamp01(asteroid.Size.Evaluate(Random.Range(0f, 1f)));
+            Int32 index = minIndex + Mathf.FloorToInt(roll * (maxIndex - minIndex + 1));
+            return (UntrackedObjectClass)Mathf.Clamp(index, minIndex, maxIndex);
+        }
+
         // Asteroid Spawner
         private IEnumerator<WaitForSecondsRealtime> AsteroidDaemon(Asteroid asteroidGroup)
         {
@@ -330,7 +348,68 @@ namespace Kopernicus.RuntimeUtility
             }
         }
 
+        /// <summary>
+        /// Compute the name stored <see cref="Vessel.launchedFrom" /> for an asteroid group.
+        /// </summary>
+        /// <remarks>
+        /// We don't really have a good way to track what group an asteroid belongs to within
+        /// Kopernicus, so instead we store this in <see cref="Vessel.launchedFrom" /> for asteroids
+        /// so that their group can be recovered later on.
+        /// </remarks>
         public static string LaunchedFromName(Asteroid asteroid) => $"AST-{asteroid.Name}";
+
+        // Maps back to asteroid group config, keyed by the string LaunchedFromName produces for them - "AST-<group name>".
+        // We use the stock Vessel.launchedFrom field to store the group key on every asteroid instance we spawn.
+        private static readonly Dictionary<String, Asteroid> AsteroidsByLaunchedFrom = new Dictionary<String, Asteroid>();
+
+        // Registers a group parsed from config. Called by Configuration.Loader as it loads them.
+        public static void RegisterAsteroidGroup(Asteroid asteroid)
+        {
+            Asteroids.Add(asteroid);
+            AsteroidsByLaunchedFrom[LaunchedFromName(asteroid)] = asteroid;
+            ValidateClassRadius(asteroid);
+        }
+
+        // The group that spawned the given vessel, or null if we didn't spawn it
+        public static Asteroid FindGroup(String launchedFrom)
+        {
+            if (String.IsNullOrEmpty(launchedFrom))
+            {
+                return null;
+            }
+
+            return AsteroidsByLaunchedFrom.TryGetValue(launchedFrom, out Asteroid group) ? group : null;
+        }
+
+        // Warns about ClassRadius ranges that can't produce a usable radius, at load time, so a
+        // broken config shows up in the log once instead of on every object it spawns.
+        private static void ValidateClassRadius(Asteroid asteroid)
+        {
+            if (asteroid.ClassRadius == null)
+            {
+                return;
+            }
+
+            foreach (UntrackedObjectClass sizeClass in Enum.GetValues(typeof(UntrackedObjectClass)))
+            {
+                Location.RandomRangeLoader range = asteroid.ClassRadius.Get(sizeClass);
+                if (range == null)
+                {
+                    continue;
+                }
+
+                if (range.MinValue.Value <= 0f || range.MaxValue.Value <= 0f)
+                {
+                    Debug.LogWarning("[Kopernicus] Asteroid group " + asteroid.Name + " has a non-positive ClassRadius for class " +
+                                     sizeClass + "; that class falls back to the stock scaling.");
+                }
+                else if (range.MaxValue.Value < range.MinValue.Value)
+                {
+                    Debug.LogWarning("[Kopernicus] Asteroid group " + asteroid.Name +
+                                     " has ClassRadius minValue > maxValue for class " + sizeClass + ".");
+                }
+            }
+        }
 
         private Location.AroundLoader[][] _aroundLoaders;
         private Location.NearbyLoader[][] _nearbyLoaders;

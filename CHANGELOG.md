@@ -1,5 +1,13 @@
 # Kopernicus Changelog
 
+## Unreleased
+1. Asteroid groups can now set the physical radius of each size class directly, in meters, via a `ClassRadius` node.
+   Classes left out of the node keep the stock scaling.
+2. Asteroid groups can now set `minClass`/`maxClass` to restrict which size classes they generate.
+   Defaults (A and I) preserve existing behaviour; note that stock's own spawner only goes up to E.
+3. Fixed a `Size` curve that evaluates to exactly 1 producing an out-of-range size class, which
+   resolved to a nonexistent `Procedural/PA_9` prefab and left the object with no model or mass.
+
 ## 247
 1. Added a series of fallback implementations to prevent old mods from not working with the new material loaders (this means if your mod didn't work with 244 forward, it should now).
 2  Fixed NRE spam with black holes lacking a sclaedbody.  Needs testing.
