@@ -45,9 +45,6 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("shader")]
         public override ShaderParser ShaderParser { get; set; }
 
-        [ParserTarget("onDemand")]
-        public override NumericParser<bool> OnDemand { get; set; } = false;
-
         // The ring itself, sampled across its width. Alpha is opacity.
         [ParserTarget("texture")]
         public MaterialTextureParser MainTexture
@@ -56,8 +53,8 @@ namespace Kopernicus.Configuration.MaterialLoader
             set => SetTexture("_MainTex", value);
         }
 
-        // Sampled instead of `texture` where the ring is lit from behind. Defaults to `texture`, so a
-        // ring that sets neither still renders and one that sets only `texture` keeps its old look.
+        // Texture to use when the ring is lit from behind. If not specified it defaults to whatever
+        // was specified for `texture`.
         [ParserTarget("backlitTexture")]
         public MaterialTextureParser BacklitTexture
         {
@@ -148,8 +145,8 @@ namespace Kopernicus.Configuration.MaterialLoader
             if (Value == null)
                 return;
 
-            if (Value.HasProperty("_BacklitTexture") && Value.GetTexture("_BacklitTexture") == null)
-                Value.SetTexture("_BacklitTexture", Value.GetTexture("_MainTex"));
+            if (Value.HasProperty("_BacklitTexture") && GetTextureName("_BacklitTexture") == null)
+                SetTexture("_BacklitTexture", GetTextureName("_MainTex"));
 
             Detail?.Apply(this);
         }

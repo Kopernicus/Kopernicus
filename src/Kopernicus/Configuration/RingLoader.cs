@@ -310,8 +310,7 @@ namespace Kopernicus.Configuration
         // Material of our ring
         [ParserTarget("Material", AllowMerge = true, GetChild = false)]
         [KittopiaUntouchable]
-        [KittopiaDescription("Shader and material properties for the ring. Omit to keep the built-in "
-                             + "shader chosen by useNewShader/unlit.")]
+        [KittopiaDescription("Shader and material properties for the ring.")]
         public MaterialLoader.MaterialLoader RingMaterial { get; set; }
 
         [ParserTargetCollection("Components", AllowMerge = true, NameSignificance = NameSignificance.Type)]
@@ -341,11 +340,19 @@ namespace Kopernicus.Configuration
                 return;
             }
 
-            String shaderName = Value.material != null && Value.material.shader != null
-                ? Value.material.shader.name
+            if (Value.materialLoader != null)
+            {
+                RingMaterial = Value.materialLoader;
+                return;
+            }
+
+            Material material = Value.ringMr != null ? Value.ringMr.sharedMaterial : null;
+            String shaderName = material != null && material.shader != null
+                ? material.shader.name
                 : MaterialLoader.RingsLoader.SHADER_NAME;
 
-            RingMaterial = MaterialLoader.MaterialLoader.Create(shaderName, Value.material);
+            RingMaterial = MaterialLoader.MaterialLoader.Create(shaderName, material);
+            Value.materialLoader = RingMaterial;
         }
 
         /// <summary>Fallback ring shader.</summary>
@@ -382,8 +389,7 @@ namespace Kopernicus.Configuration
         {
 
             (RingMaterial as MaterialLoader.RingsLoader)?.ApplyDeferred();
-            Value.material = RingMaterial.Value;
-            Value.materialOnDemandTextures = RingMaterial.Entries;
+            Value.materialLoader = RingMaterial;
 
             Events.OnRingLoaderPostApply.Fire(this, node);
         }
