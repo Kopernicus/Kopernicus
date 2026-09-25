@@ -172,6 +172,9 @@
     <!-- Exclude any code within the ShadowMan unity project from the build -->
     <Compile Remove="ShadowMan/Shaders/**/*.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="packages.lock.json" />
+  </ItemGroup>
 
   <!-- Generate some constants so we have the release number available. -->
   <Target Name="GenerateBuildInfo" BeforeTargets="BeforeCompile">
