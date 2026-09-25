@@ -53,6 +53,8 @@ namespace Kopernicus.Components
         public Quaternion rot;
         private float u;
         private float v;
+
+        private bool cleanScatters;
         private void Reset()
         {
             radius = 100.0;
@@ -86,14 +88,7 @@ namespace Kopernicus.Components
         public override void OnQuadPreBuild(PQ quad)
         {
             base.OnQuadPreBuild(quad);
-            if (!RuntimeUtility.RuntimeUtility.KopernicusConfig.CleanupKSCScatters)
-            {
-                modEnabled = false;
-            }
-            else
-            {
-                modEnabled = true;
-            }
+            cleanScatters = RuntimeUtility.RuntimeUtility.KopernicusConfig.CleanupKSCScatters;
         }
         public override void OnVertexBuild(PQS.VertexBuildData vertexBuildData)
         {
@@ -105,32 +100,34 @@ namespace Kopernicus.Components
                 }
                 return;
             }
-
-            if (sphere.isBuildingMaps)
+            if (cleanScatters)
             {
-                quadAngle = Math.Acos(Vector3d.Dot(vertexBuildData.directionFromCenter, normalisedPosition));
-                if (quadAngle > inclusionAngle)
+                if (sphere.isBuildingMaps)
+                {
+                    quadAngle = Math.Acos(Vector3d.Dot(vertexBuildData.directionFromCenter, normalisedPosition));
+                    if (quadAngle > inclusionAngle)
+                    {
+                        return;
+                    }
+                }
+                vertRot = rot * vertexBuildData.directionFromCenter;
+                u = (float)((vertRot.x * sphere.radius / radius + 1.0) * 0.5);
+                v = (float)((vertRot.z * sphere.radius / radius + 1.0) * 0.5);
+
+                if (u > 1 || v > 1 || u < 0 || v < 0)
                 {
                     return;
                 }
-            }
-            vertRot = rot * vertexBuildData.directionFromCenter;
-            u = (float)((vertRot.x * sphere.radius / radius + 1.0) * 0.5);
-            v = (float)((vertRot.z * sphere.radius / radius + 1.0) * 0.5);
 
-            if (u > 1 || v > 1 || u < 0 || v < 0)
-            {
-                return;
-            }
-
-            if (colorMap != null)
-            {
-                maskValue = colorMap.GetPixelColor(u, v).g;
-                if (debugShowColorMap)
+                if (colorMap != null)
                 {
-                    vertexBuildData.vertColor = maskValue > 0.01f ? Color.green : Color.red;
+                    maskValue = colorMap.GetPixelColor(u, v).g;
+                    if (debugShowColorMap)
+                    {
+                        vertexBuildData.vertColor = maskValue > 0.01f ? Color.green : Color.red;
+                    }
+                    vertexBuildData.allowScatter = maskValue > 0.01f ? true : false;
                 }
-                vertexBuildData.allowScatter = maskValue > 0.01f ? true : false;
             }
         }
 

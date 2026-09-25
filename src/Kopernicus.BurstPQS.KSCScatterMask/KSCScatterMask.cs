@@ -56,6 +56,8 @@ public class KSCScatterMask(PQSMod_KSCScatterMask mod)
         public double radius = mod.radius;
         public bool debugShowColorMap = mod.debugShowColorMap;
 
+        public bool cleanScatters = RuntimeUtility.RuntimeUtility.KopernicusConfig.CleanupKSCScatters;
+
         public void BuildVertices(in BuildVerticesData data)
         {
             if (!quadActive)
@@ -63,37 +65,39 @@ public class KSCScatterMask(PQSMod_KSCScatterMask mod)
                 data.vertColor.Clear();
                 return;
             }
-
-            var sphere = data.sphere;
-
-            for (int i = 0; i < data.VertexCount; ++i)
+            if (cleanScatters)
             {
-                if (sphere.isBuildingMaps)
+                var sphere = data.sphere;
+
+                for (int i = 0; i < data.VertexCount; ++i)
                 {
-                    var quadAngle = Math.Acos(
+                    if (sphere.isBuildingMaps)
+                    {
+                        var quadAngle = Math.Acos(
                         Vector3d.Dot(data.directionFromCenter[i], normalizedPosition)
                     );
-                    if (quadAngle > inclusionAngle)
+                        if (quadAngle > inclusionAngle)
+                            continue;
+                    }
+
+                    var vertRot = rot * data.directionFromCenter[i];
+                    var u = (float)((vertRot.x * sphere.radius / radius + 1.0) * 0.5);
+                    var v = (float)((vertRot.z * sphere.radius / radius + 1.0) * 0.5);
+
+                    if (u > 1 || v > 1 || u < 0 || v < 0)
                         continue;
+
+                    if (this.colorMap is not BurstMapSO colorMap)
+                        continue;
+
+                    var maskValue = colorMap.GetPixelColor(u, v).g;
+
+                    if (debugShowColorMap)
+                    {
+                        data.vertColor[i] = maskValue > 0.01f ? Color.green : Color.red;
+                    }
+                    data.allowScatter[i] = maskValue > 0.01f ? true : false;
                 }
-
-                var vertRot = rot * data.directionFromCenter[i];
-                var u = (float)((vertRot.x * sphere.radius / radius + 1.0) * 0.5);
-                var v = (float)((vertRot.z * sphere.radius / radius + 1.0) * 0.5);
-
-                if (u > 1 || v > 1 || u < 0 || v < 0)
-                    continue;
-
-                if (this.colorMap is not BurstMapSO colorMap)
-                    continue;
-
-                var maskValue = colorMap.GetPixelColor(u, v).g;
-
-                if (debugShowColorMap)
-                {
-                    data.vertColor[i] = maskValue > 0.01f ? Color.green : Color.red;
-                }
-                data.allowScatter[i] = maskValue > 0.01f ? true : false;
             }
         }
 
