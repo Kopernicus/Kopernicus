@@ -1,4 +1,28 @@
-﻿using System;
+﻿/**
+* Kopernicus Planetary System Modifier
+* -------------------------------------------------------------
+* This library is free software; you can redistribute it and/or
+* modify it under the terms of the GNU Lesser General Public
+* License as published by the Free Software Foundation; either
+* version 3 of the License, or (at your option) any later version.
+*
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License along with this library; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+* MA 02110-1301  USA
+*
+* This library is intended to be used as a plugin for Kerbal Space Program
+* which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
+* itself is governed by the terms of its EULA, not the license above.
+*
+* https://kerbalspaceprogram.com
+*/
+using System;
 using System.Collections;
 using UnityEngine;
 using KSP.UI.Screens;
@@ -105,6 +129,7 @@ namespace Kopernicus.UI
             boxStyle.fontSize = (int)Math.Round((double)((float)fontSize * GameSettings.UI_SCALE));
             GUILayout.Label("Kopernicus_Config.cfg Editor", labelStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableKopernicusShadowManager = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableKopernicusShadowManager, "EnableKopernicusShadowManager: Whether or not to run the Internal Kopernicus Shadow System. True by default.", toggleStyle);
+            RuntimeUtility.RuntimeUtility.KopernicusConfig.CleanupKSCScatters = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.CleanupKSCScatters, "CleanupKSCScatters: Whether or not to remove scatters that spawn on or close to the KSC. False by default. Requires full game restart to enable, scene switch to disable.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.DisableMainMenuMunScene = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.DisableMainMenuMunScene, " DisableMainMenuMunScene: Whether or not to disable the Mun main menu scene. Only uncheck this if you want that scene back.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.KSCLightsAlwaysOn = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.KSCLightsAlwaysOn, " KSCLightsAlwaysOn: Whether or not to force the KSC Lights to always be on. Requires game restart to take effect.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOriginalKSC2 = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOriginalKSC2, " UseOriginalKSC2: Whether or not to force the original, uncompacted KSC2 to load.  Will not be editable in any form by Kopernicus.", toggleStyle);

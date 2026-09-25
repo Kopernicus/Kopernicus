@@ -64,7 +64,7 @@
 
     <PackageReference Include="KSPBuildTools" Version="1.1.1" />
 
-    <PackageReference Include="Krafs.Publicizer" Version="2.3.0">
+    <PackageReference Include="Krafs.Publicizer" Version="2.3.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -210,12 +210,7 @@ KOP_VERSION
       </VersionConfigFileContent>
     </PropertyGroup>
 
-    <WriteLinesToFile
-      File="$(KSPBT_ModRoot)/Config/00Version.cfg"
-      Lines="$(VersionConfigFileContent)"
-      Overwrite="true"
-      WriteOnlyWhenDifferent="true"
-    />
+    <WriteLinesToFile File="$(KSPBT_ModRoot)/Config/00Version.cfg" Lines="$(VersionConfigFileContent)" Overwrite="true" WriteOnlyWhenDifferent="true" />
 
     <ItemGroup>
       <FileWrites Include="$(KSPBT_ModRoot)/Config/00Version.cfg" />

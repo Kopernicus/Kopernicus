@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\KSPBuildTools.1.1.1\build\KSPBuildTools.props" Condition="Exists('..\..\packages\KSPBuildTools.1.1.1\build\KSPBuildTools.props')" />
+  <Import Project="..\..\packages\JsonPoke.1.2.0\build\JsonPoke.props" Condition="Exists('..\..\packages\JsonPoke.1.2.0\build\JsonPoke.props')" />
+  <Import Project="..\..\packages\Krafs.Publicizer.2.3.2\build\Krafs.Publicizer.props" Condition="Exists('..\..\packages\Krafs.Publicizer.2.3.2\build\Krafs.Publicizer.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{231525C4-FDA3-4EA5-9345-BE2BDE833B75}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Kopernicus.BurstPQS.KSCScatterMask</RootNamespace>
+    <AssemblyName>Kopernicus.BurstPQS.KSCScatterMask</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <LangVersion>14</LangVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\Distribution\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\build\KSP19PLUS\GameData\Kopernicus\Plugins\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="KSCScatterMask.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="BurstPQS">
+      <HintPath>..\..\dependencies\BurstPQS.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="KSPBurst">
+      <HintPath>..\..\dependencies\Unity.Burst.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Kopernicus">
+      <HintPath>..\..\dependencies\Kopernicus.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Runtime" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Publicize Include="Assembly-CSharp" />
+    <Publicize Include="Kopernicus:Kopernicus.Components.PQSMod_KSCScatterMask.quadActive" />
+    <Publicize Include="Kopernicus:Kopernicus.Components.PQSMod_KSCScatterMask.inclusionAngle" />
+    <Publicize Include="Kopernicus:Kopernicus.Components.PQSMod_KSCScatterMask.cleanUpScatters" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Krafs.Publicizer.2.3.2\build\Krafs.Publicizer.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Krafs.Publicizer.2.3.2\build\Krafs.Publicizer.props'))" />
+    <Error Condition="!Exists('..\..\packages\Krafs.Publicizer.2.3.2\build\Krafs.Publicizer.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Krafs.Publicizer.2.3.2\build\Krafs.Publicizer.targets'))" />
+    <Error Condition="!Exists('..\..\packages\JsonPoke.1.2.0\build\JsonPoke.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\JsonPoke.1.2.0\build\JsonPoke.props'))" />
+    <Error Condition="!Exists('..\..\packages\JsonPoke.1.2.0\build\JsonPoke.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\JsonPoke.1.2.0\build\JsonPoke.targets'))" />
+    <Error Condition="!Exists('..\..\packages\KSPBuildTools.1.1.1\build\KSPBuildTools.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\KSPBuildTools.1.1.1\build\KSPBuildTools.props'))" />
+    <Error Condition="!Exists('..\..\packages\KSPBuildTools.1.1.1\build\KSPBuildTools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\KSPBuildTools.1.1.1\build\KSPBuildTools.targets'))" />
+  </Target>
+  <Import Project="..\..\packages\Krafs.Publicizer.2.3.2\build\Krafs.Publicizer.targets" Condition="Exists('..\..\packages\Krafs.Publicizer.2.3.2\build\Krafs.Publicizer.targets')" />
+  <Import Project="..\..\packages\JsonPoke.1.2.0\build\JsonPoke.targets" Condition="Exists('..\..\packages\JsonPoke.1.2.0\build\JsonPoke.targets')" />
+  <Import Project="..\..\packages\KSPBuildTools.1.1.1\build\KSPBuildTools.targets" Condition="Exists('..\..\packages\KSPBuildTools.1.1.1\build\KSPBuildTools.targets')" />
+</Project>
