@@ -1,6 +1,6 @@
 # Kopernicus Changelog
 
-## Unreleased
+## 249
 1. Added a Kopernicus KSC scatter cleanup feature.  Works great with the stock KSC.  Off by default, it can be enabled by Kopernicus_Config.cfg option CleanupKSCScatters, also found in the GUI.  Needs a scene switch to take effect.
 
 ## 248
