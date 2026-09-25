@@ -89,7 +89,6 @@ namespace Kopernicus.Components
             if (!RuntimeUtility.RuntimeUtility.KopernicusConfig.CleanupKSCScatters)
             {
                 modEnabled = false;
-                return;
             }
             else
             {
