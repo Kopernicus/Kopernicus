@@ -2,6 +2,7 @@
 
 ## 249
 1. Added a Kopernicus KSC scatter cleanup feature.  Works great with the stock KSC.  Off by default, it can be enabled by Kopernicus_Config.cfg option CleanupKSCScatters, also found in the GUI.  Needs a scene switch to take effect.
+2. This uses a mask file found in the graphics folder, and a configuration found in the config folder, in case you are looking to use a customized KSC.  That will need help from you.  Its a simple black and white .dds mask file.  Normal KSC's need not apply.
 
 ## 248
 1. Asteroid groups can now set the physical radius of each size class directly, in meters, via a `ClassRadius` node.
