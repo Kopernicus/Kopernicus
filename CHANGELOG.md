@@ -1,12 +1,16 @@
 # Kopernicus Changelog
 
-## Unreleased
+## 248
 1. Asteroid groups can now set the physical radius of each size class directly, in meters, via a `ClassRadius` node.
    Classes left out of the node keep the stock scaling.
 2. Asteroid groups can now set `minClass`/`maxClass` to restrict which size classes they generate.
    Defaults (A and I) preserve existing behaviour; note that stock's own spawner only goes up to E.
 3. Fixed a `Size` curve that evaluates to exactly 1 producing an out-of-range size class, which
    resolved to a nonexistent `Procedural/PA_9` prefab and left the object with no model or mass.
+4. Improved solar panel allocation performance in multistar situations.
+5. Implemented a partial for for github issue #825, "Strange behavior with fast rotators"
+6. Fix some shader deactivation issues at altitude on Bop.
+7. Add German Localization.
 
 ## 247
 1. Added a series of fallback implementations to prevent old mods from not working with the new material loaders (this means if your mod didn't work with 244 forward, it should now).
