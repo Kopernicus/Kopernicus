@@ -357,6 +357,7 @@ namespace Kopernicus.Configuration
                 : MaterialLoader.RingsLoader.SHADER_NAME;
 
             RingMaterial = MaterialLoader.MaterialLoader.Create(shaderName, Value.material);
+            Value.material = RingMaterial.Value;
         }
 
         /// <summary>Fallback ring shader.</summary>
