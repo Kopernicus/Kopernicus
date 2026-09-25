@@ -1,5 +1,8 @@
 # Kopernicus Changelog
 
+## Unreleased
+1. Added a Kopernicus KSC scatter cleanup feature.  Works great with the stock KSC.  Off by default, it can be enabled by Kopernicus_Config.cfg option CleanupKSCScatters, also found in the GUI.  Needs a scene switch to take effect.
+
 ## 248
 1. Asteroid groups can now set the physical radius of each size class directly, in meters, via a `ClassRadius` node.
    Classes left out of the node keep the stock scaling.
