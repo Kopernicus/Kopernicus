@@ -55,8 +55,7 @@ public class KSCScatterMask(PQSMod_KSCScatterMask mod)
         public Quaternion rot = mod.rot;
         public double radius = mod.radius;
         public bool debugShowColorMap = mod.debugShowColorMap;
-
-        public bool cleanScatters = RuntimeUtility.RuntimeUtility.KopernicusConfig.CleanupKSCScatters;
+        public bool cleanScatters = mod.cleanScatters;
 
         public void BuildVertices(in BuildVerticesData data)
         {

@@ -53,8 +53,7 @@ namespace Kopernicus.Components
         public Quaternion rot;
         private float u;
         private float v;
-
-        private bool cleanScatters;
+        public bool cleanScatters;
         private void Reset()
         {
             radius = 100.0;
@@ -65,6 +64,7 @@ namespace Kopernicus.Components
 
         public override void OnSetup()
         {
+            cleanScatters = RuntimeUtility.RuntimeUtility.KopernicusConfig.CleanupKSCScatters;
             if (HighLogic.LoadedSceneIsGame)
             {
                 if (!SpaceCenter.Instance.cb.displayName.Contains(sphere.name))
