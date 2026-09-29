@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <!-- Release number. Bump this when making a new version. -->
-    <KopernicusRelease>247</KopernicusRelease>
+    <KopernicusRelease>249</KopernicusRelease>
 
     <!-- Assembly metadata -->
     <Version>1.0.$(KopernicusRelease)</Version>
@@ -64,7 +64,7 @@
 
     <PackageReference Include="KSPBuildTools" Version="1.1.1" />
 
-    <PackageReference Include="Krafs.Publicizer" Version="2.3.0">
+    <PackageReference Include="Krafs.Publicizer" Version="2.3.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -172,6 +172,9 @@
     <!-- Exclude any code within the ShadowMan unity project from the build -->
     <Compile Remove="ShadowMan/Shaders/**/*.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="packages.lock.json" />
+  </ItemGroup>
 
   <!-- Generate some constants so we have the release number available. -->
   <Target Name="GenerateBuildInfo" BeforeTargets="BeforeCompile">
@@ -210,12 +213,7 @@ KOP_VERSION
       </VersionConfigFileContent>
     </PropertyGroup>
 
-    <WriteLinesToFile
-      File="$(KSPBT_ModRoot)/Config/00Version.cfg"
-      Lines="$(VersionConfigFileContent)"
-      Overwrite="true"
-      WriteOnlyWhenDifferent="true"
-    />
+    <WriteLinesToFile File="$(KSPBT_ModRoot)/Config/00Version.cfg" Lines="$(VersionConfigFileContent)" Overwrite="true" WriteOnlyWhenDifferent="true" />
 
     <ItemGroup>
       <FileWrites Include="$(KSPBT_ModRoot)/Config/00Version.cfg" />

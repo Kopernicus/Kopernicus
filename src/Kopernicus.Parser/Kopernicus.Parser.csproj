@@ -25,6 +25,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>none</DebugType>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove=".gitignore" />
+    <None Remove="packages.config" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="KSPBuildTools" Version="1.1.1" />

@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Version>1.0.0.0</Version>
+    <Description>A burstPQS plugin for Kopernicus KSCScatterMask.</Description>
+    <Copyright>Copyright (c) Nathaniel R. Lewis (Teknoman117), Thomas P.</Copyright>
+    <Product>Kopernicus.BurstPQS.KSCScatterMask</Product>
+
+    <!-- Other configuration -->
+    <TargetFramework>net4.8</TargetFramework>
+    <LangVersion>14</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RootNamespace>Kopernicus.BurstPQS.KSCScatterMask</RootNamespace>
+	
+	
+    <!-- Generate a nuget lockfile so that we can cache stuff in CI -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    
+    <RepoRootPath>$(MSBuildThisFileDirectory)..\..</RepoRootPath>
+    <DepDirPath>$(RepoRootPath)\dependencies</DepDirPath>
+
+    <!-- KSPBuildTools -->
+    <!-- Don't copy anything to any GameData folders -->
+    <KSPBT_ModPluginFolder>Plugins\</KSPBT_ModPluginFolder>
+    <KSPBT_GenerateAssemblyAttribute>false</KSPBT_GenerateAssemblyAttribute>
+    <KSPBT_GenerateDependencyAttributes>false</KSPBT_GenerateDependencyAttributes>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == '' ">
+    <Configuration>Debug</Configuration>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;ENABLE_PROFILER</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'ReleaseKSP19' ">
+    <OutputPath>..\Kopernicus\bin\Release19\</OutputPath>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+     <KSPBurstPath>$(DepDirPath)\Unity.Burst.dll</KSPBurstPath>
+    <ModOutDir>KSP19PLUS</ModOutDir>
+     <BurstPQSPath>$(DepDirPath)\BurstPQS.dll</BurstPQSPath>
+    <ModOutDir>KSP19PLUS</ModOutDir>
+  </PropertyGroup>
+  <PropertyGroup>
+    <KSPBT_ModRoot>$(RepoRootPath)\build\$(ModOutDir)\GameData\Kopernicus\</KSPBT_ModRoot>
+    <PlatformTarget>x64</PlatformTarget>
+    <PackageOutputPath />
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="bin\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <None Remove="bin\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="packages.lock.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Krafs.Publicizer" Version="2.3.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="KSPBuildTools" Version="1.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Kopernicus">
+      <HintPath>$(DepDirPath)\Kopernicus.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="KSPBurst">
+      <HintPath>$(KSPBurstPath)</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="KSPBurst">
+      <HintPath>$(BurstPQSPath)</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+  <!-- Krafs.Publicizer items -->
+  <ItemGroup>
+    <Publicize Include="Kopernicus:Kopernicus.Components.PQSMod_KSCScatterMask.quadActive" />
+    <Publicize Include="Kopernicus:Kopernicus.Components.PQSMod_KSCScatterMask.inclusionAngle" />
+  </ItemGroup>
+</Project>
