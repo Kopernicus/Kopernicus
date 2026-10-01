@@ -47,6 +47,9 @@ namespace Kopernicus.RuntimeUtility
         }
     }
 
+    //Note:  The below code causes issues with burstPQS for unclear reasons, causing minor to major splits in the PQS along quad borders.
+    //Someday we should probably investigate why.
+
     /// <summary>
     /// A similar issue occurs when switching to an existing vessel. FlightDriver.Start() update the orbit of every vessel,
     /// then position the floating origin to the transform position of the (future) active vessel. Due to float imprecision,
@@ -57,7 +60,7 @@ namespace Kopernicus.RuntimeUtility
     /// To get the precise vessel position, we use the same code as in OrbitDriver.updateFromParameters().
     /// </summary>
     /// 
-
+    /*
     [HarmonyPatch(typeof(FlightDriver), "Start")]
     static class PreciseFlightFloatingOrigin
     {
@@ -83,4 +86,5 @@ namespace Kopernicus.RuntimeUtility
             FloatingOrigin.SetOffset(vesselPos);
         }
     }
+    */
 }
