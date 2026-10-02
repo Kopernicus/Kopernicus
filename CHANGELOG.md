@@ -1,5 +1,9 @@
 # Kopernicus Changelog
 
+## 250
+1. Hotfix for the KSC masking feature clobbering some PQS features it shouldn't in certain mods (Kerbal Wilds, etc).
+2. Also improved PQS borders in rescale situations by removing some old buggy code.
+
 ## 249
 1. Added a Kopernicus KSC scatter cleanup feature.  Works great with the stock KSC.  Off by default, it can be enabled by Kopernicus_Config.cfg option CleanupKSCScatters, also found in the GUI.  Needs a scene switch to take effect.
 2. This uses a mask file found in the graphics folder, and a configuration found in the config folder, in case you are looking to use a customized KSC.  That will need help from you.  Its a simple black and white .dds mask file.  Normal KSC's need not apply.
