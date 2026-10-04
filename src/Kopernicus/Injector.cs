@@ -40,7 +40,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Security.Cryptography;
 using UnityEngine;
-using static Targeting;
 
 namespace Kopernicus
 {

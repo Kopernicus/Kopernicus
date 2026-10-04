@@ -60,7 +60,7 @@ namespace Kopernicus.RuntimeUtility
     /// To get the precise vessel position, we use the same code as in OrbitDriver.updateFromParameters().
     /// </summary>
     /// 
-    /*
+
     [HarmonyPatch(typeof(FlightDriver), "Start")]
     static class PreciseFlightFloatingOrigin
     {
@@ -80,11 +80,19 @@ namespace Kopernicus.RuntimeUtility
 
         static void SetFloatingOriginToActiveVessel(Vector3d notPrecisePos)
         {
-            OrbitDriver orbit = FlightGlobals.Vessels[FlightDriver.FocusVesselAfterLoad].orbitDriver;
-            Vector3d comOffset = (QuaternionD)orbit.driverTransform.rotation * orbit.vessel.localCoM;
-            Vector3d vesselPos = orbit.referenceBody.position + orbit.pos - comOffset;
-            FloatingOrigin.SetOffset(vesselPos);
+            Vessel vessel = FlightGlobals.Vessels[FlightDriver.FocusVesselAfterLoad];
+            if (vessel.situation.Equals(Vessel.Situations.SPLASHED) || vessel.situation.Equals(Vessel.Situations.LANDED))
+            {
+                FloatingOrigin.SetOffset(notPrecisePos);
+            }
+            else
+            {
+                OrbitDriver orbit = vessel.orbitDriver;
+                Vector3d comOffset = (QuaternionD)orbit.driverTransform.rotation * orbit.vessel.localCoM;
+                Vector3d vesselPos = orbit.referenceBody.position + orbit.pos - comOffset;
+                FloatingOrigin.SetOffset(vesselPos);
+            }
+
         }
     }
-    */
 }
