@@ -1,5 +1,9 @@
 # Kopernicus Changelog
 
+## 251
+1. Hotfix for the KSC masking feature doing a harmless nullref when you did a quicksave.
+2. Also reinstated the previously removed "buggy code" after rewriting it to not be buggy anymore (the code helps stability with real large distance systems, like multistar setups).
+
 ## 250
 1. Hotfix for the KSC masking feature clobbering some PQS features it shouldn't in certain mods (Kerbal Wilds, etc).
 2. Also improved PQS borders in rescale situations by removing some old buggy code.

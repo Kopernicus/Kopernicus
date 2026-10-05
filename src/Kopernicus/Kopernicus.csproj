@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <!-- Release number. Bump this when making a new version. -->
-    <KopernicusRelease>250</KopernicusRelease>
+    <KopernicusRelease>251</KopernicusRelease>
 
     <!-- Assembly metadata -->
     <Version>1.0.$(KopernicusRelease)</Version>
@@ -61,6 +61,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../Kopernicus.Parser/Kopernicus.Parser.csproj" />
+    <PackageReference Include="JsonPoke" Version="1.3.0" />
 
     <PackageReference Include="KSPBuildTools" Version="1.1.1" />
 
