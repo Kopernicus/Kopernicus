@@ -80,19 +80,25 @@ namespace Kopernicus.RuntimeUtility
 
         static void SetFloatingOriginToActiveVessel(Vector3d notPrecisePos)
         {
-            Vessel vessel = FlightGlobals.Vessels[FlightDriver.FocusVesselAfterLoad];
-            if (vessel.situation.Equals(Vessel.Situations.SPLASHED) || vessel.situation.Equals(Vessel.Situations.LANDED))
+            try
+            {
+                Vessel vessel = FlightGlobals.Vessels[FlightDriver.FocusVesselAfterLoad];
+                if (vessel.situation.Equals(Vessel.Situations.SPLASHED) || vessel.situation.Equals(Vessel.Situations.LANDED))
+                {
+                    FloatingOrigin.SetOffset(notPrecisePos);
+                }
+                else
+                {
+                    OrbitDriver orbit = vessel.orbitDriver;
+                    Vector3d comOffset = (QuaternionD)orbit.driverTransform.rotation * orbit.vessel.localCoM;
+                    Vector3d vesselPos = orbit.referenceBody.position + orbit.pos - comOffset;
+                    FloatingOrigin.SetOffset(vesselPos);
+                }
+            }
+            catch
             {
                 FloatingOrigin.SetOffset(notPrecisePos);
             }
-            else
-            {
-                OrbitDriver orbit = vessel.orbitDriver;
-                Vector3d comOffset = (QuaternionD)orbit.driverTransform.rotation * orbit.vessel.localCoM;
-                Vector3d vesselPos = orbit.referenceBody.position + orbit.pos - comOffset;
-                FloatingOrigin.SetOffset(vesselPos);
-            }
-
         }
     }
 }
