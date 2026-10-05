@@ -69,7 +69,9 @@ namespace Kopernicus.Components
             {
                 if (!SpaceCenter.Instance.cb.displayName.Contains(sphere.name))
                 {
-                    UnityEngine.Object.Destroy(this);
+                    this.modEnabled = false;
+                    this.enabled = false;
+                    colorMap = null;
                     return;
                 }
                 requirements = (PQS.ModiferRequirements.MeshColorChannel);
