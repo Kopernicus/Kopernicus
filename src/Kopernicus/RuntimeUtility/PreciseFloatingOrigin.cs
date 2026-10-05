@@ -40,10 +40,17 @@ namespace Kopernicus.RuntimeUtility
 
         static void SetFloatingOriginToKSC(Vector3d notPrecisePos)
         {
-            CelestialBody homeBody = FlightGlobals.GetHomeBody();
-            PQSCity ksc = homeBody.pqsController.transform.Find("KSC").GetComponent<PQSCity>();
-            Vector3d kscPos = homeBody.position + homeBody.rotation * ksc.planetRelativePosition;
-            FloatingOrigin.SetOffset(kscPos);
+            try
+            {
+                CelestialBody homeBody = FlightGlobals.GetHomeBody();
+                PQSCity ksc = homeBody.pqsController.transform.Find("KSC").GetComponent<PQSCity>();
+                Vector3d kscPos = homeBody.position + homeBody.rotation * ksc.planetRelativePosition;
+                FloatingOrigin.SetOffset(kscPos);
+            }
+            catch
+            {
+                FloatingOrigin.SetOffset(notPrecisePos);
+            }
         }
     }
 
