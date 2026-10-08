@@ -54,9 +54,6 @@ namespace Kopernicus.RuntimeUtility
         }
     }
 
-    //Note:  The below code causes issues with burstPQS for unclear reasons, causing minor to major splits in the PQS along quad borders.
-    //Someday we should probably investigate why.
-
     /// <summary>
     /// A similar issue occurs when switching to an existing vessel. FlightDriver.Start() update the orbit of every vessel,
     /// then position the floating origin to the transform position of the (future) active vessel. Due to float imprecision,
@@ -90,17 +87,10 @@ namespace Kopernicus.RuntimeUtility
             try
             {
                 Vessel vessel = FlightGlobals.Vessels[FlightDriver.FocusVesselAfterLoad];
-                if (vessel.situation.Equals(Vessel.Situations.SPLASHED) || vessel.situation.Equals(Vessel.Situations.LANDED))
-                {
-                    FloatingOrigin.SetOffset(notPrecisePos);
-                }
-                else
-                {
-                    OrbitDriver orbit = vessel.orbitDriver;
-                    Vector3d comOffset = (QuaternionD)orbit.driverTransform.rotation * orbit.vessel.localCoM;
-                    Vector3d vesselPos = orbit.referenceBody.position + orbit.pos - comOffset;
-                    FloatingOrigin.SetOffset(vesselPos);
-                }
+                OrbitDriver orbit = vessel.orbitDriver;
+                Vector3d comOffset = (QuaternionD)orbit.driverTransform.rotation * orbit.vessel.localCoM;
+                Vector3d vesselPos = orbit.referenceBody.position + orbit.pos - comOffset;
+                FloatingOrigin.SetOffset(vesselPos);
             }
             catch
             {
