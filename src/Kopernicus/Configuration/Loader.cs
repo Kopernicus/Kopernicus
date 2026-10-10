@@ -253,6 +253,90 @@ namespace Kopernicus.Configuration
             Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Preset: " + preset.name);
         }
 
+        /// <summary>
+        /// We allow specifying <c>flightGlobalsIndex</c> in planet configs. This assigns them
+        /// while placing other bodies' indices in the gaps.
+        /// </summary>
+        /// <param name="bodies"></param>
+        private void AssignFlightGlobalsIndices(List<Body> bodies)
+        {
+            // Give every body a unique, dense index before KSP sorts the spawned bodies by it.
+            // The root and homeworld must occupy the first two slots.
+            List<PSystemBody> orderedBodies = new List<PSystemBody>();
+            Utility.DoRecursive(SystemPrefab.rootBody, body => body.children, orderedBodies.Add);
+            int bodyCount = orderedBodies.Count;
+
+            var indexToBody = new Dictionary<int, PSystemBody>();
+            var visited = new HashSet<PSystemBody>();
+
+            indexToBody.Add(0, SystemPrefab.rootBody);
+            visited.Add(SystemPrefab.rootBody);
+
+            var homeworldName = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
+            var homeworld = bodies.FirstOrDefault(b => b.Name == homeworldName)?.GeneratedBody;
+            if (homeworld is null)
+                throw new Exception($"homeworld body `{homeworldName}` does not exist");
+
+            indexToBody.Add(1, homeworld);
+            visited.Add(homeworld);
+
+            // Reserve valid explicit slots before considering inherited template indices.
+            foreach (Body body in bodies)
+            {
+                if (!body.GeneratedBody.Has("flightGlobalsIndex"))
+                    continue;
+
+                int index = body.GeneratedBody.Get<int>("flightGlobalsIndex");
+                if (indexToBody.TryGetValue(index, out var otherBody))
+                {
+                    Logger.Default.LogWarning(
+                        $"[Kopernicus]: Both {otherBody.name} and {body.Name} have requested flightGlobalsIndex {index}. {body.Name} will be assigned a different index.");
+                    continue;
+                }
+
+                if (index >= bodyCount)
+                {
+                    Logger.Default.LogWarning(
+                        $"[Kopernicus]: Requested flightGlobalsIndex {index} is larger than the number of available bodies. It will be assigned a lower index."
+                    );
+                    continue;
+                }
+
+                if (!visited.Add(body.GeneratedBody))
+                    continue;
+
+                indexToBody.Add(index, body.GeneratedBody);
+            }
+
+            // Keep inherited indices when they are still available.
+            foreach (PSystemBody body in orderedBodies)
+            {
+                if (indexToBody.ContainsKey(body.flightGlobalsIndex))
+                    continue;
+
+                if (!visited.Add(body))
+                    continue;
+
+                indexToBody.Add(body.flightGlobalsIndex, body);
+            }
+
+            // Now assign the index gaps in order.
+            int nextIndex = 2;
+            foreach (PSystemBody body in orderedBodies)
+            {
+                if (!visited.Add(body))
+                    continue;
+
+                while (indexToBody.ContainsKey(nextIndex))
+                    nextIndex += 1;
+
+                body.flightGlobalsIndex = nextIndex;
+                indexToBody.Add(nextIndex, body);
+            }
+
+            // PostSpawnFixups will renumber bodies in any cases where the indices are not dense
+        }
+
         // Generates the system prefab from the configuration 
         void IParserEventSubscriber.PostApply(ConfigNode node)
         {
@@ -398,6 +482,7 @@ namespace Kopernicus.Configuration
                         throw new Exception("Failed to load Preset: " + presetNode.GetValue("name") + " Exception: " + e.ToString());
                     }
                 }
+
                 // Register UBIs for all bodies
                 CelestialBody[] localBodies = bodies.Select(b => b.GeneratedBody.celestialBody).ToArray();
                 foreach (Body body in bodies)
@@ -481,37 +566,12 @@ namespace Kopernicus.Configuration
                 {
                     throw new Exception("Homeworld body could not be found.");
                 }
+
                 // Sort by distance from parent (discover how this effects local bodies)
                 Utility.DoRecursive(SystemPrefab.rootBody, body => body.children, body => body.children = body.children
                     .OrderBy(b => b.orbitDriver.orbit.semiMajorAxis * (1 + b.orbitDriver.orbit.eccentricity)).ToList());
 
-                // Fix doubled flightGlobals
-                List<Int32> numbers = new List<Int32>
-                {
-                    0, 1
-                };
-                Int32 index = bodies.Sum(b => b.GeneratedBody.flightGlobalsIndex);
-                Utility.DoRecursive(SystemPrefab.rootBody, body => body.children, body =>
-                {
-                    // ReSharper disable AccessToModifiedClosure
-                    if (numbers.Contains(body.flightGlobalsIndex))
-                    {
-                        body.flightGlobalsIndex = index++;
-                    }
-
-                    if (body.name.Equals(RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName))
-                    {
-                        body.flightGlobalsIndex = 1; // Homeworld
-                    }
-
-                    if (body == SystemPrefab.rootBody)
-                    {
-                        body.flightGlobalsIndex = 0; // Sun
-                    }
-
-                    numbers.Add(body.flightGlobalsIndex);
-                    // ReSharper restore AccessToModifiedClosure
-                });
+                AssignFlightGlobalsIndices(bodies);
 
                 // Event
                 Events.OnLoaderPostApply.Fire(this, node);
