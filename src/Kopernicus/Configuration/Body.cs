@@ -180,6 +180,31 @@ namespace Kopernicus.Configuration
             set { CelestialBody.Set("contractWeight", value.Value); }
         }
 
+        // Explicit flightGlobalsIndex. Valid, unique values within the final body count are
+        // preserved when the spawned bodies are renumbered to a dense sequence.
+        [ParserTarget("flightGlobalsIndex")]
+        [KittopiaHideOption]
+        public NumericParser<Int32> FlightGlobalsIndex
+        {
+            get
+            {
+                return CelestialBody.Has("flightGlobalsIndex")
+                    ? (NumericParser<Int32>)CelestialBody.Get<Int32>("flightGlobalsIndex")
+                    : null;
+            }
+            set
+            {
+                if (value.Value < 0)
+                    throw new Exception("flightGlobalsIndex cannot be negative");
+
+                CelestialBody.Set("flightGlobalsIndex", value.Value);
+                if (Injector.IsInPrefab)
+                {
+                    GeneratedBody.flightGlobalsIndex = value.Value;
+                }
+            }
+        }
+
         // Template property of a body - responsible for generating a PSystemBody from an existing one
         [PreApply]
         [ParserTarget("Template")]
