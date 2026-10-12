@@ -271,6 +271,7 @@ namespace Kopernicus.Configuration
 
             indexToBody.Add(0, SystemPrefab.rootBody);
             visited.Add(SystemPrefab.rootBody);
+            SystemPrefab.rootBody.flightGlobalsIndex = 0;
 
             var homeworldName = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
             var homeworld = bodies.FirstOrDefault(b => b.Name == homeworldName)?.GeneratedBody;
@@ -279,11 +280,15 @@ namespace Kopernicus.Configuration
 
             indexToBody.Add(1, homeworld);
             visited.Add(homeworld);
+            homeworld.flightGlobalsIndex = 1;
 
             // Reserve valid explicit slots before considering inherited template indices.
             foreach (Body body in bodies)
             {
                 if (!body.GeneratedBody.Has("flightGlobalsIndex"))
+                    continue;
+
+                if (visited.Contains(body.GeneratedBody))
                     continue;
 
                 int index = body.GeneratedBody.Get<int>("flightGlobalsIndex");
@@ -302,10 +307,9 @@ namespace Kopernicus.Configuration
                     continue;
                 }
 
-                if (!visited.Add(body.GeneratedBody))
-                    continue;
-
+                visited.Add(body.GeneratedBody);
                 indexToBody.Add(index, body.GeneratedBody);
+                body.GeneratedBody.flightGlobalsIndex = index;
             }
 
             // Keep inherited indices when they are still available.
@@ -334,7 +338,10 @@ namespace Kopernicus.Configuration
                 indexToBody.Add(nextIndex, body);
             }
 
-            // PostSpawnFixups will renumber bodies in any cases where the indices are not dense
+            // Now we condense away any gaps so order gets preserved
+            orderedBodies.Sort((a, b) => a.flightGlobalsIndex.CompareTo(b.flightGlobalsIndex));
+            for (int i = 0; i < orderedBodies.Count; ++i)
+                orderedBodies[i].flightGlobalsIndex = i;
         }
 
         // Generates the system prefab from the configuration 
