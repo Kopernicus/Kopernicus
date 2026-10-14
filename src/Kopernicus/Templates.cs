@@ -34,8 +34,26 @@ namespace Kopernicus
     // Globally used values
     public static class Templates
     {
-        // The reference mesh for ScaledSpace (Jools Mesh)
+        // The reference mesh for ScaledSpace (Jools Mesh), with sea level at 1000 units
         public static readonly Mesh ReferenceGeosphere;
+
+        // The same mesh rescaled to a unit radius, for bodies that use the small-body convention
+        private static Mesh _unitReferenceGeosphere;
+        public static Mesh UnitReferenceGeosphere
+        {
+            get
+            {
+                if (_unitReferenceGeosphere == null)
+                {
+                    _unitReferenceGeosphere = Utility.ScaleMeshVertices(
+                        Utility.DuplicateMesh(ReferenceGeosphere),
+                        1.0f / Utility.STOCK_SCALED_MESH_RADIUS);
+                    _unitReferenceGeosphere.name = ReferenceGeosphere.name + " (unit)";
+                }
+
+                return _unitReferenceGeosphere;
+            }
+        }
 
         // Finalize Orbits stuff
         public const Double SOI_MIN_RADIUS_MULTIPLIER = 2.0d;
