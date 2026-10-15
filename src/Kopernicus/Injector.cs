@@ -250,7 +250,6 @@ namespace Kopernicus
             // The mask texture was authored with north up, covering 1400m on each side of the KSC.
             mask.width = 2800.0;
             mask.angle = 0.0f;
-            mask.debugShowColorMap = true;
 
             MapSOParserGreyScale<KopernicusMapSO> parser = new MapSOParserGreyScale<KopernicusMapSO>();
             parser.SetFromString("Kopernicus/PluginData/Textures/kscMask.dds");
