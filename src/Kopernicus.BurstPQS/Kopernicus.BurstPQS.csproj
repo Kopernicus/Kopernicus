@@ -2,16 +2,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Version>1.0.0.0</Version>
-    <Description>A burstPQS plugin for Kopernicus KSCScatterMask.</Description>
+    <Description>BurstPQS plugins for Kopernicus PQSMods.</Description>
     <Copyright>Copyright (c) Nathaniel R. Lewis (Teknoman117), Thomas P.</Copyright>
-    <Product>Kopernicus.BurstPQS.KSCScatterMask</Product>
+    <Product>Kopernicus.BurstPQS</Product>
 
     <!-- Other configuration -->
     <TargetFramework>net4.8</TargetFramework>
     <LangVersion>14</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <RootNamespace>Kopernicus.BurstPQS.KSCScatterMask</RootNamespace>
+    <RootNamespace>Kopernicus.BurstPQS</RootNamespace>
 	
 	
     <!-- Generate a nuget lockfile so that we can cache stuff in CI -->
@@ -84,7 +84,8 @@
   </ItemGroup>
   <!-- Krafs.Publicizer items -->
   <ItemGroup>
-    <Publicize Include="Kopernicus:Kopernicus.Components.PQSMod_KSCScatterMask.quadActive" />
-    <Publicize Include="Kopernicus:Kopernicus.Components.PQSMod_KSCScatterMask.inclusionAngle" />
+    <Publicize Include="Kopernicus:Kopernicus.Components.PQSMod_ScatterMask.position" />
+    <Publicize Include="Kopernicus:Kopernicus.Components.PQSMod_ScatterMask.uAxis" />
+    <Publicize Include="Kopernicus:Kopernicus.Components.PQSMod_ScatterMask.vAxis" />
   </ItemGroup>
 </Project>

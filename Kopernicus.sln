@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kopernicus.Parser", "src\Kopernicus.Parser\Kopernicus.Parser.csproj", "{F9968D87-83DA-453C-8E28-B632367EACD3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kopernicus.BurstPQS.KSCScatterMask", "src\Kopernicus.BurstPQS.KSCScatterMask\Kopernicus.BurstPQS.KSCScatterMask.csproj", "{231525C4-FDA3-4EA5-9345-BE2BDE833B75}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kopernicus.BurstPQS", "src\Kopernicus.BurstPQS\Kopernicus.BurstPQS.csproj", "{231525C4-FDA3-4EA5-9345-BE2BDE833B75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
