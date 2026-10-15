@@ -69,15 +69,16 @@
     <PackageReference Include="KSPBuildTools" Version="1.1.1" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Kopernicus">
-      <HintPath>$(DepDirPath)\Kopernicus.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <ProjectReference Include="../Kopernicus/Kopernicus.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="KSPBurst">
       <HintPath>$(KSPBurstPath)</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="KSPBurst">
+    <Reference Include="BurstPQS">
       <HintPath>$(BurstPQSPath)</HintPath>
       <Private>false</Private>
     </Reference>
