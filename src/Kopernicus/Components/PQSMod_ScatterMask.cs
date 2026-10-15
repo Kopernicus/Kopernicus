@@ -38,7 +38,7 @@ namespace Kopernicus.Components;
 public class PQSMod_ScatterMask : PQSMod
 {
     #region Config
-    // These define the center of scatter mask on the surface
+    // These define the center of the scatter mask on the surface, in degrees.
     public double lat;
     public double lon;
 
@@ -72,9 +72,7 @@ public class PQSMod_ScatterMask : PQSMod
         if (debugShowColorMap)
             requirements |= PQS.ModiferRequirements.MeshColorChannel;
 
-        var cb = sphere.GetCelestialBody();
-
-        var normal = cb.GetRelSurfaceNVector(lat, lon);
+        var normal = Planetarium.SphericalVector(lat * MathUtility.Deg2Rad, lon * MathUtility.Deg2Rad).xzy;
         position = normal * sphere.radius;
 
         // Build an east/north tangent basis at the mask center. The planet's
@@ -87,8 +85,8 @@ public class PQSMod_ScatterMask : PQSMod
 
         // Fold the texture rotation into the basis so that each vertex only
         // needs two dot products.
-        var cos = Math.Cos(angle * Math.PI / 180.0);
-        var sin = Math.Sin(angle * Math.PI / 180.0);
+        var cos = Math.Cos(angle * MathUtility.Deg2Rad);
+        var sin = Math.Sin(angle * MathUtility.Deg2Rad);
         uAxis = east * cos + north * sin;
         vAxis = north * cos - east * sin;
 

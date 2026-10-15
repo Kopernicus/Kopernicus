@@ -24,9 +24,11 @@
  */
 
 using HarmonyLib;
+using Kopernicus.Components;
 using Kopernicus.ConfigParser;
 using Kopernicus.Configuration;
 using Kopernicus.Configuration.MaterialLoader;
+using Kopernicus.Configuration.Parsing;
 using Kopernicus.Constants;
 using Kopernicus.OnDemand;
 using KSPTextureLoader;
@@ -154,6 +156,9 @@ namespace Kopernicus
                 // Backup the old prefab
                 StockSystemPrefab = PSystemManager.Instance.systemPrefab;
 
+                // Patch the stock templates before any configs get applied to them
+                PrePatchFixups();
+
                 // Fire Pre-Load Event
                 Events.OnPreLoad.Fire();
 
@@ -206,6 +211,49 @@ namespace Kopernicus
                 TextureLoader.ImmediatelyDestroyUnusedTextures();
             }
         }
+
+        #region PrePatchFixups
+        // Fixups applied to the template bodies before main kopernicus patching is run.
+        // These changes are behave as if they are part of stock.
+        private static void PrePatchFixups()
+        {
+            AddKscScatterMask();
+        }
+
+        // Add a scatter mask around the KSC so that stock scatters don't spawn
+        // on top of the space center.
+        private static void AddKscScatterMask()
+        {
+            PSystemBody kerbin = Utility.FindBody(StockSystemPrefab.rootBody, "Kerbin");
+            PQS pqs = kerbin?.pqsVersion;
+            if (pqs == null)
+                return;
+
+            PQSCity ksc = pqs.GetComponentsInChildren<PQSCity>(true).FirstOrDefault(c => c.name == "KSC");
+            if (ksc == null)
+                return;
+
+            // Run after every mod that is already on the template
+            var order = pqs.GetComponentsInChildren<PQSMod>(true).Select(m => m.order).DefaultIfEmpty(0).Max() + 1;
+            var mask = Utility.AddMod<PQSMod_ScatterMask>(pqs, order);
+            mask.name = "KSCScatterMask";
+
+            // Center the mask on the KSC. repositionRadial is a body-local direction
+            // and body-local +Y is the north pole, mirroring GetRelSurfaceNVector.
+            Vector3d dir = ((Vector3d)ksc.repositionRadial).normalized;
+            mask.lat = Math.Asin(dir.y) * MathUtility.Rad2Deg;
+            mask.lon = Math.Atan2(dir.z, dir.x) * MathUtility.Rad2Deg;
+
+            // The mask texture was authored with north up, covering 1400m on each side of the KSC.
+            mask.width = 2800.0;
+            mask.angle = 0.0f;
+            mask.debugShowColorMap = true;
+
+            MapSOParserGreyScale<KopernicusMapSO> parser = new MapSOParserGreyScale<KopernicusMapSO>();
+            parser.SetFromString("Kopernicus/PluginData/Textures/kscMask.dds");
+            mask.mask = parser.Value;
+        }
+        #endregion
 
         // Post spawn fixups (ewwwww........)
         public void PostSpawnFixups()

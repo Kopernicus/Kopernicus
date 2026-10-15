@@ -66,7 +66,7 @@ public class ScatterMask(PQSMod_ScatterMask mod)
 
 
     [BurstCompile(FloatMode = FloatMode.Fast)]
-    struct BuildJob(PQSMod_ScatterMask mod, BurstMapSO? mask) : IBatchPQSVertexJob, IDisposable
+    struct BuildJob(PQSMod_ScatterMask mod, BurstMapSO? mask) : IBatchPQSVertexJob
     {
         public BurstMapSO? mask = mask;
 
@@ -109,11 +109,6 @@ public class ScatterMask(PQSMod_ScatterMask mod)
             }
         }
 
-        public void Dispose()
-        {
-            mask?.Dispose();
-            mask = null;
-        }
     }
 
     /// <summary>

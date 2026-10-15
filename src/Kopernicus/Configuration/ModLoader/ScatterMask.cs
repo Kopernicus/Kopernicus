@@ -36,7 +36,7 @@ namespace Kopernicus.Configuration.ModLoader;
 public class ScatterMask : ModLoader<PQSMod_ScatterMask>
 {
     /// <summary>
-    /// The latitude of the center of the scatter mask.
+    /// The latitude, in degrees, of the center of the scatter mask.
     /// </summary>
     [ParserTarget("lat", Optional = false)]
     public NumericParser<double> Latitude
@@ -46,7 +46,7 @@ public class ScatterMask : ModLoader<PQSMod_ScatterMask>
     }
 
     /// <summary>
-    /// The longitude of the center of the scatter mask.
+    /// The longitude, in degrees, of the center of the scatter mask.
     /// </summary>
     [ParserTarget("lon", Optional = false)]
     public NumericParser<double> Longitude
