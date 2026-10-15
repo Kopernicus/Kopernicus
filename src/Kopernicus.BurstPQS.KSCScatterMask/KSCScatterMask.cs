@@ -61,7 +61,8 @@ public class KSCScatterMask(PQSMod_KSCScatterMask mod)
         {
             if (!quadActive)
             {
-                data.vertColor.Clear();
+                if (debugShowColorMap)
+                    data.vertColor.Fill(Color.black);
                 return;
             }
             if (cleanScatters)
