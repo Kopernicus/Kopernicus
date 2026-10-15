@@ -224,6 +224,9 @@ namespace Kopernicus
         // on top of the space center.
         private static void AddKscScatterMask()
         {
+            if (!RuntimeUtility.RuntimeUtility.KopernicusConfig.CleanupKSCScatters)
+                return;
+
             PSystemBody kerbin = Utility.FindBody(StockSystemPrefab.rootBody, "Kerbin");
             PQS pqs = kerbin?.pqsVersion;
             if (pqs == null)
