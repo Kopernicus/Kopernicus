@@ -328,11 +328,95 @@ namespace Kopernicus
             return mod;
         }
 
+
+        /// <summary>
+        /// Celestial bodies with a radius below this have their scaled space mesh rescaled
+        /// differently than the default.
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// Celestial bodies smaller than 409m end up being entirely black in editor due to
+        /// imprecision in the default matrix inverse used by unity's shaders. To work around
+        /// this, kopernicus sets the localScale of the scaled mesh differently for small
+        /// bodies. This value is the cutoff for that.
+        /// </remarks>
+        public const double SCALED_MESH_RESCALE_RADIUS = 600.0;
+
+        /// <summary>
+        /// Sea-level radius of a default scaled-space mesh.
+        /// </summary>
+        public const float STOCK_SCALED_MESH_RADIUS = 1000.0f;
+
+        // Radius of Jool, the body whose scaled mesh is the reference for all generated meshes
+        private const double R_JOOL = 6000000.0;
+
+        public static float GetScaledMeshRadius(CelestialBody body)
+        {
+            if (body == null || body.scaledBody == null)
+                return STOCK_SCALED_MESH_RADIUS;
+
+            var scale = body.scaledBody.transform.localScale.x;
+            if (scale <= 0f)
+                return STOCK_SCALED_MESH_RADIUS;
+
+            return (float)(body.Radius / (R_JOOL / STOCK_SCALED_MESH_RADIUS) / scale);
+        }
+
+        /// <summary>
+        /// Whether a body should use a unit radius scaled space mesh.
+        /// </summary>
+        public static Boolean ShouldUseUnitScaledMesh(CelestialBody body, GameObject scaledVersion)
+        {
+            if (body.Radius >= SCALED_MESH_RESCALE_RADIUS)
+                return false;
+
+            return !body.isStar && scaledVersion.GetComponentInChildren<SunShaderController>(true) == null;
+        }
+
+        /// <summary>
+        /// Returns the reference geosphere (Jool's mesh) at the given mesh radius.
+        /// </summary>
+        public static Mesh GetReferenceGeosphere(float meshRadius)
+        {
+            if (Mathf.Approximately(meshRadius, STOCK_SCALED_MESH_RADIUS))
+                return Templates.ReferenceGeosphere;
+
+            if (Mathf.Approximately(meshRadius, 1.0f))
+                return Templates.UnitReferenceGeosphere;
+
+            return ScaleMeshVertices(DuplicateMesh(Templates.ReferenceGeosphere),
+                meshRadius / STOCK_SCALED_MESH_RADIUS);
+        }
+
+        private static Boolean IsReferenceGeosphere(Mesh mesh)
+        {
+            return mesh == Templates.ReferenceGeosphere || mesh == Templates.UnitReferenceGeosphere;
+        }
+
+        /// <summary>
+        /// Sets everything on the scaled body that depends on its mesh radius.
+        /// </summary>
+        public static void ApplyScaledMeshRadius(GameObject scaledVersion, double radius, float meshRadius)
+        {
+            Single scale = (Single)(radius / R_JOOL * (STOCK_SCALED_MESH_RADIUS / meshRadius));
+            scaledVersion.transform.localScale = new Vector3(scale, scale, scale);
+
+            if (scaledVersion.TryGetComponent(out SphereCollider collider))
+                collider.radius = meshRadius;
+
+            // The atmosphere shell is a child that shares the reference geosphere, so it has to
+            // follow the same mesh radius as the body or it ends up 1000 times too large.
+            foreach (AtmosphereFromGround afg in scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true))
+            {
+                if (afg.TryGetComponent(out MeshFilter filter) && IsReferenceGeosphere(filter.sharedMesh))
+                    filter.sharedMesh = GetReferenceGeosphere(meshRadius);
+            }
+        }
+
         public static void UpdateScaledMesh(GameObject scaledVersion, PQS pqs, CelestialBody body, String path,
             String cacheFile, Boolean exportMesh, Boolean useSpherical, String hash = null)
         {
-            const Double R_JOOL = 6000000.0;
-            const Single R_SCALED = 1000.0f;
+            const Single R_SCALED = STOCK_SCALED_MESH_RADIUS;
 
             // Compute scale between Jool and this body
             Single scale = (Single)(body.Radius / R_JOOL);
@@ -368,14 +452,19 @@ namespace Kopernicus
                 cacheValid = false;
             }
 
+            // Both paths below produce a mesh with sea level at R_SCALED units, which is also what
+            // the cache on disk always stores.
+            Mesh mesh;
+            bool shared = false;
             if (cacheValid)
             {
                 Logger.Active.Log("Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + body.name);
-                scaledVersion.GetComponent<MeshFilter>().sharedMesh = MeshPreloader.Meshes.ContainsKey(cacheFile)
-                    ? MeshPreloader.Meshes[cacheFile]
-                    : DeserializeMesh(cacheFile);
+                if (MeshPreloader.Meshes.TryGetValue(cacheFile, out mesh))
+                    shared = true;
+                else
+                    mesh = DeserializeMesh(cacheFile);
 
-                scaledVersion.GetComponent<MeshFilter>().sharedMesh.indexFormat = scaledVersion.GetComponent<MeshFilter>().sharedMesh.vertexCount > 65536
+                mesh.indexFormat = mesh.vertexCount > 65536
                     ? UnityEngine.Rendering.IndexFormat.UInt32
                     : UnityEngine.Rendering.IndexFormat.UInt16;
             }
@@ -384,11 +473,10 @@ namespace Kopernicus
             else
             {
                 Logger.Active.Log("Body.PostApply(ConfigNode): Generating scaled space mesh: " + body.name);
-                Mesh scaledMesh = ComputeScaledSpaceMesh(body, useSpherical ? null : pqs);
-                scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
+                mesh = ComputeScaledSpaceMesh(body, useSpherical ? null : pqs);
                 if (exportMesh)
                 {
-                    SerializeMesh(scaledMesh, cacheFile);
+                    SerializeMesh(mesh, cacheFile);
                     if (hash != null)
                     {
                         RuntimeUtility.MeshHashManager.SetHash(relativeCachePath, hash);
@@ -396,15 +484,42 @@ namespace Kopernicus
                 }
             }
 
+            // Small bodies get a unit radius mesh so their transform scale stays invertible.
+            Single meshRadius = R_SCALED;
+            if (ShouldUseUnitScaledMesh(body, scaledVersion))
+            {
+                Logger.Active.Log($"{body.name} has a radius below {SCALED_MESH_RESCALE_RADIUS} m, using a unit radius scaled space mesh");
+
+                // The preloader's mesh is shared with every later rebuild, so never scale it in place
+                if (shared)
+                {
+                    mesh = DuplicateMesh(mesh);
+                }
+
+                ScaleMeshVertices(mesh, 1.0f / R_SCALED);
+                meshRadius = 1.0f;
+            }
+
             // Apply mesh to the body
-            if (scaledVersion.TryGetComponent<SphereCollider>(out var collider))
+            scaledVersion.GetComponent<MeshFilter>().sharedMesh = mesh;
+            ApplyScaledMeshRadius(scaledVersion, pqs != null ? pqs.radius : body.Radius, meshRadius);
+        }
+
+        /// <summary>
+        /// Multiplies every vertex of the mesh by <paramref name="factor"/> and updates its bounds.
+        /// Normals and tangents are unaffected by a uniform scale.
+        /// </summary>
+        public static Mesh ScaleMeshVertices(Mesh mesh, Single factor)
+        {
+            Vector3[] vertices = mesh.vertices;
+            for (Int32 i = 0; i < vertices.Length; i++)
             {
-                collider.radius = R_SCALED;
+                vertices[i] *= factor;
             }
-            if (pqs != null && scaledVersion.gameObject != null && scaledVersion.transform != null)
-            {
-                scaledVersion.transform.localScale = Vector3.one * (Single)(pqs.radius / R_JOOL);
-            }
+
+            mesh.vertices = vertices;
+            mesh.RecalculateBounds();
+            return mesh;
         }
 
         // Generate the scaled space mesh using PQS (all results use scale of 1)
@@ -549,6 +664,9 @@ namespace Kopernicus
         [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public static void CopyMesh(Mesh source, Mesh dest)
         {
+            // Must be set before the triangles, or indices above 65535 are lost
+            dest.indexFormat = source.indexFormat;
+
             Vector3[] verts = new Vector3[source.vertexCount];
             source.vertices.CopyTo(verts, 0);
             dest.vertices = verts;

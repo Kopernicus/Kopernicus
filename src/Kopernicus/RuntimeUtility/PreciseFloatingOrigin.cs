@@ -40,10 +40,17 @@ namespace Kopernicus.RuntimeUtility
 
         static void SetFloatingOriginToKSC(Vector3d notPrecisePos)
         {
-            CelestialBody homeBody = FlightGlobals.GetHomeBody();
-            PQSCity ksc = homeBody.pqsController.transform.Find("KSC").GetComponent<PQSCity>();
-            Vector3d kscPos = homeBody.position + homeBody.rotation * ksc.planetRelativePosition;
-            FloatingOrigin.SetOffset(kscPos);
+            try
+            {
+                CelestialBody homeBody = FlightGlobals.GetHomeBody();
+                PQSCity ksc = homeBody.pqsController.transform.Find("KSC").GetComponent<PQSCity>();
+                Vector3d kscPos = homeBody.position + homeBody.rotation * ksc.planetRelativePosition;
+                FloatingOrigin.SetOffset(kscPos);
+            }
+            catch
+            {
+                FloatingOrigin.SetOffset(notPrecisePos);
+            }
         }
     }
 
@@ -77,10 +84,18 @@ namespace Kopernicus.RuntimeUtility
 
         static void SetFloatingOriginToActiveVessel(Vector3d notPrecisePos)
         {
-            OrbitDriver orbit = FlightGlobals.Vessels[FlightDriver.FocusVesselAfterLoad].orbitDriver;
-            Vector3d comOffset = (QuaternionD)orbit.driverTransform.rotation * orbit.vessel.localCoM;
-            Vector3d vesselPos = orbit.referenceBody.position + orbit.pos - comOffset;
-            FloatingOrigin.SetOffset(vesselPos);
+            try
+            {
+                Vessel vessel = FlightGlobals.Vessels[FlightDriver.FocusVesselAfterLoad];
+                OrbitDriver orbit = vessel.orbitDriver;
+                Vector3d comOffset = (QuaternionD)orbit.driverTransform.rotation * orbit.vessel.localCoM;
+                Vector3d vesselPos = orbit.referenceBody.position + orbit.pos - comOffset;
+                FloatingOrigin.SetOffset(vesselPos);
+            }
+            catch
+            {
+                FloatingOrigin.SetOffset(notPrecisePos);
+            }
         }
     }
 }

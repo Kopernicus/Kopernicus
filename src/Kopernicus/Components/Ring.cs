@@ -163,6 +163,21 @@ namespace Kopernicus.Components
         }
 
         /// <summary>
+        /// Rings are scaled differently depending on the body radius. This gets
+        /// the appropriate scale.
+        /// </summary>
+        private Vector3 GetRingScale()
+        {
+            Vector3 scale = transform.parent.localScale;
+            if (referenceBody != null && referenceBody.scaledBody != null)
+            {
+                scale *= Utility.GetScaledMeshRadius(referenceBody) / Utility.STOCK_SCALED_MESH_RADIUS;
+            }
+
+            return scale;
+        }
+
+        /// <summary>
         /// Builds the Ring
         /// </summary>
         [SuppressMessage("ReSharper", "PossibleLossOfFraction")]
@@ -203,7 +218,7 @@ namespace Kopernicus.Components
             transform.localRotation = rotation;
 
             // Update Scale and Layer
-            Vector3 localScale = parent.transform.localScale;
+            Vector3 localScale = GetRingScale();
             transform.localScale = localScale;
             transform.position = parent.transform.localPosition;
             gameObject.layer = parent.layer;
@@ -566,7 +581,7 @@ namespace Kopernicus.Components
                 brightestStar = KopernicusStar.GetBrightest(referenceBody);
             }
 
-            transform.localScale = transform.parent.localScale;
+            transform.localScale = GetRingScale();
             SetRotation();
 
             if (_hasRuntimeLighting && ringMr.sharedMaterial != null
@@ -604,7 +619,7 @@ namespace Kopernicus.Components
         [SuppressMessage("ReSharper", "Unity.InefficientPropertyAccess")]
         private void FixedUpdate()
         {
-            transform.localScale = transform.parent.localScale;
+            transform.localScale = GetRingScale();
             SetRotation();
 
             // Call Modules
@@ -620,7 +635,7 @@ namespace Kopernicus.Components
         [SuppressMessage("ReSharper", "Unity.InefficientPropertyAccess")]
         private void LateUpdate()
         {
-            transform.localScale = transform.parent.localScale;
+            transform.localScale = GetRingScale();
             SetRotation();
 
             // Call Modules
