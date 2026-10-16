@@ -34,6 +34,7 @@ using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.ConfigParser.Interfaces;
+using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
 using Kopernicus.UI;
 using UnityEngine;
@@ -121,33 +122,33 @@ namespace Kopernicus.Configuration
         [KittopiaDescription("The maximum distance at which the rings are drawn without fading.")]
         public NumericParser<Single> FadeoutStartDistance
         {
-            get { return Value.fadeoutStartDistance; }
-            set { Value.fadeoutStartDistance = value; }
+            get { return RingMaterial.GetFloat("fadeoutStartDistance"); }
+            set { RingMaterial.SetFloat("fadeoutStartDistance", value); }
         }
 
         [ParserTarget("fadeoutStopDistance")]
         [KittopiaDescription("The minimum distance at which the rings are fully faded out.")]
         public NumericParser<Single> FadeoutStopDistance
         {
-            get { return Value.fadeoutStopDistance; }
-            set { Value.fadeoutStopDistance = value; }
+            get { return RingMaterial.GetFloat("fadeoutStopDistance"); }
+            set { RingMaterial.SetFloat("fadeoutStopDistance", value); }
         }
 
         [ParserTarget("fadeoutMinAlpha")]
         [KittopiaDescription("The opacity multiplier for the rings when fully faded out.")]
         public NumericParser<Single> FadeoutMinAlpha
         {
-            get { return Value.fadeoutMinAlpha; }
-            set { Value.fadeoutMinAlpha = value; }
+            get { return RingMaterial.GetFloat("fadeoutMinAlpha"); }
+            set { RingMaterial.SetFloat("fadeoutMinAlpha", value); }
         }
 
         // Texture of our ring
         [ParserTarget("texture")]
         [KittopiaDescription("Texture of the ring")]
-        public Texture2DParser Texture
+        public MaterialTextureParser Texture
         {
-            get { return Value.texture; }
-            set { Value.texture = value; }
+            get { return RingMaterial.GetTextureName("_MainTex"); }
+            set { RingMaterial.SetTexture("_MainTex", value); }
         }
 
         // Color of our ring
@@ -155,8 +156,8 @@ namespace Kopernicus.Configuration
         [KittopiaDescription("Color of the ring")]
         public ColorParser Color
         {
-            get { return Value.color; }
-            set { Value.color = value; }
+            get { return RingMaterial.GetColor("_Color"); }
+            set { RingMaterial.SetColor("_Color", value); }
         }
 
         // Lock rotation of our ring?
@@ -183,22 +184,16 @@ namespace Kopernicus.Configuration
         }
 
         // Unlit our ring?
+        [PreApply]
         [ParserTarget("unlit")]
         [KittopiaDescription("Apply an unlit shader to the ring?")]
-        public NumericParser<Boolean> Unlit
-        {
-            get { return Value.unlit; }
-            set { Value.unlit = value; }
-        }
+        public NumericParser<Boolean> Unlit { get; set; } = false;
 
         // Use new shader with mie scattering and planet shadow?
+        [PreApply]
         [ParserTarget("useNewShader")]
         [KittopiaDescription("Use the new custom ring shader instead of the builtin Unity shaders.")]
-        public NumericParser<Boolean> UseNewShader
-        {
-            get { return Value.useNewShader; }
-            set { Value.useNewShader = value; }
-        }
+        public NumericParser<Boolean> UseNewShader { get; set; } = false;
 
 
         // Use front-lit half of shader?
@@ -206,40 +201,40 @@ namespace Kopernicus.Configuration
         [KittopiaDescription("Intensity of the main ring texture as seen when looking at the lit side of the planet.")]
         public NumericParser<Single> AlbedoStrength
         {
-            get { return Value.albedoStrength; }
-            set { Value.albedoStrength = value; }
+            get { return RingMaterial.GetFloat("albedoStrength"); }
+            set { RingMaterial.SetFloat("albedoStrength", value); }
         }
         // Use backlit half of shader?
         [ParserTarget("scatteringStrength")]
         [KittopiaDescription("Intensity of the scattered light seen through the ring when looking towards the sun.")]
         public NumericParser<Single> ScatteringStrength
         {
-            get { return Value.scatteringStrength; }
-            set { Value.scatteringStrength = value; }
+            get { return RingMaterial.GetFloat("scatteringStrength"); }
+            set { RingMaterial.SetFloat("scatteringStrength", value); }
         }
         // MieG for backlighting
         [ParserTarget("anisotropy")]
         [KittopiaDescription("Mie phase function asymmetry for scattering effect; higher values result in a smaller spot.")]
         public NumericParser<Single> Anisotropy
         {
-            get { return Value.anisotropy; }
-            set { Value.anisotropy = value; }
+            get { return RingMaterial.GetFloat("anisotropy"); }
+            set { RingMaterial.SetFloat("anisotropy", value); }
         }
         // Texture of our ring
         [ParserTarget("backlitTexture")]
         [KittopiaDescription("Texture used for the backlit scattering effect")]
-        public Texture2DParser BacklitTexture
+        public MaterialTextureParser BacklitTexture
         {
-            get { return Value.backlitTexture; }
-            set { Value.backlitTexture = value; }
+            get { return RingMaterial.GetTextureName("_BacklitTexture"); }
+            set { RingMaterial.SetTexture("_BacklitTexture", value); }
         }
 
         // Penumbra multiplier for new shader
         [ParserTarget("penumbraMultiplier")]
         public NumericParser<Single> PenumbraMultiplier
         {
-            get { return Value.penumbraMultiplier; }
-            set { Value.penumbraMultiplier = value; }
+            get { return RingMaterial.GetFloat("penumbraMultiplier"); }
+            set { RingMaterial.SetFloat("penumbraMultiplier", value); }
         }
 
         // Amount of vertices around the ring
@@ -283,10 +278,10 @@ namespace Kopernicus.Configuration
         /// </summary>
         [ParserTarget("innerShadeTexture")]
         [KittopiaDescription("This texture's opaque pixels cast shadows on our inner surface.")]
-        public Texture2DParser InnerShadeTexture
+        public MaterialTextureParser InnerShadeTexture
         {
-            get { return Value.innerShadeTexture; }
-            set { Value.innerShadeTexture = value; }
+            get { return RingMaterial.GetTextureName("_InnerShadeTexture"); }
+            set { RingMaterial.SetTexture("_InnerShadeTexture", value); }
         }
 
         /// <summary>
@@ -312,154 +307,24 @@ namespace Kopernicus.Configuration
         }
 
         // Detail data
-        [ParserTarget("Detail")]
-        public DetailLoader Detail
+        [ParserTarget("Detail", AllowMerge = true)]
+        public MaterialLoader.RingDetailLoader Detail
         {
-            get { return new DetailLoader(Value.detailSettings); }
-            set { Value.detailSettings = value.Value; }
-        }
-
-        [RequireConfigType(ConfigType.Node)]
-        public class DetailPassLoader : BaseLoader, ITypeParser<Ring.DetailPass>
-        {
-            public Ring.DetailPass Value { get; set; }
-
-            public DetailPassLoader()
+            get { return (RingMaterial as MaterialLoader.RingsLoader)?.Detail; }
+            set
             {
-                Value = new Ring.DetailPass();
-            }
-
-            public DetailPassLoader(Ring.DetailPass pass)
-            {
-                Value = pass;
-            }
-
-            [ParserTarget("texture")]
-            [KittopiaDescription("The texture used for this layer of detail.")]
-            public Texture2DParser Texture
-            {
-                get { return Value.texture; }
-                set { Value.texture = value; }
-            }
-
-            [ParserTarget("alphaMin")]
-            [KittopiaDescription("A per-channel override of the minimum opacity multiplier.")]
-            public Vector4Parser AlphaMin
-            {
-                get { return Value.alphaMin; }
-                set { Value.alphaMin = value; }
-            }
-
-            [ParserTarget("alphaMax")]
-            [KittopiaDescription("A per-channel override of the maximum opacity multiplier.")]
-            public Vector4Parser AlphaMax
-            {
-                get { return Value.alphaMax; }
-                set { Value.alphaMax = value; }
-            }
-
-            [ParserTarget("tiling")]
-            [KittopiaDescription("Texture tiling multiplier for this level of ring detail.")]
-            public Vector2Parser Tiling
-            {
-                get { return Value.tiling; }
-                set { Value.tiling = value; }
-            }
-
-            [ParserTarget("strength")]
-            [KittopiaDescription("The strength of the detail overlay effect.")]
-            public NumericParser<float> Strength
-            {
-                get { return Value.strength; }
-                set { Value.strength = value; }
-            }
-
-            [ParserTarget("fadeInStart")]
-            [KittopiaDescription("The distance from the camera that a ring pixel has to be for this detail level to start being blended in.")]
-            public NumericParser<float> FadeInStart
-            {
-                get { return Value.fadeParams.x; }
-                set { Value.fadeParams.x = value; }
-            }
-
-            [ParserTarget("fadeInEnd")]
-            [KittopiaDescription("The distance from the camera that a ring pixel has to be for this detail level to fully be blended in.")]
-            public NumericParser<float> FadeInEnd
-            {
-                get { return Value.fadeParams.y; }
-                set { Value.fadeParams.y = value; }
-            }
-
-            [ParserTarget("fadeOutStart")]
-            [KittopiaDescription("The distance from the camera at which this detail level will start being faded out again.")]
-            public NumericParser<float> FadeOutStart
-            {
-                get { return Value.fadeParams.z; }
-                set { Value.fadeParams.z = value; }
-            }
-
-            [ParserTarget("fadeOutEnd")]
-            [KittopiaDescription("The distance from the camera at which this detail level is again fully ignored.")]
-            public NumericParser<float> FadeOutEnd
-            {
-                get { return Value.fadeParams.w; }
-                set { Value.fadeParams.w = value; }
-            }
-
-            [ParserTarget("detailMask")]
-            [KittopiaDescription("A per-detail-pass per-texture-channel multiplier.")]
-            public Vector4Parser DetailMask
-            {
-                get { return Value.detailMask; }
-                set { Value.detailMask = value; }
+                if (RingMaterial is MaterialLoader.RingsLoader rings)
+                {
+                    rings.Detail = value;
+                }
             }
         }
 
-        [RequireConfigType(ConfigType.Node)]
-        public class DetailLoader : BaseLoader, ITypeParser<Ring.DetailSettings>
-        {
-            public Ring.DetailSettings Value { get; set; }
-
-            public DetailLoader()
-            {
-                Value = new Ring.DetailSettings();
-            }
-
-            public DetailLoader(Ring.DetailSettings settings)
-            {
-                Value = settings;
-            }
-
-            [ParserTarget("detailRegionsMask")]
-            [KittopiaDescription("A mask that is applied to the detail regions texture mutiplicatively.")]
-            public Vector4Parser DetailRegionsMask
-            {
-                get { return Value.detailRegionsMask; }
-                set { Value.detailRegionsMask = value; }
-            }
-
-            [ParserTarget("detailRegionsTexture")]
-            [KittopiaDescription("A texture that defines per-location prominence of the detail noise texture channels.")]
-            public Texture2DParser DetailRegionsTexture
-            {
-                get { return Value.detailRegionsTexture; }
-                set { Value.detailRegionsTexture = value; }
-            }
-
-            [ParserTarget("Coarse")]
-            public DetailPassLoader DetailCoarse
-            {
-                get { return new DetailPassLoader(Value.coarse); }
-                set { Value.coarse = value.Value; }
-            }
-
-            [ParserTarget("Fine")]
-            public DetailPassLoader DetailFine
-            {
-                get { return new DetailPassLoader(Value.fine); }
-                set { Value.fine = value.Value; }
-            }
-        }
+        // Material of our ring
+        [ParserTarget("Material", AllowMerge = true, GetChild = false)]
+        [KittopiaUntouchable]
+        [KittopiaDescription("Shader and material properties for the ring.")]
+        public MaterialLoader.MaterialLoader RingMaterial { get; set; }
 
         [ParserTargetCollection("Components", AllowMerge = true, NameSignificance = NameSignificance.Type)]
         [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
@@ -480,15 +345,65 @@ namespace Kopernicus.Configuration
             Object.Destroy(Value.gameObject);
         }
 
+        /// <summary>Build the loader the forwarding targets above read and write through.</summary>
+        private void EnsureMaterialLoader()
+        {
+            if (RingMaterial != null)
+            {
+                return;
+            }
+
+            if (Value.materialLoader != null)
+            {
+                RingMaterial = Value.materialLoader;
+                return;
+            }
+
+            Material material = Value.ringMr != null ? Value.ringMr.sharedMaterial : null;
+            String shaderName = material != null && material.shader != null
+                ? material.shader.name
+                : MaterialLoader.RingsLoader.SHADER_NAME;
+
+            RingMaterial = MaterialLoader.MaterialLoader.Create(shaderName, material);
+            Value.materialLoader = RingMaterial;
+        }
+
+        /// <summary>Fallback ring shader.</summary>
+        private String DefaultShaderName()
+        {
+            if (UseNewShader)
+            {
+                return MaterialLoader.RingsLoader.SHADER_NAME;
+            }
+
+            return Unlit ? "Unlit/Transparent" : "Legacy Shaders/Transparent/Diffuse";
+        }
+
         // Apply event
         void IParserEventSubscriber.Apply(ConfigNode node)
         {
+            String shaderName = node.GetNode("Material")?.GetValue("shader") ?? DefaultShaderName();
+            RingMaterial = MaterialLoader.MaterialLoader.Create(shaderName, null);
+
+            if (RingMaterial.ShaderParser == null)
+            {
+                ShaderParser shaderParser = new ShaderParser();
+                shaderParser.SetFromString(shaderName);
+                RingMaterial.ShaderParser = shaderParser;
+            }
+
+            RingMaterial.Apply(node.GetNode("Material") ?? new ConfigNode());
+
             Events.OnRingLoaderApply.Fire(this, node);
         }
 
         // Post-Apply event
         void IParserEventSubscriber.PostApply(ConfigNode node)
         {
+
+            (RingMaterial as MaterialLoader.RingsLoader)?.ApplyDeferred();
+            Value.materialLoader = RingMaterial;
+
             Events.OnRingLoaderPostApply.Fire(this, node);
         }
 
@@ -549,6 +464,8 @@ namespace Kopernicus.Configuration
             // Need to check the parent body's rotation to orient the LAN properly
             Value.referenceBody = body;
 
+            EnsureMaterialLoader();
+
             // Create the Component callback
             Components = new CallbackList<ComponentLoader<Ring>>(e =>
             {
@@ -595,6 +512,8 @@ namespace Kopernicus.Configuration
         public RingLoader(Ring value)
         {
             Value = value;
+
+            EnsureMaterialLoader();
 
             // Create the Component callback
             Components = new CallbackList<ComponentLoader<Ring>>(e =>

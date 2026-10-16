@@ -747,7 +747,8 @@ public abstract class MaterialLoader : BaseLoader, IParserEventSubscriber
                 {
                     if (material == null)
                     {
-                        var shader = Shader.Find(shaderName);
+                        // Check both KSP's and Kopernicus's shader caches
+                        var shader = Shader.Find(shaderName) ?? ShaderLoader.GetShader(shaderName);
                         if (shader == null)
                             throw new Exception($"Shader `{shaderName}` does not exist.");
 
@@ -763,7 +764,7 @@ public abstract class MaterialLoader : BaseLoader, IParserEventSubscriber
                 {
                     if (material == null)
                     {
-                        var shader = Shader.Find(shaderName);
+                        var shader = Shader.Find(shaderName) ?? ShaderLoader.GetShader(shaderName);
                         if (shader == null)
                             throw new Exception($"Shader `{shaderName}` does not exist.");
 

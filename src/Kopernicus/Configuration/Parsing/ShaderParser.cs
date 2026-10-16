@@ -42,7 +42,8 @@ public class ShaderParser : IParsable, ITypeParser<Shader>
 
     public void SetFromString(string s)
     {
-        var shader = Shader.Find(s);
+        // Check both KSP's and Kopernicus's shader caches
+        var shader = Shader.Find(s) ?? ShaderLoader.GetShader(s);
         if (shader == null)
             throw new Exception($"Unable to find shader `{s}`");
 
