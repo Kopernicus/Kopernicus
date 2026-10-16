@@ -56,9 +56,19 @@ public class ScatterMask : ModLoader<PQSMod_ScatterMask>
     }
 
     /// <summary>
+    /// Half the distance, in meters, covered by any one edge of the scatter mask.
+    /// </summary>
+    [ParserTarget("radius")]
+    public NumericParser<double> Radius
+    {
+        get => Mod.width * 0.5;
+        set => Mod.width = value * 2.0;
+    }
+
+    /// <summary>
     /// The distance, in meters, covered by any one edge of the scatter mask.
     /// </summary>
-    [ParserTarget("width", Optional = false)]
+    [ParserTarget("width")]
     public NumericParser<double> Width
     {
         get => Mod.width;

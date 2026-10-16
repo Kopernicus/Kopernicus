@@ -61,6 +61,9 @@ public class PQSMod_ScatterMask : PQSMod
     // planet-local coordinates.
     private Vector3d position;
 
+    // Unit direction from the planet center to the mask center.
+    private Vector3d normal;
+
     // Surface tangent directions, in planet-local coordinates, that the
     // texture's U and V axes are mapped along. These are unit vectors.
     private Vector3d uAxis;
@@ -72,7 +75,7 @@ public class PQSMod_ScatterMask : PQSMod
         if (debugShowColorMap)
             requirements |= PQS.ModiferRequirements.MeshColorChannel;
 
-        var normal = Planetarium.SphericalVector(lat * MathUtility.Deg2Rad, lon * MathUtility.Deg2Rad).xzy;
+        normal = Planetarium.SphericalVector(lat * MathUtility.Deg2Rad, lon * MathUtility.Deg2Rad).xzy;
         position = normal * sphere.radius;
 
         // Build an east/north tangent basis at the mask center. The planet's
@@ -92,7 +95,7 @@ public class PQSMod_ScatterMask : PQSMod
 
         if (mask == null)
         {
-            Debug.LogWarning("PQSMod_KSCScatterMask: No mask specified, planet: " + sphere.name);
+            Debug.LogWarning("PQSMod_ScatterMask: No mask specified, planet: " + sphere.name);
             modEnabled = false;
         }
     }
@@ -107,6 +110,10 @@ public class PQSMod_ScatterMask : PQSMod
 
         var ratio = sphere.radius / (0.5 * width);
         var dir = data.directionFromCenter;
+
+        // Check that we are on the same side of the planet as the mask
+        if (Vector3d.Dot(dir, normal) <= 0.0)
+            return;
         var u = (Vector3d.Dot(dir, uAxis) * ratio + 1.0) * 0.5;
         var v = (Vector3d.Dot(dir, vAxis) * ratio + 1.0) * 0.5;
 
@@ -119,12 +126,10 @@ public class PQSMod_ScatterMask : PQSMod
             return;
 
         var value = mask.GetPixelFloat(u, v);
-        data.allowScatter = value > 0.01f;
+        var allowScatter = value > 0.01f;
+
+        data.allowScatter &= allowScatter;
         if (debugShowColorMap)
-            data.vertColor = data.allowScatter ? Color.green : Color.red;
+            data.vertColor = allowScatter ? Color.green : Color.red;
     }
-
-
-    private static bool WithinRadius(Vector3d a, Vector3d b, double distance) =>
-        (a - b).sqrMagnitude <= distance * distance;
 }

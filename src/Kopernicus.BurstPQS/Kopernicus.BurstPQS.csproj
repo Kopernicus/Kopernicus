@@ -86,6 +86,7 @@
   <!-- Krafs.Publicizer items -->
   <ItemGroup>
     <Publicize Include="Kopernicus:Kopernicus.Components.PQSMod_ScatterMask.position" />
+    <Publicize Include="Kopernicus:Kopernicus.Components.PQSMod_ScatterMask.normal" />
     <Publicize Include="Kopernicus:Kopernicus.Components.PQSMod_ScatterMask.uAxis" />
     <Publicize Include="Kopernicus:Kopernicus.Components.PQSMod_ScatterMask.vAxis" />
   </ItemGroup>

@@ -70,6 +70,7 @@ public class ScatterMask(PQSMod_ScatterMask mod)
     {
         public BurstMapSO? mask = mask;
 
+        public Vector3d normal = mod.normal;
         public Vector3d uAxis = mod.uAxis;
         public Vector3d vAxis = mod.vAxis;
         public double width = mod.width;
@@ -92,6 +93,10 @@ public class ScatterMask(PQSMod_ScatterMask mod)
             for (int i = 0; i < data.VertexCount; ++i)
             {
                 var dir = data.directionFromCenter[i];
+
+                // Check that we are on the same side of the planet as the mask
+                if (Vector3d.Dot(dir, normal) <= 0.0)
+                    continue;
                 var u = (Vector3d.Dot(dir, uAxis) * ratio + 1.0) * 0.5;
                 var v = (Vector3d.Dot(dir, vAxis) * ratio + 1.0) * 0.5;
 
@@ -101,9 +106,9 @@ public class ScatterMask(PQSMod_ScatterMask mod)
                     continue;
 
                 var value = mask.GetPixelFloat(u, v);
-                var allowScatter = value > 0.01f;
+                var allowScatter =  value > 0.01f;
 
-                data.allowScatter[i] = allowScatter;
+                data.allowScatter[i] &= allowScatter;
                 if (debugShowColorMap)
                     data.vertColor[i] = allowScatter ? Color.green : Color.red;
             }
