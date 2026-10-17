@@ -430,6 +430,15 @@ namespace Kopernicus.Configuration
             Type = GetInitialScaledMaterialType();
             Material = MaterialLoader.MaterialLoader.CreateExisting(CurrentMaterial);
 
+            // On-demand textures are off the material until the body is in view, so take
+            // their paths from the component that loads them.
+            var onDemand = Value.scaledBody.GetComponent<ScaledSpaceOnDemand>();
+            if (Material != null && onDemand != null)
+            {
+                foreach (var entry in onDemand.Entries)
+                    Material.Entries[entry.Key] = entry.Path;
+            }
+
             if (Type != ScaledMaterialType.Star)
             {
                 ScaledSpaceFader fader = Value.scaledBody.GetComponent<ScaledSpaceFader>();

@@ -258,6 +258,18 @@ namespace Kopernicus.OnDemand
             listeners.Add(new(property, path, listener));
         }
 
+        /// <summary>
+        /// The property and path of each texture registered for <paramref name="listener"/>.
+        /// </summary>
+        internal IEnumerable<OnDemandTextureEntry> GetTextures(IOnDemandTextureListener listener)
+        {
+            foreach (var entry in listeners)
+            {
+                if (ReferenceEquals(entry.listener, listener))
+                    yield return new OnDemandTextureEntry(entry.property, entry.path);
+            }
+        }
+
         void StartTextureLoad()
         {
             // Cancel any pending unload — keep what's already loaded.
