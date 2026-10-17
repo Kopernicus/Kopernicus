@@ -428,6 +428,7 @@ namespace Kopernicus.Configuration
             }
 
             Type = GetInitialScaledMaterialType();
+            Material = MaterialLoader.MaterialLoader.CreateExisting(CurrentMaterial);
 
             if (Type != ScaledMaterialType.Star)
             {

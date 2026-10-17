@@ -723,6 +723,33 @@ public abstract class MaterialLoader : BaseLoader, IParserEventSubscriber
             && material.shader.name == shaderName ? material : null);
     }
 
+    /// <summary>
+    /// Create a loader wrapping an existing <paramref name="material"/>, keeping its
+    /// current properties. Unlike <see cref="Create"/>, shaders without a registered
+    /// loader keep the material too, via a <see cref="CustomMaterialLoader"/>, and the
+    /// loader holds the material itself rather than a copy.
+    /// </summary>
+    public static MaterialLoader CreateExisting(Material material)
+    {
+        if (material == null)
+            return null;
+
+        var shaderName = material.shader.name;
+        if (!Registry.TryGetValue(shaderName, out var entry))
+            return new CustomMaterialLoader(material);
+
+        // Loader constructors copy the material, and the parser later assigns the copy
+        // to its user. Nothing will do that here, so hold the original instead.
+        var loader = entry.ctor(material, shaderName);
+        if (loader.Value != material)
+        {
+            if (loader.Value != null)
+                UnityEngine.Object.Destroy(loader.Value);
+            loader.Value = material;
+        }
+        return loader;
+    }
+
     internal static void BuildRegistry()
     {
         Registry.Clear();

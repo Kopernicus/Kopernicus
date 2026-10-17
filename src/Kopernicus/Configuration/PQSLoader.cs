@@ -418,6 +418,7 @@ namespace Kopernicus.Configuration
             body.pqsController.transform.name = transform.name;
             body.pqsController.gameObject.name = transform.name;
             body.pqsController.radius = body.Radius;
+            SurfaceMaterial = MaterialLoader.MaterialLoader.CreateExisting(BasicSurfaceMaterial);
 
             if (!(Versioning.version_minor < 9))
             {
