@@ -160,8 +160,10 @@ namespace Kopernicus.RuntimeUtility
             planetRotato.speed = planetRefRotato.speed * ((Single)planetCb.rotationPeriod / KERBIN_ROTATION_PERIOD);
             menuPlanet.transform.Rotate(0f, (Single)planetCb.initialRotation, 0f);
 
-            // Scale the body
-            menuPlanet.transform.localScale = kerbin.localScale;
+            // Scale the body. The menu Kerbin uses the stock 1000 unit mesh, so compensate if our
+            // body's mesh has a different radius.
+            menuPlanet.transform.localScale = kerbin.localScale *
+                (Utility.STOCK_SCALED_MESH_RADIUS / Utility.GetScaledMeshRadius(planetCb));
             menuPlanet.transform.localPosition = kerbin.localPosition;
             menuPlanet.transform.position = kerbin.position;
 

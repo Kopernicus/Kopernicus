@@ -406,7 +406,7 @@ namespace Kopernicus.Configuration
                 renderer.sharedMaterial = new Components.MaterialWrapper.AtmosphereFromGround();
                 renderer.sharedMaterial.renderQueue = 3020;
                 MeshFilter meshFilter = scaledAtmosphere.AddComponent<MeshFilter>();
-                meshFilter.sharedMesh = Templates.ReferenceGeosphere;
+                meshFilter.sharedMesh = Utility.GetReferenceGeosphere(Utility.GetScaledMeshRadius(body));
                 Value = body.afg = scaledAtmosphere.AddComponent<AtmosphereFromGround>();
                 Value.planet = body;
                 Value.sunLight = Sun.Instance.gameObject;
