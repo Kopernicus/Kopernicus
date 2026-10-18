@@ -451,7 +451,7 @@ namespace Kopernicus.Configuration
             Events.OnBodyGenerateScaledSpace.Fire(this, node);
         }
 
-        [KittopiaAction("Convert Body to Barycenter")]
+        [KittopiaAction("Convert Body to Barycenter", Destructive = true)]
         public void CreateBarycenter()
         {
             // Set the value accordingly
