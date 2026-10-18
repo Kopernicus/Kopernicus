@@ -258,6 +258,48 @@ namespace Kopernicus.OnDemand
             listeners.Add(new(property, path, listener));
         }
 
+        /// <summary>
+        /// Stop loading <paramref name="property"/> for <paramref name="listener"/>, e.g. once
+        /// something else has set that texture.
+        /// </summary>
+        internal void RemoveTextureListener(string property, IOnDemandTextureListener listener)
+        {
+            // Handles line up with listeners by index, so the callbacks restart afterwards.
+            if (loadCoroutine != null)
+            {
+                StopCoroutine(loadCoroutine);
+                loadCoroutine = null;
+            }
+
+            for (int i = listeners.Count - 1; i >= 0; --i)
+            {
+                if (listeners[i].property != property || !ReferenceEquals(listeners[i].listener, listener))
+                    continue;
+
+                listeners.RemoveAt(i);
+                if (i < handles.Count)
+                {
+                    handles[i]?.Dispose();
+                    handles.RemoveAt(i);
+                }
+            }
+
+            if (handles.Count != 0 && unloadCoroutine == null)
+                loadCoroutine = StartCoroutine(DoTextureCallbacks());
+        }
+
+        /// <summary>
+        /// The property and path of each texture registered for <paramref name="listener"/>.
+        /// </summary>
+        internal IEnumerable<OnDemandTextureEntry> GetTextures(IOnDemandTextureListener listener)
+        {
+            foreach (var entry in listeners)
+            {
+                if (ReferenceEquals(entry.listener, listener))
+                    yield return new OnDemandTextureEntry(entry.property, entry.path);
+            }
+        }
+
         void StartTextureLoad()
         {
             // Cancel any pending unload — keep what's already loaded.

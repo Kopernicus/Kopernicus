@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -215,11 +215,14 @@ public abstract class MaterialLoader : BaseLoader, IParserEventSubscriber
 
     /// <summary>
     /// Configure the material of the renderer attached to <paramref name="scaledBody"/>.
+    /// </summary>
+    /// 
+    /// <remarks>
     /// By default this will create a <see cref="ScaledSpaceOnDemand" /> component
     /// on <paramref name="scaledBody" /> if there are any on-demand textures.
     /// Override this method if you need to attach custom components to
     /// <paramref name="scaledBody"/>.
-    /// </summary>
+    /// </remarks>
     public virtual void OnParentApply(GameObject scaledBody)
     {
         if (Value == null || scaledBody == null)
@@ -234,6 +237,113 @@ public abstract class MaterialLoader : BaseLoader, IParserEventSubscriber
         onDemand.Entries = Entries
             .Select(kv => new OnDemandTextureEntry(kv.Key, kv.Value))
             .ToList();
+    }
+
+    /// <summary>
+    /// Update the linked on demand entries for <paramref name="scaledBody"/> after
+    /// <see cref="Entries" /> has been updated.
+    /// </summary>
+    /// 
+    /// <remarks>
+    /// By default this will update a <see cref="ScaledSpaceOnDemand" /> component
+    /// on <see cref="scaledBody" /> and reload any on-demand textures on it.
+    /// Override it to add custom behaviour for scaled bodies.
+    /// </remarks>
+    public virtual void RefreshOnDemand(GameObject scaledBody)
+    {
+        if (scaledBody == null)
+            return;
+
+        var onDemand = scaledBody.GetComponent<ScaledSpaceOnDemand>();
+        if (onDemand == null)
+        {
+            if (Entries.Count == 0)
+                return;
+            onDemand = scaledBody.AddComponent<ScaledSpaceOnDemand>();
+        }
+
+        bool loaded = onDemand.isLoaded;
+        if (loaded)
+            onDemand.UnloadTextures();
+        onDemand.Entries = Entries
+            .Select(kv => new OnDemandTextureEntry(kv.Key, kv.Value))
+            .ToList();
+        if (loaded)
+            onDemand.LoadTextures();
+    }
+
+    /// <summary>
+    /// Update the linked on-demand entries for <paramref name="handler" /> on
+    /// <paramref name="pqs" />
+    /// </summary>
+    /// 
+    /// <remarks>
+    /// By default this will unregister all entries that are no longer present
+    /// from <paramref name="handler"/>, then register all the new ones.
+    /// Override to add your own behaviour here.
+    /// </remarks>
+    public virtual void RefreshOnDemand(PQS pqs, PQSMod_OnDemandHandler handler)
+    {
+        if (pqs == null || handler == null)
+            return;
+
+        var listener = pqs.GetComponent<PQSSurfaceMaterialTextureListener>();
+        if (listener == null)
+        {
+            if (Entries.Count == 0)
+                return;
+            listener = pqs.gameObject.AddComponent<PQSSurfaceMaterialTextureListener>();
+        }
+
+        SyncTextureListener(handler, listener);
+    }
+
+    /// <summary>
+    /// Update the linked on-demand entries for <paramref name="handler" /> on
+    /// <paramref name="mod" />
+    /// </summary>
+    ///
+    /// <remarks>
+    /// By default this will unregister all entries that are no longer present
+    /// from <paramref name="handler"/>, then register all the new ones.
+    /// Override to add your own behaviour here.
+    /// </remarks>
+    public virtual void RefreshOnDemand(IPQSModWithMaterial mod, PQSMod_OnDemandHandler handler)
+    {
+        if (mod == null || handler == null)
+            return;
+
+        var listener = mod.gameObject.GetComponent<MaterialTextureListener>();
+        if (listener == null)
+        {
+            if (Entries.Count == 0 || Value == null)
+                return;
+            listener = mod.gameObject.AddComponent<MaterialTextureListener>();
+            listener.Setup(Value);
+        }
+
+        SyncTextureListener(handler, listener);
+    }
+
+    /// <summary>
+    /// Unregister the textures <paramref name="listener"/> has with <paramref name="handler"/>
+    /// that are no longer in <see cref="Entries"/>, then register the ones it is missing.
+    /// </summary>
+    void SyncTextureListener<T>(PQSMod_OnDemandHandler handler, T listener)
+        where T : UnityEngine.Object, IOnDemandTextureListener
+    {
+        foreach (var entry in handler.GetTextures(listener).ToList())
+        {
+            if (!Entries.TryGetValue(entry.Key, out var path) || path != entry.Path)
+                handler.RemoveTextureListener(entry.Key, listener);
+        }
+
+        var registered = new HashSet<string>(handler.GetTextures(listener).Select(e => e.Key));
+        foreach (var (property, path) in Entries)
+        {
+            if (!registered.Contains(property))
+                handler.AddTextureListener(property, path, listener);
+        }
     }
 
     /// <summary>
@@ -721,6 +831,33 @@ public abstract class MaterialLoader : BaseLoader, IParserEventSubscriber
         // switching shaders, start with the new shader's defaults.
         return new CustomMaterialLoader(material != null && material.shader != null
             && material.shader.name == shaderName ? material : null);
+    }
+
+    /// <summary>
+    /// Create a loader wrapping an existing <paramref name="material"/>, keeping its
+    /// current properties. Unlike <see cref="Create"/>, shaders without a registered
+    /// loader keep the material too, via a <see cref="CustomMaterialLoader"/>, and the
+    /// loader holds the material itself rather than a copy.
+    /// </summary>
+    public static MaterialLoader CreateExisting(Material material)
+    {
+        if (material == null)
+            return null;
+
+        var shaderName = material.shader.name;
+        if (!Registry.TryGetValue(shaderName, out var entry))
+            return new CustomMaterialLoader(material);
+
+        // Loader constructors copy the material, and the parser later assigns the copy
+        // to its user. Nothing will do that here, so hold the original instead.
+        var loader = entry.ctor(material, shaderName);
+        if (loader.Value != material)
+        {
+            if (loader.Value != null)
+                UnityEngine.Object.Destroy(loader.Value);
+            loader.Value = material;
+        }
+        return loader;
     }
 
     internal static void BuildRegistry()

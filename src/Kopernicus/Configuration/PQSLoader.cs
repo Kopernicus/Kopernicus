@@ -418,6 +418,16 @@ namespace Kopernicus.Configuration
             body.pqsController.transform.name = transform.name;
             body.pqsController.gameObject.name = transform.name;
             body.pqsController.radius = body.Radius;
+            SurfaceMaterial = MaterialLoader.MaterialLoader.CreateExisting(BasicSurfaceMaterial);
+
+            // As for scaled space, on-demand texture paths are only known to the handler.
+            var handler = Utility.GetMod<PQSMod_OnDemandHandler>(Value);
+            var listener = Value.GetComponent<PQSSurfaceMaterialTextureListener>();
+            if (SurfaceMaterial != null && handler != null && listener != null)
+            {
+                foreach (var entry in handler.GetTextures(listener))
+                    SurfaceMaterial.Entries[entry.Key] = entry.Path;
+            }
 
             if (!(Versioning.version_minor < 9))
             {
