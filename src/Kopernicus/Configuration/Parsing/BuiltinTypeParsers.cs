@@ -68,18 +68,43 @@ namespace Kopernicus.Configuration.Parsing
             Altitude = 0;
         }
 
+        // The radius of the body being loaded, or of the live body outside of loading
+        private static Double? CurrentRadius()
+        {
+            Body body = Parser.GetState<Body>("Kopernicus:currentBody");
+            if (body == null)
+            {
+                return null;
+            }
+
+            CelestialBody celestialBody = body.GeneratedBody != null
+                ? body.GeneratedBody.celestialBody
+                : Injector.IsInPrefab ? null : body.CelestialBody;
+            return celestialBody != null ? Math.Max(celestialBody.Radius, 0) : (Double?)null;
+        }
+
         // Convert
         public static implicit operator Vector3(PositionParser parser)
         {
-            PSystemBody generatedBody = Parser.GetState<Body>("Kopernicus:currentBody")?.GeneratedBody;
-            if (generatedBody == null)
+            Double? radius = CurrentRadius();
+            if (radius == null)
             {
                 return Vector3.zero;
             }
 
-            Double radius = generatedBody.celestialBody.Radius;
-            return Utility.LLAtoECEF(parser.Latitude, parser.Longitude, parser.Altitude,
-                Math.Max(radius, 0));
+            return Utility.LLAtoECEF(parser.Latitude, parser.Longitude, parser.Altitude, radius.Value);
+        }
+
+        // Convert back, so that the position can be read
+        public static implicit operator PositionParser(Vector3 position)
+        {
+            Utility.ECEFtoLLA(position, CurrentRadius() ?? 0, out Double lat, out Double lon, out Double alt);
+            return new PositionParser
+            {
+                Latitude = lat,
+                Longitude = lon,
+                Altitude = alt
+            };
         }
     }
 

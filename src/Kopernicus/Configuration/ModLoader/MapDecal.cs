@@ -29,6 +29,7 @@ using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.Configuration.Parsing;
+using Kopernicus.UI;
 
 namespace Kopernicus.Configuration.ModLoader
 {
@@ -103,6 +104,7 @@ namespace Kopernicus.Configuration.ModLoader
 
         // position
         [ParserTarget("position")]
+        [KittopiaHideOption(Export = false)]
         public Vector3Parser Position
         {
             get { return Mod.position; }
@@ -113,6 +115,7 @@ namespace Kopernicus.Configuration.ModLoader
         [ParserTarget("Position")]
         private PositionParser Position2
         {
+            get { return Mod.position; }
             set { Mod.position = value; }
         }
 
