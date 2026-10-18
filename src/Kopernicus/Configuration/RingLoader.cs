@@ -53,7 +53,7 @@ namespace Kopernicus.Configuration
 
         // Inner Radius of our ring
         [ParserTarget("innerRadius")]
-        [KittopiaDescription("The lower bound of the ring (measured in meters from the center of the body).")]
+        [KittopiaDescription("The lower bound of the ring, in milliradii (thousandths of the body's radius) from its center.")]
         public NumericParser<Single> InnerRadius
         {
             get { return Value.innerRadius; }
@@ -62,7 +62,7 @@ namespace Kopernicus.Configuration
 
         // Outer Radius of our ring
         [ParserTarget("outerRadius")]
-        [KittopiaDescription("The upper bound of the ring (measured in meters from the center of the body).")]
+        [KittopiaDescription("The upper bound of the ring, in milliradii (thousandths of the body's radius) from its center.")]
         public NumericParser<Single> OuterRadius
         {
             get { return Value.outerRadius; }
