@@ -85,6 +85,7 @@
 	<Reference Include="netstandard">
       <HintPath>$(DepDirPath)\netstandard.dll</HintPath>
       <Private>False</Private>
+	</Reference>
   </ItemGroup>
   <!-- Krafs.Publicizer items -->
   <ItemGroup>
