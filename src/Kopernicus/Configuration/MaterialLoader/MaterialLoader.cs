@@ -717,10 +717,10 @@ public abstract class MaterialLoader : BaseLoader, IParserEventSubscriber
         if (Registry.TryGetValue(shaderName, out var entry))
             return entry.ctor(material, shaderName);
 
-        // Explicitly exclude the material. The existing properties likely don't
-        // make sense and we want the user to configure anything that isn't the
-        // shader defaults.
-        return new CustomMaterialLoader();
+        // Preserve a custom material when wrapping its current shader. When
+        // switching shaders, start with the new shader's defaults.
+        return new CustomMaterialLoader(material != null && material.shader != null
+            && material.shader.name == shaderName ? material : null);
     }
 
     internal static void BuildRegistry()
@@ -747,7 +747,8 @@ public abstract class MaterialLoader : BaseLoader, IParserEventSubscriber
                 {
                     if (material == null)
                     {
-                        var shader = Shader.Find(shaderName);
+                        // Check both KSP's and Kopernicus's shader caches
+                        var shader = Shader.Find(shaderName) ?? ShaderLoader.GetShader(shaderName);
                         if (shader == null)
                             throw new Exception($"Shader `{shaderName}` does not exist.");
 
@@ -763,7 +764,7 @@ public abstract class MaterialLoader : BaseLoader, IParserEventSubscriber
                 {
                     if (material == null)
                     {
-                        var shader = Shader.Find(shaderName);
+                        var shader = Shader.Find(shaderName) ?? ShaderLoader.GetShader(shaderName);
                         if (shader == null)
                             throw new Exception($"Shader `{shaderName}` does not exist.");
 
