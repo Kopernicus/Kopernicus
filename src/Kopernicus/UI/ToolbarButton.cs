@@ -31,7 +31,6 @@ using Kopernicus.Configuration;
 using Kopernicus.RuntimeUtility;
 using Expansions.Missions;
 using static Targeting;
-using static UnityEngine.UIElements.UxmlAttributeDescription;
 using System.Security.AccessControl;
 
 namespace Kopernicus.UI

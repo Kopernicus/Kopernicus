@@ -33,4 +33,11 @@
   <ItemGroup>
     <PackageReference Include="KSPBuildTools" Version="1.1.1" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="netstandard">
+      <HintPath>$(DepDirPath)\netstandard.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
 </Project>

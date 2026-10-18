@@ -1011,7 +1011,7 @@ namespace Kopernicus.Components
                 flags |= TextureCreationFlags.Crunch;
 
             var uflags = (UnityEngine.Experimental.Rendering.TextureCreationFlags)flags;
-            Texture2D.Internal_Create(tex, width, height, mipCount, gformat, uflags, IntPtr.Zero);
+            tex = new Texture2D(width, height, gformat, mipCount, uflags);
             return tex;
         }
     }

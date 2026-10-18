@@ -82,6 +82,9 @@
       <HintPath>$(BurstPQSPath)</HintPath>
       <Private>false</Private>
     </Reference>
+	<Reference Include="netstandard">
+      <HintPath>$(DepDirPath)\netstandard.dll</HintPath>
+      <Private>False</Private>
   </ItemGroup>
   <!-- Krafs.Publicizer items -->
   <ItemGroup>

@@ -72,17 +72,22 @@
 
     <Reference Include="HarmonyKSP">
       <HintPath>$(DepDirPath)\Harmony\0Harmony.dll</HintPath>
-      <Private>false</Private>
+      <Private>False</Private>
     </Reference>
 
     <Reference Include="KSPTextureLoader">
       <HintPath>$(DepDirPath)\KSPTextureLoader.dll</HintPath>
-      <Private>false</Private>
+      <Private>False</Private>
     </Reference>
 
     <Reference Include="ModularFlightIntegrator">
       <HintPath>$(MFIPath)</HintPath>
-      <Private>false</Private>
+      <Private>False</Private>
+    </Reference>
+
+    <Reference Include="netstandard">
+      <HintPath>$(DepDirPath)\netstandard.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
 
@@ -100,6 +105,7 @@
   <!-- Krafs.Publicizer items -->
   <ItemGroup>
     <Publicize Include="UnityEngine.CoreModule:UnityEngine.Object.m_CachedPtr" />
+    <Publicize Include="UnityEngine.CoreModule:UnityEngine.TextureColorSpace" />
     <Publicize Include="UnityEngine.CoreModule:UnityEngine.Texture.ValidateFormat" />
     <Publicize Include="UnityEngine.CoreModule:UnityEngine.Texture2D.Internal_Create" />
     <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.cacheUnassigned" />

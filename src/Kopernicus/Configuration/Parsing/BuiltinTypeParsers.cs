@@ -256,21 +256,21 @@ namespace Kopernicus.Configuration.Parsing
     [RequireConfigType(ConfigType.Node)]
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class PhysicsMaterialParser : ITypeParser<PhysicMaterial>
+    public class PhysicsMaterialParser : ITypeParser<PhysicsMaterial>
     {
         // Physics material we are generating
-        public PhysicMaterial Value { get; set; }
+        public PhysicsMaterial Value { get; set; }
 
         // Physics material parameters
         [ParserTarget("bounceCombine")]
-        public EnumParser<PhysicMaterialCombine> BounceCombine
+        public EnumParser<PhysicsMaterialCombine> BounceCombine
         {
             get { return Value.bounceCombine; }
             set { Value.bounceCombine = value; }
         }
 
         [ParserTarget("frictionCombine")]
-        public EnumParser<PhysicMaterialCombine> FrictionCombine
+        public EnumParser<PhysicsMaterialCombine> FrictionCombine
         {
             get { return Value.frictionCombine; }
             set { Value.frictionCombine = value; }
@@ -302,21 +302,21 @@ namespace Kopernicus.Configuration.Parsing
         /// </summary>
         public PhysicsMaterialParser()
         {
-            Value = new PhysicMaterial
+            Value = new PhysicsMaterial
             {
                 name = "Ground",
                 dynamicFriction = 0.6f,
                 staticFriction = 0.8f,
                 bounciness = 0.0f,
-                frictionCombine = PhysicMaterialCombine.Maximum,
-                bounceCombine = PhysicMaterialCombine.Average
+                frictionCombine = PhysicsMaterialCombine.Maximum,
+                bounceCombine = PhysicsMaterialCombine.Average
             };
         }
 
         /// <summary>
         /// Create a new PhysicsMaterialParser from an already existing PhysicMaterial
         /// </summary>
-        public PhysicsMaterialParser(PhysicMaterial material) : this()
+        public PhysicsMaterialParser(PhysicsMaterial material) : this()
         {
             if (material != null)
             {
@@ -327,7 +327,7 @@ namespace Kopernicus.Configuration.Parsing
         /// <summary>
         /// Convert Parser to Value
         /// </summary>
-        public static implicit operator PhysicMaterial(PhysicsMaterialParser parser)
+        public static implicit operator PhysicsMaterial(PhysicsMaterialParser parser)
         {
             return parser.Value;
         }
@@ -335,7 +335,7 @@ namespace Kopernicus.Configuration.Parsing
         /// <summary>
         /// Convert Value to Parser
         /// </summary>
-        public static implicit operator PhysicsMaterialParser(PhysicMaterial value)
+        public static implicit operator PhysicsMaterialParser(PhysicsMaterial value)
         {
             return new PhysicsMaterialParser(value);
         }
