@@ -963,6 +963,17 @@ namespace Kopernicus.ConfigParser
             }
         }
 
+        /// <summary>
+        /// Called by HotReloadKSP when an assembly is reloaded.
+        /// </summary>
+        private static void OnHotReload(Assembly oldAssembly, Assembly newAssembly)
+        {
+            // Clear the existing caches so that the next parse rebuilds them.
+            _modTypes = null;
+            ParserTargetExternalInfo.Reset();
+            NameToTypeCache.Reset();
+        }
+
         private static void GetModTypes()
         {
             _modTypes = new List<Type>();
@@ -979,6 +990,8 @@ namespace Kopernicus.ConfigParser
         private class ParserTargetExternalInfo
         {
             private static List<ParserTargetExternalInfo> _cache;
+
+            public static void Reset() => _cache = null;
 
             public static List<ParserTargetExternalInfo> Cache
             {
@@ -1031,6 +1044,8 @@ namespace Kopernicus.ConfigParser
         private class NameToTypeCache
         {
             private static Dictionary<string, Dictionary<Type, Type>> nameToType = new Dictionary<string, Dictionary<Type, Type>>();
+
+            public static void Reset() => nameToType.Clear();
 
             public static Type GetElementType(string name, Type targetType)
             {
