@@ -36,6 +36,7 @@ using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.ConfigParser.Interfaces;
 using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
+using Kopernicus.OnDemand;
 using Kopernicus.UI;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -334,7 +335,6 @@ namespace Kopernicus.Configuration
         [KittopiaDescription("Updates the mesh of the planetary ring.")]
         public void RebuildRing()
         {
-            Object.DestroyImmediate(Value.GetComponent<MeshRenderer>());
             Object.DestroyImmediate(Value.GetComponent<MeshFilter>());
             Value.BuildRing();
         }
@@ -353,19 +353,35 @@ namespace Kopernicus.Configuration
                 return;
             }
 
-            if (Value.materialLoader != null)
-            {
-                RingMaterial = Value.materialLoader;
-                return;
-            }
-
-            Material material = Value.ringMr != null ? Value.ringMr.sharedMaterial : null;
-            String shaderName = material != null && material.shader != null
-                ? material.shader.name
+            String shaderName = Value.material != null && Value.material.shader != null
+                ? Value.material.shader.name
                 : MaterialLoader.RingsLoader.SHADER_NAME;
 
-            RingMaterial = MaterialLoader.MaterialLoader.Create(shaderName, material);
-            Value.materialLoader = RingMaterial;
+            RingMaterial = CreateMaterialLoader(shaderName);
+            Value.material = RingMaterial.Value;
+        }
+
+        private MaterialLoader.MaterialLoader CreateMaterialLoader(String shaderName)
+        {
+            var loader = MaterialLoader.MaterialLoader.Create(shaderName, Value.material);
+            if (Value.material != null && loader.Value == Value.material)
+            {
+                // Deferred paths survive Unity cloning on the on-demand component,
+                // even while the material's texture slots are empty.
+                var onDemand = Value.GetComponent<ScaledSpaceOnDemand>();
+                if (onDemand != null)
+                {
+                    var shader = new ShaderParser();
+                    shader.SetFromString(shaderName);
+                    foreach (var entry in onDemand.Entries)
+                    {
+                        var index = shader.Value.FindPropertyIndex(entry.Key);
+                        if (index >= 0 && shader.Value.GetPropertyType(index) == UnityEngine.Rendering.ShaderPropertyType.Texture)
+                            loader.Entries[entry.Key] = entry.Path;
+                    }
+                }
+            }
+            return loader;
         }
 
         /// <summary>Fallback ring shader.</summary>
@@ -383,15 +399,21 @@ namespace Kopernicus.Configuration
         void IParserEventSubscriber.Apply(ConfigNode node)
         {
             String shaderName = node.GetNode("Material")?.GetValue("shader") ?? DefaultShaderName();
-            RingMaterial = MaterialLoader.MaterialLoader.Create(shaderName, null);
-
-            if (RingMaterial.ShaderParser == null)
+            if (RingMaterial == null || RingMaterial.Value == null
+                || RingMaterial.Value.shader == null || RingMaterial.Value.shader.name != shaderName)
             {
-                ShaderParser shaderParser = new ShaderParser();
-                shaderParser.SetFromString(shaderName);
-                RingMaterial.ShaderParser = shaderParser;
+                RingMaterial = CreateMaterialLoader(shaderName);
             }
 
+            ShaderParser shaderParser = new ShaderParser();
+            shaderParser.SetFromString(shaderName);
+            RingMaterial.ShaderParser = shaderParser;
+
+            // The parser will also recurse into the "Material" node on its own after this method
+            // returns, since RingMaterial is itself a plain ParserTarget, calling RingMaterial.Apply
+            // a second time - harmless since it's idempotent. This explicit call is what resolves and
+            // assigns the shader up front, which also has to happen for the old flat syntax, where
+            // there's no "Material" node for the parser to recurse into at all.
             RingMaterial.Apply(node.GetNode("Material") ?? new ConfigNode());
 
             Events.OnRingLoaderApply.Fire(this, node);
@@ -400,9 +422,22 @@ namespace Kopernicus.Configuration
         // Post-Apply event
         void IParserEventSubscriber.PostApply(ConfigNode node)
         {
-
             (RingMaterial as MaterialLoader.RingsLoader)?.ApplyDeferred();
-            Value.materialLoader = RingMaterial;
+            Value.material = RingMaterial.Value;
+
+            // Ring's own mesh geometry can only be built once the parent body's scale is known, so
+            // that still happens lazily in Ring.Start(). The renderer and material don't have that
+            // dependency, so attach them now and let MaterialLoader.OnParentApply wire up on-demand
+            // textures, just like it does for scaled-space bodies (ScaledVersionLoader).
+            if (Value.gameObject.GetComponent<MeshRenderer>() == null)
+            {
+                Value.gameObject.AddComponent<MeshRenderer>();
+            }
+
+            // Re-applying a config replaces the texture bindings for this material.
+            foreach (var onDemand in Value.GetComponents<ScaledSpaceOnDemand>())
+                Object.DestroyImmediate(onDemand);
+            RingMaterial.OnParentApply(Value.gameObject);
 
             Events.OnRingLoaderPostApply.Fire(this, node);
         }

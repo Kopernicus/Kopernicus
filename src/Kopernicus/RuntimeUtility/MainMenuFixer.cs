@@ -133,7 +133,7 @@ namespace Kopernicus.RuntimeUtility
             munPivot.gameObject.SetActive(false);
 
             // Activate the textures
-            ScaledSpaceOnDemand od = planetCb.scaledBody.GetComponentInChildren<ScaledSpaceOnDemand>();
+            ScaledSpaceOnDemand od = planetCb.scaledBody.GetComponent<ScaledSpaceOnDemand>();
             if (od != null)
             {
                 od.LoadTextures();

@@ -717,10 +717,10 @@ public abstract class MaterialLoader : BaseLoader, IParserEventSubscriber
         if (Registry.TryGetValue(shaderName, out var entry))
             return entry.ctor(material, shaderName);
 
-        // Explicitly exclude the material. The existing properties likely don't
-        // make sense and we want the user to configure anything that isn't the
-        // shader defaults.
-        return new CustomMaterialLoader();
+        // Preserve a custom material when wrapping its current shader. When
+        // switching shaders, start with the new shader's defaults.
+        return new CustomMaterialLoader(material != null && material.shader != null
+            && material.shader.name == shaderName ? material : null);
     }
 
     internal static void BuildRegistry()

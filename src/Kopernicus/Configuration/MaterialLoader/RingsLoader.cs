@@ -29,6 +29,7 @@ using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.Configuration.Attributes;
 using Kopernicus.Configuration.MaterialLoader.Parsing;
 using Kopernicus.Configuration.Parsing;
+using Kopernicus.OnDemand;
 using UnityEngine;
 
 namespace Kopernicus.Configuration.MaterialLoader
@@ -44,6 +45,9 @@ namespace Kopernicus.Configuration.MaterialLoader
         [PreApply]
         [ParserTarget("shader")]
         public override ShaderParser ShaderParser { get; set; }
+
+        [ParserTarget("onDemand")]
+        public override NumericParser<bool> OnDemand { get; set; } = OnDemandStorage.UseOnDemand;
 
         // The ring itself, sampled across its width. Alpha is opacity.
         [ParserTarget("texture")]
