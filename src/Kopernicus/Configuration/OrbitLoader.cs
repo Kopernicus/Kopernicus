@@ -50,7 +50,6 @@ namespace Kopernicus.Configuration
 
         // Reference body to orbit
         [ParserTarget("referenceBody")]
-        [KittopiaHideOption]
         [KittopiaDescription("The body that this body is orbiting around.")]
         public String ReferenceBody
         {
