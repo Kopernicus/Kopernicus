@@ -1044,6 +1044,17 @@ namespace Kopernicus
             return new Vector3((Single)x, (Single)y, (Single)z);
         }
 
+        // The inverse of LLAtoECEF: latitude and longitude in degrees, altitude above the radius.
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        public static void ECEFtoLLA(Vector3d position, Double radius, out Double lat, out Double lon, out Double alt)
+        {
+            const Double RADIANS_TO_DEGREES = 180.0 / Math.PI;
+            Double r = position.magnitude;
+            lat = r > 0 ? Math.Asin(position.y / r) * RADIANS_TO_DEGREES : 0;
+            lon = Math.Atan2(position.z, position.x) * RADIANS_TO_DEGREES;
+            alt = r - radius;
+        }
+
         public static Boolean TextureExists(String path)
         {
             return TextureLoader.TextureExists(path);

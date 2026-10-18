@@ -352,6 +352,7 @@ namespace Kopernicus.Configuration.ModLoader
 
         // repositionRadial
         [ParserTarget("repositionRadial")]
+        [KittopiaHideOption(Export = false)]
         public Vector3Parser RepositionRadial
         {
             get { return Mod.repositionRadial; }
@@ -363,6 +364,7 @@ namespace Kopernicus.Configuration.ModLoader
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
         private PositionParser RepositionRadialPosition
         {
+            get { return Mod.repositionRadial; }
             set { Mod.repositionRadial = value; }
         }
 
