@@ -48,8 +48,8 @@ namespace Kopernicus.Constants
     {
         // Compatible version
         internal const string VERSION_MAJOR = "1";
-        internal const string VERSION_MINOR = "12";
-        internal const string VERSION_MINOR_LOWER_LIMIT = "8";
+        internal const string VERSION_MINOR = "13";
+        internal const string VERSION_MINOR_LOWER_LIMIT = "13";
         internal const string REVISION = "1";
         internal const string KOPERNICUS = BuildInfo.KopernicusRelease;
         public static Boolean IsCompatible()
@@ -83,7 +83,7 @@ namespace Kopernicus.Constants
             if (IsCompatible())
             {
                 // warn about unsupported versions
-                if (((Versioning.version_minor == 11) && (Versioning.Revision > 2)) || ((Versioning.version_minor == 12) && (Versioning.Revision > 5)) || (Versioning.version_minor > 12))
+                if (Versioning.version_minor > 13 || Versioning.version_major > 1)
                 {
                     PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "Kopernicus", "Kopernicus", "Kopernicus is in beta on this version of KSP...  Bugs may be present!", "OK", false, UISkinManager.defaultSkin);
                 }
