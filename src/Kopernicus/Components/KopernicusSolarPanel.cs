@@ -207,6 +207,10 @@ namespace Kopernicus.Components
 
             if (HighLogic.LoadedSceneIsEditor) return;
 
+            // don't break tutorial scenarios and making history missions: DisableScenario clears
+            // the persisted isEnabled flag, which would be mistaken for a reliability failure below.
+            if (IsScenario()) return;
+
             // apply states changes we have done through automation
             if ((state == PanelState.Retracted || state == PanelState.Extended || state == PanelState.ExtendedFixed) && state != SolarPanel.GetState())
                 SolarPanel.SetDeployedStateOnLoad(state);
@@ -255,8 +259,14 @@ namespace Kopernicus.Components
             AtmosphericAttenutationSolarAngleMultiplier.Add(120f, 0.050f, 0f, 0f);
 
             // don't break tutorial scenarios
-            // TODO : does this actually work ?
-            if (DisableScenario(this)) return;
+            if (DisableScenario(this))
+            {
+                // the target module runs on its own in scenarios. Older versions could
+                // disable it from OnLoad, and that got persisted, so turn it back on.
+                if (SolarPanel != null || GetSolarPanelModule())
+                    SolarPanel.TargetModule.enabled = SolarPanel.TargetModule.isEnabled = true;
+                return;
+            }
 
             if (SolarPanel == null && !GetSolarPanelModule())
             {
