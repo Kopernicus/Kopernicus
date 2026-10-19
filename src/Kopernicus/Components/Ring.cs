@@ -81,6 +81,12 @@ namespace Kopernicus.Components
         /// </summary>
         public Material material;
 
+        /// <summary>
+        /// Scatterer reads this to get the main texture. Do not use it for anything else.
+        /// </summary>
+        [Obsolete("this field is included only for compatibility with scatterer and will be removed in the future")]
+        public Texture2D texture;
+
         public Single radiusMultiplier = 1.0F;
 
         public Int32 steps = 128;
