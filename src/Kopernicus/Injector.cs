@@ -218,6 +218,52 @@ namespace Kopernicus
         private static void PrePatchFixups()
         {
             AddKscScatterMask();
+            StandardizePhysicsMaterial();
+        }
+
+        // Stock only gives bodies with an ocean a physics material, the rest
+        // use Unity's default (why squad). This makes all planets have the
+        // same physics material by default as kerbin.
+        private static void StandardizePhysicsMaterial()
+        {
+            PSystemBody kerbin = Utility.FindBody(StockSystemPrefab.rootBody, "Kerbin");
+            PQSMod_QuadMeshColliders kerbinColliders = kerbin?.pqsVersion != null
+                ? Utility.GetMod<PQSMod_QuadMeshColliders>(kerbin.pqsVersion)
+                : null;
+
+            PhysicMaterial ground = kerbinColliders?.physicsMaterial;
+            if (ground == null)
+            {
+                ground = new PhysicMaterial
+                {
+                    name = "Ground",
+                    dynamicFriction = 0.9f,
+                    staticFriction = 0.9f,
+                    bounciness = 0.0f,
+                    frictionCombine = PhysicMaterialCombine.Maximum,
+                    bounceCombine = PhysicMaterialCombine.Minimum
+                };
+            }
+
+            StandardizePhysicsMaterial(StockSystemPrefab.rootBody, ground);
+        }
+
+        private static void StandardizePhysicsMaterial(PSystemBody body, PhysicMaterial ground)
+        {
+            if (body.pqsVersion != null)
+            {
+                var colliders = body.pqsVersion.GetComponentsInChildren<PQSMod_QuadMeshColliders>(true);
+                foreach (var mod in colliders)
+                {
+                    if (mod.physicsMaterial.IsNotNullOrDestroyed())
+                        continue;
+
+                    mod.physicsMaterial = ground;
+                }
+            }
+
+            foreach (PSystemBody child in body.children)
+                StandardizePhysicsMaterial(child, ground);
         }
 
         // Add a scatter mask around the KSC so that stock scatters don't spawn

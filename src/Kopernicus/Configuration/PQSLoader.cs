@@ -259,6 +259,7 @@ namespace Kopernicus.Configuration
                 // Crete the quad mesh colliders
                 _collider = Utility.AddMod<PQSMod_QuadMeshColliders>(Value, 100);
                 _collider.maxLevelOffset = 0;
+                _collider.physicsMaterial = Utility.GetMod<PQSMod_QuadMeshColliders>(laythe.pqsVersion).physicsMaterial;
 
                 // Create the material direction
                 Utility.AddMod<PQSMod_MaterialSetDirection>(Value, 100).valueName = "_sunLightDirection";
@@ -266,6 +267,10 @@ namespace Kopernicus.Configuration
                 // Create the UV planet relative position
                 Utility.AddMod<PQSMod_UVPlanetRelativePosition>(Value, 999999);
             }
+
+            // Give the body its own physics material, since templates share theirs with other bodies
+            if (_collider != null && _collider.physicsMaterial != null)
+                _collider.physicsMaterial = Object.Instantiate(_collider.physicsMaterial);
 
             // Assigning the new PQS
             generatedBody.pqsVersion = Value;
@@ -403,6 +408,7 @@ namespace Kopernicus.Configuration
                 // Crete the quad mesh colliders
                 _collider = Utility.AddMod<PQSMod_QuadMeshColliders>(Value, 100);
                 _collider.maxLevelOffset = 0;
+                _collider.physicsMaterial = Object.Instantiate(Utility.GetMod<PQSMod_QuadMeshColliders>(laythe.pqsVersion).physicsMaterial);
 
                 // Create the material direction
                 Utility.AddMod<PQSMod_MaterialSetDirection>(Value, 100).valueName = "_sunLightDirection";
