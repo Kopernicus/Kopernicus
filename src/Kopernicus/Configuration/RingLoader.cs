@@ -364,6 +364,8 @@ namespace Kopernicus.Configuration
         private MaterialLoader.MaterialLoader CreateMaterialLoader(String shaderName)
         {
             var loader = MaterialLoader.MaterialLoader.Create(shaderName, Value.material);
+            // Scatterer reads Ring.texture directly, so ring textures can't be loaded on demand.
+            loader.OnDemand = false;
             if (Value.material != null && loader.Value == Value.material)
             {
                 // Deferred paths survive Unity cloning on the on-demand component,
@@ -423,7 +425,12 @@ namespace Kopernicus.Configuration
         void IParserEventSubscriber.PostApply(ConfigNode node)
         {
             (RingMaterial as MaterialLoader.RingsLoader)?.ApplyDeferred();
+            // A Material node can still turn onDemand back on, so load anything left deferred.
+            RingMaterial.ForceLoadTextures();
             Value.material = RingMaterial.Value;
+#pragma warning disable CS0618 // Type or member is obsolete
+            Value.texture = Value.material.mainTexture as Texture2D;
+#pragma warning restore CS0618
 
             // Ring's own mesh geometry can only be built once the parent body's scale is known, so
             // that still happens lazily in Ring.Start(). The renderer and material don't have that
