@@ -162,9 +162,9 @@ namespace Kopernicus.Components
                     // match what MapSO does here to instead be consistent with
                     // GetPixelColor.
                     if (Texture.Format == TextureFormat.Alpha8)
-                        return new Color(pixel.a, pixel.a, pixel.a, 255);
+                        return new Color32(pixel.a, pixel.a, pixel.a, 255);
                     else
-                        return new Color(pixel.r, pixel.r, pixel.r, 255);
+                        return new Color32(pixel.r, pixel.r, pixel.r, 255);
                 case MapDepth.HeightAlpha:
                     return new Color32(pixel.r, pixel.r, pixel.r, pixel.a);
                 default:
