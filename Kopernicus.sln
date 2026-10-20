@@ -1,4 +1,5 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.10.12217.157
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -13,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kopernicus.Parser", "src\Kopernicus.Parser\Kopernicus.Parser.csproj", "{F9968D87-83DA-453C-8E28-B632367EACD3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kopernicus.BurstPQS", "src\Kopernicus.BurstPQS\Kopernicus.BurstPQS.csproj", "{231525C4-FDA3-4EA5-9345-BE2BDE833B75}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kopernicus.BurstPQS.KSCScatterMask", "src\Kopernicus.BurstPQS.KSCScatterMask\Kopernicus.BurstPQS.KSCScatterMask.csproj", "{6666CC8F-C388-4ED5-EF3E-B0A503360995}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +50,14 @@ Global
 		{231525C4-FDA3-4EA5-9345-BE2BDE833B75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{231525C4-FDA3-4EA5-9345-BE2BDE833B75}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{231525C4-FDA3-4EA5-9345-BE2BDE833B75}.Debug|x64.Build.0 = Debug|Any CPU
+		{6666CC8F-C388-4ED5-EF3E-B0A503360995}.1.9+ Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6666CC8F-C388-4ED5-EF3E-B0A503360995}.1.9+ Release|Any CPU.Build.0 = Release|Any CPU
+		{6666CC8F-C388-4ED5-EF3E-B0A503360995}.1.9+ Release|x64.ActiveCfg = Release|Any CPU
+		{6666CC8F-C388-4ED5-EF3E-B0A503360995}.1.9+ Release|x64.Build.0 = Release|Any CPU
+		{6666CC8F-C388-4ED5-EF3E-B0A503360995}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6666CC8F-C388-4ED5-EF3E-B0A503360995}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6666CC8F-C388-4ED5-EF3E-B0A503360995}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6666CC8F-C388-4ED5-EF3E-B0A503360995}.Debug|x64.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

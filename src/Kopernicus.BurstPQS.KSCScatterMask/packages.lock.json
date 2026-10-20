@@ -19,8 +19,22 @@
       },
       "JsonPoke": {
         "type": "Transitive",
-        "resolved": "1.2.0",
-        "contentHash": "AW7iyzudTA4VzW3pYjTzy+MucrF+wUWKQulqx/EnqvlqLwVseNk2nqlWpTRySItQCgBv0w7o/dqTN4wj0tWJhA=="
+        "resolved": "1.3.0",
+        "contentHash": "0vhzlGYctYA2uNeFIpn/+MrdKzx7mGnFyUZmecrueNtb44LckSV1NHrNP90TtSK2YVMNwtFiQwVzcsJhq/oLUA=="
+      },
+      "kopernicus": {
+        "type": "Project",
+        "dependencies": {
+          "JsonPoke": "[1.3.0, )",
+          "KSPBuildTools": "[1.1.1, )",
+          "Kopernicus.Parser": "[1.0.0, )"
+        }
+      },
+      "kopernicus.parser": {
+        "type": "Project",
+        "dependencies": {
+          "KSPBuildTools": "[1.1.1, )"
+        }
       }
     }
   }
