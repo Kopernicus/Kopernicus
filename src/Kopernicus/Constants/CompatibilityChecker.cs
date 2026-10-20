@@ -50,7 +50,7 @@ namespace Kopernicus.Constants
         internal const string VERSION_MAJOR = "1";
         internal const string VERSION_MINOR = "13";
         internal const string VERSION_MINOR_LOWER_LIMIT = "13";
-        internal const string REVISION = "1";
+        internal const string REVISION = "0";
         internal const string KOPERNICUS = BuildInfo.KopernicusRelease;
         public static Boolean IsCompatible()
         {
