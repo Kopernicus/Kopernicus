@@ -57,6 +57,7 @@
 
   <PropertyGroup>
     <KSPBT_ModRoot>$(RepoRootPath)\build\$(ModOutDir)\GameData\$(MSBuildProjectName)</KSPBT_ModRoot>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
