@@ -2,7 +2,11 @@ name: Build
 
 on:
   push:
+    branches:
+      - master
   pull_request:
+    branches:
+      - maaster
   workflow_call:
 
 jobs:
