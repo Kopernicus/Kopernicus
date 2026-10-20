@@ -50,7 +50,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <KSPBT_ModRoot>$(RepoRootPath)\build\$(ModOutDir)\GameData\Kopernicus\</KSPBT_ModRoot>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <PackageOutputPath>..\..\build\KSP19PLUS\GameData\Kopernicus\Plugins</PackageOutputPath>
   </PropertyGroup>
   <ItemGroup>
