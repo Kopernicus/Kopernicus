@@ -48,6 +48,11 @@
     <ModOutDir>KSP19PLUS</ModOutDir>
   </PropertyGroup>
   <PropertyGroup>
+    <ModOutDir>KSP19PLUS</ModOutDir>
+     <KSPBurstPath>$(DepDirPath)\Unity.Burst.dll</KSPBurstPath>
+    <ModOutDir>KSP19PLUS</ModOutDir>
+  </PropertyGroup>
+  <PropertyGroup>
     <KSPBT_ModRoot>$(RepoRootPath)\build\$(ModOutDir)\GameData\Kopernicus\</KSPBT_ModRoot>
     <PlatformTarget>x64</PlatformTarget>
     <PackageOutputPath />
@@ -81,9 +86,8 @@
       <HintPath>$(BurstPQSPath)</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="netstandard">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Kerbal Space Program\KSP_x64_Data\Managed\netstandard.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Unity.Burst">
+      <HintPath>$(RepoRootPath\dependencies\Unity.Burst.dll</HintPath>
     </Reference>
   </ItemGroup>
   <!-- Krafs.Publicizer items -->

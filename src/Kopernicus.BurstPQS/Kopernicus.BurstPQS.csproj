@@ -18,7 +18,6 @@
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     
     <RepoRootPath>$(MSBuildThisFileDirectory)..\..</RepoRootPath>
-    <DepDirPath>$(RepoRootPath)\dependencies</DepDirPath>
 
     <!-- KSPBuildTools -->
     <!-- Don't copy anything to any GameData folders -->
@@ -43,9 +42,9 @@
   </PropertyGroup>
   
   <PropertyGroup>
-     <KSPBurstPath>$(DepDirPath)\Unity.Burst.dll</KSPBurstPath>
+     <KSPBurstPath>$(RepoRootPath)\dependencies\Unity.Burst.dll</KSPBurstPath>
     <ModOutDir>KSP19PLUS</ModOutDir>
-     <BurstPQSPath>$(DepDirPath)\BurstPQS.dll</BurstPQSPath>
+     <BurstPQSPath>$(RepoRootPath)\dependencies\BurstPQS.dll</BurstPQSPath>
     <ModOutDir>KSP19PLUS</ModOutDir>
   </PropertyGroup>
   <PropertyGroup>
