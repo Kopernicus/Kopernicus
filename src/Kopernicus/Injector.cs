@@ -231,24 +231,24 @@ namespace Kopernicus
                 ? Utility.GetMod<PQSMod_QuadMeshColliders>(kerbin.pqsVersion)
                 : null;
 
-            PhysicMaterial ground = kerbinColliders?.physicsMaterial;
+            PhysicsMaterial ground = kerbinColliders?.physicsMaterial;
             if (ground == null)
             {
-                ground = new PhysicMaterial
+                ground = new PhysicsMaterial
                 {
                     name = "Ground",
                     dynamicFriction = 0.9f,
                     staticFriction = 0.9f,
                     bounciness = 0.0f,
-                    frictionCombine = PhysicMaterialCombine.Maximum,
-                    bounceCombine = PhysicMaterialCombine.Minimum
+                    frictionCombine = PhysicsMaterialCombine.Maximum,
+                    bounceCombine = PhysicsMaterialCombine.Minimum
                 };
             }
 
             StandardizePhysicsMaterial(StockSystemPrefab.rootBody, ground);
         }
 
-        private static void StandardizePhysicsMaterial(PSystemBody body, PhysicMaterial ground)
+        private static void StandardizePhysicsMaterial(PSystemBody body, PhysicsMaterial ground)
         {
             if (body.pqsVersion != null)
             {
