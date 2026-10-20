@@ -3,10 +3,10 @@ name: Build
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - maaster
   workflow_call:
 
 jobs:
