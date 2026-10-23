@@ -57,12 +57,7 @@ namespace Kopernicus.Components
             path = Path.Combine(KSPUtil.ApplicationRootPath + "GameData/", path);
 
             // Pick correct bundle for platform
-            if (Application.platform == RuntimePlatform.WindowsPlayer &&
-                SystemInfo.graphicsDeviceVersion.StartsWith("OpenGL"))
-            {
-                path = Path.Combine(path, bundleName + "-linux.unity3d"); // fixes OpenGL on windows
-            }
-            else if (Application.platform == RuntimePlatform.WindowsPlayer)
+            if (Application.platform == RuntimePlatform.WindowsPlayer)
             {
                 path = Path.Combine(path, bundleName + "-windows.unity3d");
             }
