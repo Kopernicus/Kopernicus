@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="Immutable Package Rules" Description="Errors for Forbidden API rules" ToolsVersion="16.0">
+  <IncludeAll Action="None" />
+  <Rules AnalyzerId="Unity.Analyzers" RuleNamespace="Unity.Analyzers">
+    <Rule Id="UAC0005" Action="Error" />
+    <Rule Id="UAC0006" Action="Error" />
+    <Rule Id="UAC0007" Action="Error" />
+    <Rule Id="UAC0020" Action="Error" />
+    <Rule Id="UAC0023" Action="Error" />
+    <Rule Id="UAC1001" Action="None" />
+    <Rule Id="UAC1002" Action="None" />
+    <Rule Id="UAC1004" Action="None" />
+    <Rule Id="UAC1008" Action="None" />
+    <Rule Id="UAC1009" Action="None" />
+    <Rule Id="UAC1010" Action="None" />
+    <Rule Id="UAC1011" Action="None" />
+  </Rules>
+</RuleSet>
