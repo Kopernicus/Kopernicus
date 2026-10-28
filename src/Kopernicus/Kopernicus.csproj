@@ -173,6 +173,10 @@
     <Publicize Include="Assembly-CSharp:SpaceObjectCollider.marchStepsPerFrame" />
     <Publicize Include="Assembly-CSharp:SpaceObjectCollider.meshGensPerFrame" />
     <Publicize Include="Assembly-CSharp:SpaceObjectCollider.colliderGensPerFrame" />
+    <Publicize Include="Assembly-CSharp:KSP.Retooled.UI.Settings.Controls.SettingsTerrainDetail" />
+    <Publicize Include="Assembly-CSharp:KSP.Retooled.UI.Settings.Controls.SettingsTerrainDetail.Values" />
+    <Publicize Include="Assembly-CSharp:KSP.Retooled.UI.Settings.Controls.SettingsTerrainDetail.Choices" />
+    <Publicize Include="Assembly-CSharp:KSP.Retooled.UI.Settings.Controls.SettingsTerrainDetail.ShowChoice" />
   </ItemGroup>
 
   <!-- Build excludes-->

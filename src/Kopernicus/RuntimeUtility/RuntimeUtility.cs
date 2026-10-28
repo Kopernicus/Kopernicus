@@ -38,16 +38,18 @@ using Kopernicus.Configuration;
 using Kopernicus.Constants;
 using Kopernicus.OnDemand;
 using KSP.Localization;
+using KSP.Retooled.UI.Settings.Controls;
 using KSP.UI;
 using KSP.UI.Screens;
 using KSP.UI.Screens.Mapview;
 using KSP.UI.Screens.Mapview.MapContextMenuOptions;
-using KSP.UI.Screens.Settings.Controls;
 using ModularFI;
 using SentinelMission;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
+using Button = UnityEngine.UI.Button;
 using Object = UnityEngine.Object;
 
 namespace Kopernicus
@@ -684,8 +686,9 @@ namespace Kopernicus.RuntimeUtility
             }
         }
 
-        // The preset names
-        private String[] _details;
+        // The preset names, and a value for each of them
+        private String _details;
+        private String _detailValues;
 
         // Update the names of the presets in the settings dialog
         private void UpdatePresetNames()
@@ -695,10 +698,27 @@ namespace Kopernicus.RuntimeUtility
                 return;
             }
 
-            foreach (SettingsTerrainDetail detail in Resources.FindObjectsOfTypeAll<SettingsTerrainDetail>())
+            if (_details == null)
             {
-                detail.displayStringValue = true;
-                detail.stringValues = _details ?? (_details = Templates.PresetDisplayNames.ToArray());
+                _details = String.Join(",", Templates.PresetDisplayNames);
+                _detailValues = String.Join(",", Enumerable.Range(0, Templates.PresetDisplayNames.Count));
+            }
+
+            // The settings dialog is drawn with UI Toolkit. The terrain detail slider reads these when its page is
+            // first shown, and only shows the names when it has as many values as names.
+            foreach (UIDocument document in Resources.FindObjectsOfTypeAll<UIDocument>())
+            {
+                if (document.rootVisualElement == null)
+                {
+                    continue;
+                }
+
+                foreach (SettingsTerrainDetail detail in document.rootVisualElement.Query<SettingsTerrainDetail>().ToList())
+                {
+                    detail.ShowChoice = true;
+                    detail.Values = _detailValues;
+                    detail.Choices = _details;
+                }
             }
         }
 
