@@ -1067,7 +1067,7 @@ namespace Kopernicus.RuntimeUtility
             if (nodes.Length != 0)
             {
                 ConfigNode node = null;
-                if (nodes[0].TryGetNode("Kopernicus-config", ref node))
+                if (nodes[0].TryGetNode("Kopernicus_config", ref node))
                     ConfigNode.LoadObjectFromConfig(defaults, node);
             }
 
@@ -1181,11 +1181,12 @@ namespace Kopernicus.RuntimeUtility
         {
             SceneSwitchInProgress = false;
         }
+        
+        private void OnApplicationQuit() => UpdateConfig();
 
         // Remove the Handlers
         private void OnDestroy()
         {
-            UpdateConfig();
             GameEvents.OnMapEntered.Remove(OnMapEntered);
             GameEvents.onLevelWasLoaded.Remove(OnLevelLoaded);
             GameEvents.onProtoVesselLoad.Remove(TransformBodyReferencesOnLoad);
