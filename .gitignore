@@ -90,7 +90,6 @@ dlldata.c
 *.tlb
 *.tli
 *.tlh
-*.tmp
 *.tmp_proj
 *.log
 *.vspscc
@@ -257,4 +256,8 @@ $RECYCLE.BIN/
 # Kopernicus
 build/KSP19PLUS/GameData/Kopernicus/Cache/
 !dependencies/*
+!dependencies/.*
 !dependencies/*/*
+!dependencies/*/.*
+/KSP
+*.DS_Store
