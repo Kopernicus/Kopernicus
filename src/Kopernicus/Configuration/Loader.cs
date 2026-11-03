@@ -254,7 +254,7 @@ namespace Kopernicus.Configuration
         }
 
         /// <summary>
-        /// We allow specifying <c>flightGlobalsIndex</c> in planet configs. This assigns them
+        /// We allow specifying <c>requestedFlightGlobalsIndex</c> in planet configs. This assigns them
         /// while placing other bodies' indices in the gaps.
         /// </summary>
         /// <param name="bodies"></param>
@@ -285,24 +285,24 @@ namespace Kopernicus.Configuration
             // Reserve valid explicit slots before considering inherited template indices.
             foreach (Body body in bodies)
             {
-                if (!body.GeneratedBody.Has("flightGlobalsIndex"))
+                if (!body.GeneratedBody.Has("requestedFlightGlobalsIndex"))
                     continue;
 
                 if (visited.Contains(body.GeneratedBody))
                     continue;
 
-                int index = body.GeneratedBody.Get<int>("flightGlobalsIndex");
+                int index = body.GeneratedBody.Get<int>("requestedFlightGlobalsIndex");
                 if (indexToBody.TryGetValue(index, out var otherBody))
                 {
                     Logger.Default.LogWarning(
-                        $"[Kopernicus]: Both {otherBody.name} and {body.Name} have requested flightGlobalsIndex {index}. {body.Name} will be assigned a different index.");
+                        $"[Kopernicus]: Both {otherBody.name} and {body.Name} have requested requestedFlightGlobalsIndex {index}. {body.Name} will be assigned a different index.");
                     continue;
                 }
 
                 if (index >= bodyCount)
                 {
                     Logger.Default.LogWarning(
-                        $"[Kopernicus]: Requested flightGlobalsIndex {index} is larger than the number of available bodies. It will be assigned a lower index."
+                        $"[Kopernicus]: Requested requestedFlightGlobalsIndex {index} is larger than the number of available bodies. It will be assigned a lower index."
                     );
                     continue;
                 }
