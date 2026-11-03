@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -26,7 +26,9 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using KSPTextureLoader;
+using Unity.Burst;
 using Unity.Collections;
+using Unity.Jobs;
 using UnityEngine;
 
 namespace Kopernicus.Components
@@ -35,6 +37,7 @@ namespace Kopernicus.Components
     /// MapSO replacement that stores pixel data in a <see cref="CPUTexture2D"/>
     /// instead of the stock byte array.
     /// </summary>
+    [BurstCompile]
     public class KopernicusMapSO : MapSO
     {
         // A non-allocating HeightAlpha for internal use.
@@ -80,8 +83,8 @@ namespace Kopernicus.Components
             _bpp = (int)depth;
             Depth = depth;
 
-            if (tex.Format == TextureFormat.R16 && depth == MapDepth.HeightAlpha)
-                Texture = new RA16Texture(tex);
+            if (depth == MapDepth.HeightAlpha)
+                Texture = CreateHeightAlphaTexture(tex);
             else
                 Texture = tex;
 
@@ -355,17 +358,124 @@ namespace Kopernicus.Components
         }
         #endregion
 
-        #region RA16Texture
-        private sealed class RA16Texture(CPUTexture2D tex) :
-            CPUTexture2D<CPUTexture2D.RA16>(new(tex.GetRawTextureData<byte>(), tex.Width, tex.Height, tex.MipCount))
+        #region HeightAlphaTexture
+        /// <summary>
+        /// Two-channel textures used as HeightAlpha maps store height in the
+        /// first channel and alpha in the second. Wrap them so that the second
+        /// channel is exposed as alpha.
+        /// </summary>
+        private static CPUTexture2D CreateHeightAlphaTexture(CPUTexture2D tex)
         {
-            readonly CPUTexture2D tex = tex;
+            var data = tex.GetRawTextureData<byte>();
+            int width = tex.Width;
+            int height = tex.Height;
+            int mips = tex.MipCount;
+
+            switch (tex.Format)
+            {
+                case TextureFormat.R16:
+                    return new WrapperTexture<CPUTexture2D.RA16>(
+                        new(data, width, height, mips), tex);
+                case TextureFormat.RG16:
+                    return new WrapperTexture<RACPUTexture<CPUTexture2D.RG16>>(
+                        new(new(data, width, height, mips)), tex);
+                case TextureFormat.RGHalf:
+                    return new WrapperTexture<RACPUTexture<CPUTexture2D.RGHalf>>(
+                        new(new(data, width, height, mips)), tex);
+                case TextureFormat.RGFloat:
+                    return new WrapperTexture<RACPUTexture<CPUTexture2D.RGFloat>>(
+                        new(new(data, width, height, mips)), tex);
+                case TextureFormat.BC5:
+                    return new WrapperTexture<RACPUTexture<CPUTexture2D.BC5>>(
+                        new(new(data, width, height, mips)), tex);
+                default:
+                    return tex;
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="CPUTexture2D{T}"/> that reinterprets the data of
+        /// another <see cref="CPUTexture2D"/> and keeps it alive until disposed.
+        /// </summary>
+        private sealed class WrapperTexture<T>(T texture, CPUTexture2D owner) : CPUTexture2D<T>(texture)
+            where T : ICPUTexture2D
+        {
+            readonly CPUTexture2D owner = owner;
 
             public override void Dispose()
             {
                 base.Dispose();
-                tex.Dispose();
+                owner.Dispose();
             }
+        }
+        #endregion
+
+        #region RATexture
+        private readonly struct RACPUTexture<T>(T tex) : ICPUTexture2D, IGetPixels
+            where T : ICPUTexture2D, IGetPixels
+        {
+            private readonly T tex = tex;
+
+            public int Width => tex.Width;
+            public int Height => tex.Height;
+            public int MipCount => tex.MipCount;
+            public TextureFormat Format => (TextureFormat)0;
+
+            public Color32 GetPixel32(int x, int y, int mipLevel = 0)
+            {
+                var color = tex.GetPixel32(x, y, mipLevel);
+                return new(color.r, 0, 0, color.g);
+            }
+
+            public Color GetPixel(int x, int y, int mipLevel = 0)
+            {
+                var color = tex.GetPixel(x, y, mipLevel);
+                return new(color.r, 0f, 0f, color.g);
+            }
+
+            public Color GetPixelBilinear(float u, float v, int mipLevel = 0)
+            {
+                var color = tex.GetPixelBilinear(u, v, mipLevel);
+                return new(color.r, 0f, 0f, color.g);
+            }
+
+            public NativeArray<U> GetRawTextureData<U>()
+                where U : unmanaged
+            {
+                return tex.GetRawTextureData<U>();
+            }
+
+            public NativeArray<Color> GetPixels(int mipLevel = 0, Allocator allocator = Allocator.Temp)
+            {
+                var pixels = tex.GetPixels(mipLevel, allocator);
+                new SwizzleColorsRA { data = pixels }.Run(pixels.Length);
+                return pixels;
+            }
+
+            public NativeArray<Color32> GetPixels32(int mipLevel = 0, Allocator allocator = Allocator.Temp)
+            {
+                var pixels = tex.GetPixels32(mipLevel, allocator);
+                new SwizzleColorsRA32 { data = pixels }.Run(pixels.Length);
+                return pixels;
+            }
+        }
+
+        [BurstCompile]
+        private struct SwizzleColorsRA32 : IJobParallelFor
+        {
+            public NativeArray<Color32> data;
+
+            public void Execute(int i) =>
+                data[i] = new(data[i].r, 0, 0, data[i].g);
+        }
+
+        [BurstCompile]
+        private struct SwizzleColorsRA : IJobParallelFor
+        {
+            public NativeArray<Color> data;
+
+            public void Execute(int i) =>
+                data[i] = new(data[i].r, 0f, 0f, data[i].g);
         }
         #endregion
     }
