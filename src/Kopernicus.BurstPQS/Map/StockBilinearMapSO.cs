@@ -3,7 +3,7 @@ using BurstPQS.Map;
 using Unity.Burst;
 using UnityEngine;
 
-namespace Kopernicus.BurstPQS.Map;
+namespace BurstPQS.Kopernicus.Map;
 
 /// <summary>
 /// A wrapper around <see cref="StockBurstMapSO"/> that uses the stock KSP bilinear

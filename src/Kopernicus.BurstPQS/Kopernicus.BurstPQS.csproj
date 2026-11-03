@@ -13,7 +13,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <RootNamespace>Kopernicus.BurstPQS</RootNamespace>
+    <RootNamespace>BurstPQS.Kopernicus</RootNamespace>
 
     <!-- Generate a nuget lockfile so that we can cache stuff in CI -->
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>

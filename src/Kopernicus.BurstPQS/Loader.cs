@@ -1,11 +1,11 @@
-using Kopernicus.BurstPQS.Map;
+using BurstPQS.Kopernicus.Map;
 using BurstPQS.Map;
 using HarmonyLib;
 using Kopernicus.Components;
 using Kopernicus.OnDemand;
 using UnityEngine;
 
-namespace Kopernicus.BurstPQS;
+namespace BurstPQS.Kopernicus;
 
 [KSPAddon(KSPAddon.Startup.Instantly, once: true)]
 internal class Loader : MonoBehaviour

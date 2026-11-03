@@ -8,7 +8,7 @@ using KSPTextureLoader;
 using Unity.Burst;
 using UnityEngine;
 
-namespace Kopernicus.BurstPQS.Map;
+namespace BurstPQS.Kopernicus.Map;
 
 /// <summary>
 /// Adapter structs that wrap KSPTextureLoader's <see cref="CPUTexture2D"/> format types

@@ -1,7 +1,7 @@
 ﻿using BurstPQS;
 using Kopernicus.OnDemand;
 
-namespace Kopernicus.BurstPQS.Mod;
+namespace BurstPQS.Kopernicus.Mod;
 
 /// <summary>
 /// Adapter for <see cref="PQSMod_OnDemandHandler"/>. This mod manages

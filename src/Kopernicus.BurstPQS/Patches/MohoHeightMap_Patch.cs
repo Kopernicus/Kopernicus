@@ -1,9 +1,9 @@
-using Kopernicus.BurstPQS.Map;
+using BurstPQS.Kopernicus.Map;
 using BurstPQS.Map;
 using HarmonyLib;
 using Kopernicus;
 
-namespace Kopernicus.BurstPQS.Patches;
+namespace BurstPQS.Kopernicus.Patches;
 
 /// <summary>
 /// When <c>KopernicusConfig.UseStockMohoTemplate</c> is true, Kopernicus keeps the

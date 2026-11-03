@@ -8,7 +8,7 @@ using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
-namespace Kopernicus.BurstPQS.Map;
+namespace BurstPQS.Kopernicus.Map;
 
 /// <summary>
 /// An <see cref="IMapSO"/> implementation for <see cref="KopernicusCBAttributeMapSO"/>.
