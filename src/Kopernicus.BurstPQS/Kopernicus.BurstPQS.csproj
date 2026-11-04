@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Version>1.0.0.0</Version>
+    <Description>BurstPQS integration for Kopernicus.</Description>
+    <Company>Kopernicus Project</Company>
+    <Copyright>Copyright (C) Kopernicus Project</Copyright>
+    <Product>Kopernicus.BurstPQS</Product>
+
+    <!-- Other configuration -->
+    <TargetFramework>net4.8</TargetFramework>
+    <LangVersion>14</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RootNamespace>BurstPQS.Kopernicus</RootNamespace>
+
+    <!-- Generate a nuget lockfile so that we can cache stuff in CI -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+
+    <RepoRootPath>$(MSBuildThisFileDirectory)..\..</RepoRootPath>
+    <DepDirPath>$(RepoRootPath)\dependencies</DepDirPath>
+
+    <!-- KSPBuildTools -->
+    <KSPBT_ModPluginFolder>Plugins\</KSPBT_ModPluginFolder>
+    <KSPBT_GenerateAssemblyAttribute>false</KSPBT_GenerateAssemblyAttribute>
+    <KSPBT_GenerateDependencyAttributes>false</KSPBT_GenerateDependencyAttributes>
+
+    <!-- Configurations and Platforms  -->
+    <Configurations>Debug;ReleaseKSP19Plus</Configurations>
+    <Platforms>Any CPU;x64</Platforms>
+
+    <!-- Nothing we can do about this warning -->
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == '' ">
+    <Configuration>Debug</Configuration>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;ENABLE_PROFILER</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ModOutDir>KSP19PLUS</ModOutDir>
+    <KSPBT_ModRoot>$(RepoRootPath)\build\$(ModOutDir)\GameData\Kopernicus</KSPBT_ModRoot>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="packages.lock.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Kopernicus/Kopernicus.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+
+    <PackageReference Include="KSPBuildTools" Version="1.1.1" />
+
+    <PackageReference Include="Krafs.Publicizer" Version="2.3.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+
+    <Reference Include="HarmonyKSP">
+      <HintPath>$(DepDirPath)\Harmony\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="KSPTextureLoader">
+      <HintPath>$(DepDirPath)\KSPTextureLoader.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="Unity.Burst">
+      <HintPath>$(DepDirPath)\Unity.Burst.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="BurstPQS">
+      <HintPath>$(DepDirPath)\BurstPQS.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <!--
+      BurstPQS's [StructInherit] source generator. It is used to generate
+      concrete burst-compilable structs for each texture format.
+    -->
+    <Analyzer Include="$(DepDirPath)\BurstPQS.Generators.dll" />
+  </ItemGroup>
+
+  <!-- Krafs.Publicizer items -->
+  <ItemGroup>
+    <Publicize Include="Assembly-CSharp:MapSO._data" />
+    <Publicize Include="Kopernicus:Kopernicus.Components.KopernicusMapSO+RACPUTexture`1" />
+  </ItemGroup>
+</Project>
