@@ -76,14 +76,13 @@
       <Private>false</Private>
     </Reference>
 
-    <Reference Include="Unity.Burst">
-      <HintPath>$(DepDirPath)\Unity.Burst.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
     <Reference Include="BurstPQS">
       <HintPath>$(DepDirPath)\BurstPQS.dll</HintPath>
       <Private>false</Private>
+    </Reference>
+	<Reference Include="netstandard">
+      <HintPath>$(DepDirPath)\netstandard.dll</HintPath>
+      <Private>False</Private>
     </Reference>
 
     <!--
