@@ -1,5 +1,8 @@
 # Kopernicus Changelog
 
+## 253
+1. Fixed a bug in Kopernicus that could wreck games for Principia/RSS players.  If you arne't using those mods, you are fine.  If you are, you are urged to upgrade.
+
 ## 252
 1. Removed Kopernicus KSCScatterMask option since the main offending mod (Parallax) has fixed support for their own version that just works.
 2. You can now reassign a bodies flightGlobalsIndex using parameter "requestedFlightGlobalsIndex".  It will then be assigned if possible on the body.  See wiki.
