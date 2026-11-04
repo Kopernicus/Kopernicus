@@ -1,5 +1,12 @@
 # Kopernicus Changelog
 
+## 252
+1. Removed Kopernicus KSCScatterMask option since the main offending mod (Parallax) has fixed support for their own version that just works.
+2. You can now reassign a bodies flightGlobalsIndex using parameter "requestedFlightGlobalsIndex".  It will then be assigned if possible on the body.  See wiki.
+3. Fixed a scenario where a config would fail to be written under some circumstances. Fix by @sarbian.  Closes issue #948.
+4. Tweaks added to better handle extremely small scaled space meshes.
+5. Minor tweaks for the hot new rewritten Kittopia (check it out!).
+
 ## 251
 1. Hotfix for the KSC masking feature doing a harmless nullref when you did a quicksave.
 2. Also reinstated the previously removed "buggy code" after rewriting it to not be buggy anymore (the code helps stability with real large distance systems, like multistar setups).
