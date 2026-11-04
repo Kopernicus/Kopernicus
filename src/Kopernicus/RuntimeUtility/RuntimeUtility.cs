@@ -1096,8 +1096,6 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("\t%SolarRefreshRate = " + KopernicusConfig.SolarRefreshRate);
                 if (KopernicusConfig.EnableKopernicusShadowManager != defaults.EnableKopernicusShadowManager)
                     configFile.WriteLine("\t%EnableKopernicusShadowManager = " + KopernicusConfig.EnableKopernicusShadowManager);
-                if (KopernicusConfig.CleanupKSCScatters != defaults.CleanupKSCScatters)
-                    configFile.WriteLine("\t%CleanupKSCScatters = " + KopernicusConfig.CleanupKSCScatters);
                 if (KopernicusConfig.ShadowRangeCap != defaults.ShadowRangeCap)
                     configFile.WriteLine("\t%ShadowRangeCap = " + KopernicusConfig.ShadowRangeCap);
                 if (KopernicusConfig.DisableMainMenuMunScene != defaults.DisableMainMenuMunScene)
