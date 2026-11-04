@@ -4,8 +4,12 @@
 1. Removed Kopernicus KSCScatterMask option since the main offending mod (Parallax) has fixed support for their own version that just works.
 2. You can now reassign a bodies flightGlobalsIndex using parameter "requestedFlightGlobalsIndex".  It will then be assigned if possible on the body.  See wiki.
 3. Fixed a scenario where a config would fail to be written under some circumstances. Fix by @sarbian.  Closes issue #948.
-4. Tweaks added to better handle extremely small scaled space meshes.
+4. Scaled space meshes for bodies below 489m will will no longer always be black.
 5. Minor tweaks for the hot new rewritten Kittopia (check it out!).
+6. Rings now support custom materials.
+7. All stock bodies now have the same physics material as kerbin (unless squad gave them a non-default one already).
+8. Maps that take HeightAlpha will now transparently work with RG16, RGHalf, RGFloat, and BC5.
+
 
 ## 251
 1. Hotfix for the KSC masking feature doing a harmless nullref when you did a quicksave.
