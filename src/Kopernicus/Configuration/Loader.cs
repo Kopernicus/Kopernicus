@@ -283,10 +283,13 @@ namespace Kopernicus.Configuration
             homeworld.flightGlobalsIndex = 1;
 
             // Reserve valid explicit slots before considering inherited template indices.
+            bool hasRequestedFlightGlobalsIndex = false;
             foreach (Body body in bodies)
             {
                 if (!body.GeneratedBody.Has("requestedFlightGlobalsIndex"))
                     continue;
+
+                hasRequestedFlightGlobalsIndex = true;
 
                 if (visited.Contains(body.GeneratedBody))
                     continue;
@@ -310,6 +313,39 @@ namespace Kopernicus.Configuration
                 visited.Add(body.GeneratedBody);
                 indexToBody.Add(index, body.GeneratedBody);
                 body.GeneratedBody.flightGlobalsIndex = index;
+            }
+
+            // If there is no `requestedFlightGlobalsIndex`, it is important to preserve the legacy
+            // generation of `flightGlobalIndex` values, otherwise Principia scrambles the celestials.
+            if (!hasRequestedFlightGlobalsIndex) {
+                // Fix doubled flightGlobals
+                List<Int32> numbers = new List<Int32>
+                {
+                        0, 1
+                };
+                Int32 index = bodies.Sum(b => b.GeneratedBody.flightGlobalsIndex);
+                Utility.DoRecursive(SystemPrefab.rootBody, body => body.children, body =>
+                {
+                    // ReSharper disable AccessToModifiedClosure
+                    if (numbers.Contains(body.flightGlobalsIndex))
+                    {
+                        body.flightGlobalsIndex = index++;
+                    }
+
+                    if (body.name.Equals(RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName))
+                    {
+                        body.flightGlobalsIndex = 1; // Homeworld
+                    }
+
+                    if (body == SystemPrefab.rootBody)
+                    {
+                        body.flightGlobalsIndex = 0; // Sun
+                    }
+
+                    numbers.Add(body.flightGlobalsIndex);
+                    // ReSharper restore AccessToModifiedClosure
+                });
+                return;
             }
 
             // Keep inherited indices when they are still available.
@@ -344,7 +380,7 @@ namespace Kopernicus.Configuration
                 orderedBodies[i].flightGlobalsIndex = i;
         }
 
-        // Generates the system prefab from the configuration 
+        // Generates the system prefab from the configuration
         void IParserEventSubscriber.PostApply(ConfigNode node)
         {
             //Set of items seen while loading, to prevent duplicate loggers being created (throws IOExceptions)
@@ -445,7 +481,7 @@ namespace Kopernicus.Configuration
                 seen.Clear();
                 logger.Close();
                 //first cache stock preset values
-                // Load all of the PQS Presets                
+                // Load all of the PQS Presets
                 foreach (ConfigNode presetNode in node.GetNodes(PRESET_NODE_NAME))
                 {
                     // Attempt to create or edit the Preset
