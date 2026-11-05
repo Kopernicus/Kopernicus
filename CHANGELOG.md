@@ -1,5 +1,8 @@
 # Kopernicus Changelog
 
+## 254
+1. Added support for...  a mysterious something.  What could it be?
+
 ## 253
 1. Fixed a bug in Kopernicus that could wreck games for Principia/RSS players.  If you arne't using those mods, you are fine.  If you are, you are urged to upgrade.
 
