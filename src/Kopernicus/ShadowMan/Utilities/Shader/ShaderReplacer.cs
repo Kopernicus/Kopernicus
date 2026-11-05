@@ -54,9 +54,7 @@ namespace Kopernicus.ShadowMan
         {
             string shaderspath;
 
-            if (Application.platform == RuntimePlatform.WindowsPlayer && SystemInfo.graphicsDeviceVersion.StartsWith("OpenGL"))
-                shaderspath = path + "Kopernicus/Shaders/scatterershaders-linux"; //fixes openGL on windows
-            else if (Application.platform == RuntimePlatform.WindowsPlayer)
+            if (Application.platform == RuntimePlatform.WindowsPlayer)
                 shaderspath = path + "Kopernicus/Shaders/scatterershaders-windows";
             else if (Application.platform == RuntimePlatform.LinuxPlayer)
                 shaderspath = path + "Kopernicus/Shaders/scatterershaders-linux";

@@ -273,7 +273,7 @@ namespace System.IO.Compression
         // Static CRC32 Table
         private static readonly UInt32[] CrcTable;
         // Default filename encoder
-        private static readonly Encoding DefaultEncoding = Encoding.GetEncoding(437);
+        private static readonly Encoding DefaultEncoding = Encoding.ASCII;
         #endregion
 
         #region Public methods
