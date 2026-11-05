@@ -48,6 +48,7 @@
   <PropertyGroup>
     <ModOutDir>KSP19PLUS</ModOutDir>
     <KSPBT_ModRoot>$(RepoRootPath)\build\$(ModOutDir)\GameData\Kopernicus</KSPBT_ModRoot>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>

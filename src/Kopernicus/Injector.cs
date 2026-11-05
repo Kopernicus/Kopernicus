@@ -93,7 +93,7 @@ namespace Kopernicus
             //Harmony stuff
 
             Harmony harmony = new Harmony("Kopernicus");
-            harmony.PatchAll();
+            ApplyHarmonyPatches(harmony);
 
             // Wrap this in a try - catch block so we can display a warning if Kopernicus fails to load for some reason
             try
@@ -210,6 +210,54 @@ namespace Kopernicus
                 // Attempt to reduce memory usage by immediately unloading unused textures
                 TextureLoader.ImmediatelyDestroyUnusedTextures();
             }
+        }
+
+        // Activates each Harmony patch class individually. A patch class that isn't listed here is never applied.
+        private static void ApplyHarmonyPatches(Harmony harmony)
+        {
+            // Kopernicus.Patches
+            harmony.CreateClassProcessor(typeof(Patches.GameSettings_WriteCfg)).Patch();
+            //Stock KSP specific patches
+            if (Versioning.fetch.versionMinor <= 12)
+            {
+                harmony.CreateClassProcessor(typeof(Patches.MapSOPatch_Double)).Patch();
+                harmony.CreateClassProcessor(typeof(Patches.MapSOPPatch_Float)).Patch();
+                harmony.CreateClassProcessor(typeof(Patches.PQS_ResetAndWait)).Patch();
+                harmony.CreateClassProcessor(typeof(Patches.PQS_ResetAndWait_MoveNext)).Patch();
+            }
+            harmony.CreateClassProcessor(typeof(Patches.MapSOPatch_Width)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.MapSOPatch_Height)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.ModuleAsteroid_OnStart)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.ModuleAsteroidInfo_OnStart)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.ModuleCometInfo_OnStart)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.OrbitPhysicsManager_setDominantBody)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.PQS_StartSphere)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.PQS_UpdateQuadsInit)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.PQS_UpdateVisual)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.PQSLandControl_OnVertexBuildHeight)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.ProceduralSpaceObject_Generate)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.PSpaceObject_CreateCollider)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.ROCManager_ValidateCBBiomeCombos)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.SentinelUtilities_FindInnerAndOuterBodies)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.SpaceCenterCamera2_Start)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.SpaceObjectCollider_CompositeSolid_BuildCompositeMesh)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.SpaceObjectCollider_LinkChunks)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.SpaceObjectCollider_Setup)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.SpaceObjectCollider_UpdateGenRange)).Patch();
+
+            // Kopernicus
+            harmony.CreateClassProcessor(typeof(PQSLandControlFixer)).Patch();
+
+            // Kopernicus.Components.ModularScatter
+            harmony.CreateClassProcessor(typeof(Components.ModularScatter.PQSMod_LandClassScatterQuad_OnQuadUpdate)).Patch();
+            harmony.CreateClassProcessor(typeof(Components.ModularScatter.PQSMod_LandClassScatterQuad_Destroy)).Patch();
+            harmony.CreateClassProcessor(typeof(Components.ModularScatter.PQSLandControl_LandClassScatter_AddScatterMeshController)).Patch();
+            harmony.CreateClassProcessor(typeof(Components.ModularScatter.PQSLandControl_LandClassScatter_BuildCache)).Patch();
+            harmony.CreateClassProcessor(typeof(Components.ModularScatter.PQSLandControl_LandClassScatter_Setup)).Patch();
+
+            // Kopernicus.RuntimeUtility
+            harmony.CreateClassProcessor(typeof(RuntimeUtility.PreciseKSCFloatingOrigin)).Patch();
+            harmony.CreateClassProcessor(typeof(RuntimeUtility.PreciseFlightFloatingOrigin)).Patch();
         }
 
         #region PrePatchFixups
