@@ -968,10 +968,10 @@ namespace Kopernicus.Components
             None,
             MipChain = 1 << 0,
             DontInitializePixels = 1 << 2,
-            DontDestroyTexture = 1 << 3,
-            DontCreateSharedTextureData = 1 << 4,
-            APIShareable = 1 << 5,
             Crunch = 1 << 6,
+            DontUploadUponCreate = 1 << 10, // 6.7 only, harmless on 2019.4
+            APIShareable = 1 << 5,
+            Uninitialized = DontInitializePixels | DontUploadUponCreate,
         }
 
         /// <summary>
@@ -982,37 +982,27 @@ namespace Kopernicus.Components
             int height,
             TextureFormat format = TextureFormat.RGBA32,
             bool mipChain = false,
-            bool linear = false
+            bool linear = false,
+            TextureCreationFlags flags = TextureCreationFlags.Uninitialized
         )
         {
-            // The code in here exactly matches the behaviour of the Texture2D
-            // constructors which directly take a TextureFormat, with one
-            // difference: it includes the DontInitializePixels flag.
-            //
-            // This is necessary because the Texture2D constructors that take
-            // GraphicsFormat validate the format differently than those that take
-            // TextureFormat, and only the GraphicsFormat constructors allow you to
-            // pass TextureCreationFlags.
-            //
-            // I (@Phantomical) have taken at look at decompiled implementation for
-            // Internal_Create_Impl and validated that this works as you would expect.
-
-            var tex = (Texture2D)FormatterServices.GetUninitializedObject(typeof(Texture2D));
-            if (!tex.ValidateFormat(format))
-                return tex;
-
             var gformat = GraphicsFormatUtility.GetGraphicsFormat(format, isSRGB: !linear);
-            var flags = TextureCreationFlags.DontInitializePixels;
-            int mipCount = !mipChain ? 1 : -1;
 
-            if (mipCount != 1)
+            // The GraphicsFormat constructor validates more strictly than the
+            // TextureFormat one: ARGB4444 fails it on OpenGL.
+            if (!SystemInfo.IsFormatSupported(gformat, FormatUsage.Sample))
+                return new Texture2D(width, height, format, mipChain, linear);
+
+            if (mipChain)
                 flags |= TextureCreationFlags.MipChain;
-            if (GraphicsFormatUtility.IsCrunchFormat(format))
-                flags |= TextureCreationFlags.Crunch;
 
-            var uflags = (UnityEngine.Experimental.Rendering.TextureCreationFlags)flags;
-            Texture2D.Internal_Create(tex, width, height, mipCount, gformat, uflags, IntPtr.Zero);
-            return tex;
+            return new Texture2D(
+                width,
+                height,
+                gformat,
+                mipChain ? -1 : 1,
+                (UnityEngine.Experimental.Rendering.TextureCreationFlags)flags
+            );
         }
     }
 }
