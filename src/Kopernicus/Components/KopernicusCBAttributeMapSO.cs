@@ -194,7 +194,8 @@ namespace Kopernicus.Components
                 throw new Exception("Can't have more than 256 biomes !");
 
             int biomeCount = Attributes.Length;
-            var biomeColors = new NativeArray<RGBA32>(biomeCount, Allocator.Temp);
+            var biomeColors = new NativeArray<RGBA32>(biomeCount, Allocator.TempJob);
+            using var biomeColorsGuard = new AsyncNativeArrayDisposeGuard<RGBA32>(biomeColors);
 
             for (int i = biomeCount; i-- > 0;)
                 biomeColors[i] = Attributes[i].mapColor;
@@ -209,8 +210,8 @@ namespace Kopernicus.Components
             fixed (Color32* pcolorData = colorData)
             fixed (byte* pdata = _data)
             {
-                var ncolorData = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<Color32>(pcolorData, colorData.Length, Allocator.Invalid);
-                var ndata = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(pdata, _data.Length, Allocator.Invalid);
+                var ncolorData = NativeArraySafety.Wrap<Color32>(pcolorData, colorData.Length, Allocator.Invalid);
+                var ndata = NativeArraySafety.Wrap<byte>(pdata, _data.Length, Allocator.Invalid);
 
                 var job = new ConvertFromTextureJob
                 {
@@ -238,9 +239,15 @@ namespace Kopernicus.Components
         [BurstCompile]
         unsafe struct ConvertFromTextureJob : IJobParallelFor
         {
+            [NativeDisableUnsafePtrRestriction]
             public int* badPixelsCount;
+            [NativeDisableParallelForRestriction]
+            [NativeDisableContainerSafetyRestriction]
             public NativeArray<byte> output;
+            [ReadOnly]
+            [NativeDisableContainerSafetyRestriction]
             public NativeArray<Color32> input;
+            [ReadOnly]
             public NativeArray<RGBA32> biomeColors;
 
             public int width;
@@ -377,7 +384,8 @@ namespace Kopernicus.Components
             _isCompiled = true;
 
             int biomeCount = Attributes.Length;
-            var biomeColors = new NativeArray<RGBA32>(biomeCount, Allocator.Temp);
+            var biomeColors = new NativeArray<RGBA32>(biomeCount, Allocator.TempJob);
+            using var biomeColorsGuard = new AsyncNativeArrayDisposeGuard<RGBA32>(biomeColors);
 
             for (int i = biomeCount; i-- > 0;)
                 biomeColors[i] = Attributes[i].mapColor;
@@ -391,8 +399,8 @@ namespace Kopernicus.Components
             fixed (byte* pfromData = fromData)
             fixed (byte* pdata = _data)
             {
-                var nfrom = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(pfromData, fromData.Length, Allocator.Invalid);
-                var ndata = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(pdata, _data.Length, Allocator.Invalid);
+                var nfrom = NativeArraySafety.Wrap<byte>(pfromData, fromData.Length, Allocator.Invalid);
+                var ndata = NativeArraySafety.Wrap<byte>(pdata, _data.Length, Allocator.Invalid);
 
                 var job = new ConvertFromStockMapJob
                 {
@@ -423,9 +431,15 @@ namespace Kopernicus.Components
         [BurstCompile]
         unsafe struct ConvertFromStockMapJob : IJobParallelFor
         {
+            [NativeDisableUnsafePtrRestriction]
             public int* badPixelsCount;
+            [NativeDisableParallelForRestriction]
+            [NativeDisableContainerSafetyRestriction]
             public NativeArray<byte> output;
+            [ReadOnly]
+            [NativeDisableContainerSafetyRestriction]
             public NativeArray<byte> input;
+            [ReadOnly]
             public NativeArray<RGBA32> biomeColors;
 
             public int width;
@@ -559,7 +573,7 @@ namespace Kopernicus.Components
         {
             fixed (RGBA32* pbiomeColors = biomeColors)
             {
-                var nbiomeColors = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<RGBA32>(pbiomeColors, biomeColors.Length, Allocator.Invalid);
+                var nbiomeColors = NativeArraySafety.Wrap<RGBA32>(pbiomeColors, biomeColors.Length, Allocator.Invalid);
                 return GetBiomeIndexStockBilinearSampling(nbiomeColors, c00, c10, c01, c11, midX, midY, nonExactThreshold);
             }
         }
@@ -709,6 +723,7 @@ namespace Kopernicus.Components
             [DeallocateOnJobCompletion]
             public NativeArray<Color32> colors;
 
+            [NativeDisableContainerSafetyRestriction]
             [ReadOnly]
             public NativeArray<byte> data;
 
@@ -729,6 +744,7 @@ namespace Kopernicus.Components
             [DeallocateOnJobCompletion]
             public NativeArray<ushort> colors;
 
+            [NativeDisableContainerSafetyRestriction]
             [ReadOnly]
             public NativeArray<byte> data;
 
@@ -822,7 +838,7 @@ namespace Kopernicus.Components
 
             fixed (byte* pdata = _data)
             {
-                var data = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(pdata, _data.Length, Allocator.Invalid);
+                var data = NativeArraySafety.Wrap<byte>(pdata, _data.Length, Allocator.Invalid);
                 switch (quantization)
                 {
                     case Quantization.RGB565:
