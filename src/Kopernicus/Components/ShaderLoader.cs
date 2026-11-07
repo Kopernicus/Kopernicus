@@ -57,11 +57,11 @@ namespace Kopernicus.Components
             path = Path.Combine(KSPUtil.ApplicationRootPath + "GameData/", path);
 
             // Pick correct bundle for platform
-            if (Application.platform == RuntimePlatform.WindowsPlayer)
+            if (Application.platform is RuntimePlatform.WindowsPlayer or RuntimePlatform.WindowsEditor)
             {
                 path = Path.Combine(path, bundleName + "-windows.unity3d");
             }
-            else if (Application.platform == RuntimePlatform.LinuxPlayer)
+            else if (Application.platform is RuntimePlatform.LinuxPlayer or RuntimePlatform.LinuxEditor)
             {
                 path = Path.Combine(path, bundleName + "-linux.unity3d");
             }

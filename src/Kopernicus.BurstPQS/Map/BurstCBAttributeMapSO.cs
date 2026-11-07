@@ -2,6 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using BurstPQS.Map;
 using BurstPQS.Util;
+using Kopernicus;
 using Kopernicus.Components;
 using Unity.Burst;
 using Unity.Collections;
@@ -36,7 +37,7 @@ public struct BurstCBAttributeMapSO : IMapSO, IDisposable
         rowWidth = mapSO.RowWidth;
 
         var dataptr = UnsafeUtility.PinGCArrayAndGetDataAddress(mapSO._data, out gchandle);
-        data = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(
+        data = NativeArraySafety.Wrap<byte>(
             dataptr,
             mapSO._data.Length,
             Allocator.Invalid

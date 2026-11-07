@@ -54,9 +54,9 @@ namespace Kopernicus.ShadowMan
         {
             string shaderspath;
 
-            if (Application.platform == RuntimePlatform.WindowsPlayer)
+            if (Application.platform is RuntimePlatform.WindowsPlayer or RuntimePlatform.WindowsEditor)
                 shaderspath = path + "Kopernicus/Shaders/scatterershaders-windows";
-            else if (Application.platform == RuntimePlatform.LinuxPlayer)
+            else if (Application.platform is RuntimePlatform.LinuxPlayer or RuntimePlatform.LinuxEditor)
                 shaderspath = path + "Kopernicus/Shaders/scatterershaders-linux";
             else
                 shaderspath = path + "Kopernicus/Shaders/scatterershaders-macosx";

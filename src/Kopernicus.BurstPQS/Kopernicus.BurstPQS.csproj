@@ -98,5 +98,6 @@
   <ItemGroup>
     <Publicize Include="Assembly-CSharp:MapSO._data" />
     <Publicize Include="Kopernicus:Kopernicus.Components.KopernicusMapSO+RACPUTexture`1" />
+    <Publicize Include="Kopernicus:Kopernicus.NativeArraySafety" />
   </ItemGroup>
 </Project>
