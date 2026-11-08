@@ -44,6 +44,6 @@ internal static unsafe class NativeArraySafety
 
     private static class Setter<T>
     {
-        public static readonly MethodInfo Method = SetHandle.MakeGenericMethod(typeof(T));
+        public static readonly MethodInfo Method = SetHandle?.MakeGenericMethod(typeof(T));
     }
 }
