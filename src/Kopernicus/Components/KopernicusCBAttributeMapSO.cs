@@ -356,6 +356,26 @@ namespace Kopernicus.Components
             CreateMap(MapDepth.RGB, texture);
         }
 
+        private static MapAttribute[] CloneAttributes(MapAttribute[] attributes)
+        {
+            var clones = new MapAttribute[attributes.Length];
+            for (int i = 0; i < attributes.Length; ++i)
+            {
+                var source = attributes[i];
+                clones[i] = new MapAttribute
+                {
+                    mapColor = source.mapColor,
+                    name = source.name,
+                    localizationTag = source.localizationTag,
+                    displayname = source.displayname,
+                    value = source.value,
+                    notNear = source.notNear
+                };
+            }
+
+            return clones;
+        }
+
         /// <summary>
         /// Convert a 3 Bpp stock biome map encoding rgb colors into a 1 Bpp biome map encoding biome indices.
         /// </summary>
@@ -367,7 +387,10 @@ namespace Kopernicus.Components
             if (stockMap.BitsPerPixel != 3)
                 return false;
 
-            Attributes = replacementAttributes ?? stockMap.Attributes;
+            // QuantizeBiomeColors rewrites the attribute colors in place. Every body
+            // templated on the same stock body shares that body's attributes, so
+            // quantize copies to keep later conversions matching the stock pixels.
+            Attributes = replacementAttributes ?? CloneAttributes(stockMap.Attributes);
             name = stockMap.name;
             _name = stockMap.MapName;
             _width = stockMap._width;
