@@ -237,6 +237,21 @@ namespace Kopernicus.OnDemand
             _unloadTime = System.Diagnostics.Stopwatch.GetTimestamp();
         }
 
+        private void OnDisable()
+        {
+            if (loaderCoroutine is null)
+                return;
+
+            StopCoroutine(loaderCoroutine);
+            loaderCoroutine = null;
+
+            using (new ClearListGuard<TextureHandle>(Handles))
+            {
+                foreach (var handle in Handles)
+                    handle.Dispose();
+            }
+        }
+
         private void OnDestroy()
         {
             using var guard = new ClearListGuard<TextureHandle>(Handles);
