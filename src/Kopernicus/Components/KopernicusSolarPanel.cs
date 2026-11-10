@@ -933,10 +933,15 @@ namespace Kopernicus.Components
         ///<summary>return true if a tutorial scenario or making history mission is active</summary>
         public static bool IsScenario()
         {
-            return HighLogic.CurrentGame.Mode == Game.Modes.SCENARIO
-                   || HighLogic.CurrentGame.Mode == Game.Modes.SCENARIO_NON_RESUMABLE
-                   || HighLogic.CurrentGame.Mode == Game.Modes.MISSION_BUILDER
-                   || HighLogic.CurrentGame.Mode == Game.Modes.MISSION;
+            // CurrentGame is null while parts are being compiled during the loading screen.
+            Game game = HighLogic.CurrentGame;
+            if (game == null)
+                return false;
+
+            return game.Mode == Game.Modes.SCENARIO
+                   || game.Mode == Game.Modes.SCENARIO_NON_RESUMABLE
+                   || game.Mode == Game.Modes.MISSION_BUILDER
+                   || game.Mode == Game.Modes.MISSION;
         }
 
         ///<summary>disable the module and return true if a tutorial scenario is active</summary>
