@@ -1,1 +1,5 @@
 System.cfg -text
+# Rewritten by the build with platform-native line endings; normalize so
+# CRLF vs LF differences don't show up as changes.
+build/KSP19PLUS/GameData/Kopernicus/Config/00Version.cfg text eol=lf
+build/KSP19PLUS/GameData/Kopernicus/Plugins/Kopernicus.version text eol=lf

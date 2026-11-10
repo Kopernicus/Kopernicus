@@ -110,7 +110,7 @@
       <URL>https://raw.githubusercontent.com/Kopernicus/Kopernicus/master/build/KSP19PLUS/GameData/Kopernicus/Plugins/Kopernicus.version</URL>
       <Version>1.12.1.$(KopernicusRelease)</Version>
       <KSP_Version_Min>1.12.0</KSP_Version_Min>
-      <KSP_Version_Max>1.12.99</KSP_Version_Max>
+      <KSP_Version_Max>1.13.0</KSP_Version_Max>
     </KSPVersionFile>
   </ItemGroup>
 
