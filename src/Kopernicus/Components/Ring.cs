@@ -242,6 +242,7 @@ namespace Kopernicus.Components
             };
             meshFilter.mesh.RecalculateNormals();
             meshFilter.mesh.RecalculateBounds();
+            Utility.RecalculateUVDistributionMetrics(meshFilter.mesh);
             meshFilter.sharedMesh = meshFilter.mesh;
 
             // RingLoader normally already attached the MeshRenderer and material (via

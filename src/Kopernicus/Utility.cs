@@ -499,6 +499,11 @@ namespace Kopernicus
                 ScaleMeshVertices(mesh, 1.0f / R_SCALED);
                 meshRadius = 1.0f;
             }
+            else
+            {
+                // ScaleMeshVertices already did this for the unit radius mesh
+                RecalculateUVDistributionMetrics(mesh);
+            }
 
             // Apply mesh to the body
             scaledVersion.GetComponent<MeshFilter>().sharedMesh = mesh;
@@ -519,7 +524,33 @@ namespace Kopernicus
 
             mesh.vertices = vertices;
             mesh.RecalculateBounds();
+            RecalculateUVDistributionMetrics(mesh);
             return mesh;
+        }
+
+        // Mesh.RecalculateUVDistributionMetrics exists from Unity 2020.1 on, but KSP runs on 2019.4, so it is only
+        // reachable through reflection. Null when the running Unity lacks it.
+        private static readonly Action<Mesh, Single> RecalculateUVDistributionMetricsImpl =
+            CreateRecalculateUVDistributionMetrics();
+
+        private static Action<Mesh, Single> CreateRecalculateUVDistributionMetrics()
+        {
+            MethodInfo method = typeof(Mesh).GetMethod("RecalculateUVDistributionMetrics",
+                BindingFlags.Public | BindingFlags.Instance, null, new[] { typeof(Single) }, null);
+            if (method == null)
+                return null;
+
+            return (Action<Mesh, Single>)Delegate.CreateDelegate(typeof(Action<Mesh, Single>), method);
+        }
+
+        /// <summary>
+        /// On 6000.7 this will recalculate the mesh distribution metrics for a
+        /// loaded mesh so that mipmap streaming handles it correctly.
+        /// </summary>
+        public static void RecalculateUVDistributionMetrics(Mesh mesh)
+        {
+            // Unity's default threshold for skipping degenerate triangles
+            RecalculateUVDistributionMetricsImpl?.Invoke(mesh, 1e-9f);
         }
 
         // Generate the scaled space mesh using PQS (all results use scale of 1)
