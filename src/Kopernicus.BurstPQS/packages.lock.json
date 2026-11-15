@@ -8,11 +8,11 @@
         "resolved": "2.3.2",
         "contentHash": "SPk1Bv/k8yX3L0PLNSxeYg+tLB3o9Iyd9wEBb9tFEYHqMu+/x9N8kjEbwW55B7RGEu+cm7ly/7hwRmCnVCjgVw=="
       },
-      "KSPBuildTools": {
+      "KSP1Retooled.BuildTools": {
         "type": "Direct",
-        "requested": "[1.1.1, )",
-        "resolved": "1.1.1",
-        "contentHash": "Cw3bES8zmfApzecdBLAsKyDVOgNqmjYruhyBq/u1XnO8N2ypN03iSW0OdN3dYoS+huboNffvDnf0u+diPagrJA==",
+        "requested": "[2.0.3, )",
+        "resolved": "2.0.3",
+        "contentHash": "y8vBkG9kT4quNiI6Es35J6TybM2YclPuAGY/lPQcd7wY9Moxgwv+weU36C7TOXKhEq1Dolu48I12qfb85tkWAg==",
         "dependencies": {
           "JsonPoke": "1.2.0"
         }
@@ -26,14 +26,14 @@
         "type": "Project",
         "dependencies": {
           "JsonPoke": "[1.3.0, )",
-          "KSPBuildTools": "[1.1.1, )",
+          "KSP1Retooled.BuildTools": "[2.0.3, )",
           "Kopernicus.Parser": "[1.0.0, )"
         }
       },
       "kopernicus.parser": {
         "type": "Project",
         "dependencies": {
-          "KSPBuildTools": "[1.1.1, )"
+          "KSP1Retooled.BuildTools": "[2.0.3, )"
         }
       }
     }

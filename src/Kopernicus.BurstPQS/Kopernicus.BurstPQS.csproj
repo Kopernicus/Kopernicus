@@ -60,7 +60,7 @@
       <Private>false</Private>
     </ProjectReference>
 
-    <PackageReference Include="KSPBuildTools" Version="1.1.1" />
+    <PackageReference Include="KSP1Retooled.BuildTools" Version="2.0.3" />
 
     <PackageReference Include="Krafs.Publicizer" Version="2.3.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -77,7 +77,7 @@
       <Private>false</Private>
     </Reference>
 
-    <Reference Include="Unity.Burst">
+    <Reference Include="Unity.Burst" Condition=" '$(KSPBT_TargetGame)' != 'Retooled' ">
       <HintPath>$(DepDirPath)\Unity.Burst.dll</HintPath>
       <Private>false</Private>
     </Reference>
