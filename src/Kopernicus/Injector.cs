@@ -42,6 +42,10 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Security.Cryptography;
 using UnityEngine;
+#if UNITY_6_7
+using PhysicMaterial = UnityEngine.PhysicsMaterial;
+using PhysicMaterialCombine = UnityEngine.PhysicsMaterialCombine;
+#endif
 
 namespace Kopernicus
 {
@@ -217,14 +221,12 @@ namespace Kopernicus
         {
             // Kopernicus.Patches
             harmony.CreateClassProcessor(typeof(Patches.GameSettings_WriteCfg)).Patch();
-            //Stock KSP specific patches
-            if (Versioning.fetch.versionMinor <= 12)
-            {
-                harmony.CreateClassProcessor(typeof(Patches.MapSOPatch_Double)).Patch();
-                harmony.CreateClassProcessor(typeof(Patches.MapSOPPatch_Float)).Patch();
-                harmony.CreateClassProcessor(typeof(Patches.PQS_ResetAndWait)).Patch();
-                harmony.CreateClassProcessor(typeof(Patches.PQS_ResetAndWait_MoveNext)).Patch();
-            }
+#if !KSP_RETOOLED
+            harmony.CreateClassProcessor(typeof(Patches.MapSOPatch_Double)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.MapSOPPatch_Float)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.PQS_ResetAndWait)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.PQS_ResetAndWait_MoveNext)).Patch();
+#endif
             harmony.CreateClassProcessor(typeof(Patches.MapSOPatch_Width)).Patch();
             harmony.CreateClassProcessor(typeof(Patches.MapSOPatch_Height)).Patch();
             harmony.CreateClassProcessor(typeof(Patches.ModuleAsteroid_OnStart)).Patch();

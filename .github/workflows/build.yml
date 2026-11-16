@@ -22,11 +22,21 @@ jobs:
           wget --quiet https://github.com/KSPModdingLibs/KSPLibs/raw/main/KSP-1.12.5.zip -O /tmp/ksp.zip
           unzip -q -P "" /tmp/ksp.zip -d /tmp/ksp
 
+      - name: Download Retooled libs
+        run: |
+          gh release download 1.13.0-rc0 --repo KSP1Retooled/retooled --pattern retooled-refs.zip -O /tmp/retooled-refs.zip
+          unzip -q /tmp/retooled-refs.zip -d /tmp/retooled
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: Restore
         run: dotnet restore
 
       - name: Build
-        run: dotnet msbuild -m:1 -p:"Configuration=1.9+ Release" -p:KSPBT_ManagedPath=/tmp/ksp/KSP_x64_Data/Managed
+        run: dotnet msbuild -m:1 -p:"Configuration=1.9+ Release"
+        env:
+          KSPBT_StockGameRoot: /tmp/ksp
+          KSPBT_RetooledGameRoot: /tmp/retooled
 
       - uses: KSPModdingLibs/KSPBuildTools/.github/actions/assemble-release@1.1.1
         with:

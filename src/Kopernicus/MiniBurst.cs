@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UNITY_6_7
+using System;
 
 namespace Unity.Burst
 {
@@ -121,3 +122,4 @@ namespace Unity.Burst
         }
     }
 }
+#endif

@@ -38,6 +38,10 @@ using Kopernicus.OnDemand;
 using KSPTextureLoader;
 using UnityEngine;
 using Object = UnityEngine.Object;
+#if UNITY_6_7
+using PhysicMaterial = UnityEngine.PhysicsMaterial;
+using PhysicMaterialCombine = UnityEngine.PhysicsMaterialCombine;
+#endif
 
 namespace Kopernicus.Configuration.Parsing
 {
