@@ -1,5 +1,11 @@
 # Kopernicus Changelog
 
+## 255
+1. This is a big one:  PostSpawnOrbit is hereby deprecated, as the homeworld can now NATIVELY BE PLACED ON A MOON WITHOUT BUGS.
+2. Changed main menu planet rotation speed to not be inverse to its true rotation period (which could produce truly disturbingly fast planet rotators).
+3. Added body parameter "mainMenuBodyRotationMult" which is a multiplier for body main menu rotation speed, if desired.
+4. Some other small bugfixes, nothing too major, if interested consult gitlog.
+
 ## 254
 1. Added support for...  a mysterious something.  What could it be?
 

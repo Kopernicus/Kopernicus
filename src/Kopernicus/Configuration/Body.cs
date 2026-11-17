@@ -172,6 +172,15 @@ namespace Kopernicus.Configuration
             }
         }
 
+        // Multiplier for how fast this body turns when it is the main menu body. 1 is the speed its rotation period
+        // gives it.
+        [ParserTarget("mainMenuBodyRotationMult")]
+        public NumericParser<Single> MainMenuBodyRotationMult
+        {
+            get { return CelestialBody.Get("mainMenuBodyRotationMult", 1f); }
+            set { CelestialBody.Set("mainMenuBodyRotationMult", value.Value); }
+        }
+
         // Describes how often contracts should be generated for a body
         [ParserTarget("contractWeight")]
         public NumericParser<Int32> ContractWeight

@@ -65,6 +65,20 @@ namespace Kopernicus.RuntimeUtility
 
         private const Single KERBIN_ROTATION_PERIOD = 21600f;
 
+        // How fast the menu body turns compared to the menu's Kerbin. A body with Kerbin's rotation period turns at
+        // Kerbin's speed, one with twice the period at half of it, and one with a negative period turns backwards.
+        // A period that is zero keeps Kerbin's speed.
+        private static Single MenuRotationScale(Double rotationPeriod)
+        {
+            Double scale = KERBIN_ROTATION_PERIOD / rotationPeriod;
+            if (Double.IsNaN(scale) || Double.IsInfinity(scale))
+            {
+                return 1f;
+            }
+
+            return (Single)scale;
+        }
+
         // Update the menu body
         private void Start()
         {
@@ -157,7 +171,7 @@ namespace Kopernicus.RuntimeUtility
             // That sounds funny
             Rotato planetRotato = menuPlanet.AddComponent<Rotato>();
             Rotato planetRefRotato = kerbin.GetComponent<Rotato>();
-            planetRotato.speed = planetRefRotato.speed * ((Single)planetCb.rotationPeriod / KERBIN_ROTATION_PERIOD);
+            planetRotato.speed = planetRefRotato.speed * MenuRotationScale(planetCb.rotationPeriod) * planetCb.Get("mainMenuBodyRotationMult", 1f);
             menuPlanet.transform.Rotate(0f, (Single)planetCb.initialRotation, 0f);
 
             // Scale the body. The menu Kerbin uses the stock 1000 unit mesh, so compensate if our

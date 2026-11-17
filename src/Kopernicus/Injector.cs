@@ -226,6 +226,15 @@ namespace Kopernicus
             harmony.CreateClassProcessor(typeof(Patches.MapSOPPatch_Float)).Patch();
             harmony.CreateClassProcessor(typeof(Patches.PQS_ResetAndWait)).Patch();
             harmony.CreateClassProcessor(typeof(Patches.PQS_ResetAndWait_MoveNext)).Patch();
+
+            // A home world that orbits a planet. Stock KSP never got support for it, so this covers 1.12.5 and older.
+            if (Patches.BodyHierarchy.GameNeedsPatches)
+            {
+                harmony.CreateClassProcessor(typeof(Patches.PSystemSetup_SetSpaceCentre)).Patch();
+                harmony.CreateClassProcessor(typeof(Patches.Planetarium_FindRootBody)).Patch();
+                harmony.CreateClassProcessor(typeof(Patches.HomeWorld_SolarOrbit)).Patch();
+                harmony.CreateClassProcessor(typeof(Patches.UIWarpToNextMorning_SolarDay)).Patch();
+            }
 #endif
             harmony.CreateClassProcessor(typeof(Patches.MapSOPatch_Width)).Patch();
             harmony.CreateClassProcessor(typeof(Patches.MapSOPatch_Height)).Patch();
