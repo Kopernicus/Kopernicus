@@ -1,5 +1,9 @@
 # Kopernicus Changelog
 
+## 256
+1. Changed main menu planet rotation speed to default to Kerbin speed and then be only configurable by author via mainMenuBodyRotationMult parameter, because it turns out some planet pack worlds (Mesbin etc) actually spin dangerously fast.
+2. If you are a user with epilepsy please download this immediately.
+
 ## 255
 1. This is a big one:  PostSpawnOrbit is hereby deprecated, as the homeworld can now NATIVELY BE PLACED ON A MOON WITHOUT BUGS.
 2. Changed main menu planet rotation speed to not be inverse to its true rotation period (which could produce truly disturbingly fast planet rotators).

@@ -172,8 +172,7 @@ namespace Kopernicus.Configuration
             }
         }
 
-        // Multiplier for how fast this body turns when it is the main menu body. 1 is the speed its rotation period
-        // gives it.
+        // Multiplier for how fast this body turns when it is the main menu body. 1 is the speed of kerbin.
         [ParserTarget("mainMenuBodyRotationMult")]
         public NumericParser<Single> MainMenuBodyRotationMult
         {

@@ -65,18 +65,19 @@ namespace Kopernicus.RuntimeUtility
 
         private const Single KERBIN_ROTATION_PERIOD = 21600f;
 
-        // How fast the menu body turns compared to the menu's Kerbin. A body with Kerbin's rotation period turns at
-        // Kerbin's speed, one with twice the period at half of it, and one with a negative period turns backwards.
-        // A period that is zero keeps Kerbin's speed.
+        // How fast the menu body turns compared to the menu's Kerbin.
         private static Single MenuRotationScale(Double rotationPeriod)
         {
-            Double scale = KERBIN_ROTATION_PERIOD / rotationPeriod;
+            //This old code led to epilepsy hazard planets (mesbin).  We now let the author decicde.
+            /*Double scale = KERBIN_ROTATION_PERIOD / rotationPeriod;
             if (Double.IsNaN(scale) || Double.IsInfinity(scale))
             {
                 return 1f;
             }
 
-            return (Single)scale;
+            return (Single)scale;*/
+            return 1f;
+
         }
 
         // Update the menu body
