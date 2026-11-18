@@ -186,7 +186,7 @@ namespace Kopernicus.Configuration.Parsing
                 Hint = TextureLoadHint.Synchronous,
                 Unreadable = true
             };
-            var handle = TextureLoader.LoadTexture<Texture2D>(s);
+            var handle = TextureLoader.LoadTexture<Texture2D>(s, options);
             try
             {
                 Value = handle.GetTexture();
