@@ -250,6 +250,7 @@ namespace Kopernicus
             harmony.CreateClassProcessor(typeof(Patches.PSpaceObject_CreateCollider)).Patch();
             harmony.CreateClassProcessor(typeof(Patches.ROCManager_ValidateCBBiomeCombos)).Patch();
             harmony.CreateClassProcessor(typeof(Patches.SentinelUtilities_FindInnerAndOuterBodies)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.SiteNode_SetupWaypoint)).Patch();
             harmony.CreateClassProcessor(typeof(Patches.SpaceCenterCamera2_Start)).Patch();
             harmony.CreateClassProcessor(typeof(Patches.SpaceObjectCollider_CompositeSolid_BuildCompositeMesh)).Patch();
             harmony.CreateClassProcessor(typeof(Patches.SpaceObjectCollider_LinkChunks)).Patch();
