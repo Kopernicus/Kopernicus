@@ -570,9 +570,7 @@ namespace Kopernicus.RuntimeUtility
                     continue;
                 }
 
-                Double rotationPeriod = body.rotationPeriod;
-                Double orbitalPeriod = body.orbit.period;
-                body.rotationPeriod = rotationPeriod * orbitalPeriod / (orbitalPeriod + rotationPeriod);
+                body.rotationPeriod = Utility.SolarToSiderealRotationPeriod(body, body.rotationPeriod, body.orbit.period);
             }
 
             // Update the order in the tracking station

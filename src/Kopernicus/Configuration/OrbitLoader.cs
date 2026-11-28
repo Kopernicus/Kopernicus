@@ -454,8 +454,8 @@ namespace Kopernicus.Configuration
 
             if (body.solarRotationPeriod)
             {
-                double solarDayLength = (body.orbit.period * body.rotationPeriod) / (body.orbit.period - body.rotationPeriod);
-                body.rotationPeriod = (period * solarDayLength) / (period + solarDayLength);
+                double solarDayLength = Utility.SiderealToSolarRotationPeriod(body, body.rotationPeriod, body.orbit.period);
+                body.rotationPeriod = Utility.SolarToSiderealRotationPeriod(body, solarDayLength, period);
             }
 
             body.orbit.period = period;

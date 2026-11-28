@@ -56,6 +56,34 @@ namespace Kopernicus
         private static FloatCurve gasGiantMassVsRadiusCurve = null;
 
         /// <summary>
+        /// Returns the orbital period with the same sign convention as CelestialBody.rotationPeriod.
+        /// Orbits with an inclination above 90 degrees are retrograde relative to a positive rotation.
+        /// Thus their period is returned as a negative value.
+        /// </summary>
+        public static Double SignedOrbitalPeriod(CelestialBody body, Double period)
+        {
+            return body.orbit != null && body.orbit.inclination > 90 ? -period : period;
+        }
+
+        /// <summary>
+        /// Converts a solar day length into a sidereal rotation period, taking the orbit direction into account.
+        /// </summary>
+        public static Double SolarToSiderealRotationPeriod(CelestialBody body, Double solarDay, Double orbitalPeriod)
+        {
+            Double p = SignedOrbitalPeriod(body, orbitalPeriod);
+            return solarDay * p / (p + solarDay);
+        }
+
+        /// <summary>
+        /// Converts a sidereal rotation period into a solar day length, taking the orbit direction into account.
+        /// </summary>
+        public static Double SiderealToSolarRotationPeriod(CelestialBody body, Double siderealPeriod, Double orbitalPeriod)
+        {
+            Double p = SignedOrbitalPeriod(body, orbitalPeriod);
+            return siderealPeriod * p / (p - siderealPeriod);
+        }
+
+        /// <summary>
         /// Get an object which is deactivated, essentially, and children are prefabs
         /// </summary>
         public static Transform Deactivator
