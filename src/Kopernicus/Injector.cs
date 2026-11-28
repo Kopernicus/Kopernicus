@@ -220,6 +220,8 @@ namespace Kopernicus
         private static void ApplyHarmonyPatches(Harmony harmony)
         {
             // Kopernicus.Patches
+            harmony.CreateClassProcessor(typeof(Patches.CelestialBody_CBUpdate)).Patch();
+            harmony.CreateClassProcessor(typeof(Patches.CelestialBody_Start)).Patch();
             harmony.CreateClassProcessor(typeof(Patches.GameSettings_WriteCfg)).Patch();
 #if !KSP_RETOOLED
             harmony.CreateClassProcessor(typeof(Patches.MapSOPatch_Double)).Patch();
